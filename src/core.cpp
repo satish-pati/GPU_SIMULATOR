@@ -5,7 +5,7 @@
 Core::Core(Memory &memRef, int coreId)
     : memory(memRef), pc(0), coreID(coreId), baseAddress(coreId * 1024) {
     std::fill(std::begin(registers), std::end(registers), 0);
-    registers[32] = coreId; // Store core ID in register x32
+    registers[32] = coreId; //  core ID in register x32
 }
 
 uint32_t Core::fetch() {
@@ -98,6 +98,7 @@ void Core::execute(const Instruction &instruction) {
                   << std::hex << (int)opcode << std::dec << std::endl;
         break;
     }
+     registers[0] = 0;
 }
 
 void Core::run(int numInstructions) {
