@@ -90,7 +90,25 @@ case 0x23: // SW
     break;
 }
 
+case 0x6F: // JAL (Jump and Link)
+{
+    registers[rd] = pc ; 
+    pc-=4; // Store return address which is address of next Instruction
+    pc += imm;  // Jump to target address
+    std::cout << "Core " << coreID << " - JAL: Jumping to " << pc 
+              << ", storing return address in x" << (int)rd << std::endl;
+    break;
+}
 
+// case 0x67: // JALR (Jump and Link Register)
+// {
+//     uint32_t temp = pc + 4;
+//     pc = (registers[rs1] + imm) & ~1; // Jump to (rs1 + imm), ensuring LSB is 0
+//     registers[rd] = temp; // Store return address
+//     std::cout << "Core " << coreID << " - JALR: Jumping to " << pc 
+//               << ", storing return address in x" << (int)rd << std::endl;
+//     break;
+// }
     default:
         std::cerr << "[ERROR] Core " << coreID << " - Unknown instruction: 0x" 
                   << std::hex << (int)opcode << std::dec << std::endl;

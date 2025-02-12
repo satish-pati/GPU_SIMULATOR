@@ -14,7 +14,7 @@ uint32_t Memory::loadWord(uint32_t address) const {
 }
 
 void Memory::storeWord(uint32_t address, uint32_t value) {
-    std::cout<<value<<"At addr"<<address<<std::endl;
+    std::cout<<value<<" At addr"<<address<<std::endl;
     if (address % 4 != 0 || address + 3 >= MEMORY_SIZE) {
         std::cerr << "[ERROR] Invalid memory access at: 0x" << std::hex << address << std::dec << std::endl;
         return;
