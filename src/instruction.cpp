@@ -23,12 +23,20 @@ if (opcode == 0x63) { // B-type
 if (rawInstruction & 0x80000000) imm |= 0xFFFFF000; // Sign-extend
     } 
 
-    else if (opcode == 0x6F) { // JAL (J-type)
-    imm = ((rawInstruction >> 12) & 0xFF) << 12 |  // Bits [19:12]
-          ((rawInstruction >> 20) & 0x1) << 11 |   // Bit [11]
-          ((rawInstruction >> 21) & 0x3FF) << 1 |  // Bits [10:1]
-          ((rawInstruction >> 31) ? 0xFFF00000 : 0); // Sign-extend
-    } 
+    // else if (opcode == 0x6F) { // JAL (J-type)
+    // imm = ((rawInstruction >> 12) & 0xFF) << 12 |  // Bits [19:12]
+    //       ((rawInstruction >> 20) & 0x1) << 11 |   // Bit [11]
+    //       ((rawInstruction >> 21) & 0x3FF) << 1 |  // Bits [10:1]
+    //       ((rawInstruction >> 31) ? 0xFFF00000 : 0); // Sign-extend
+    // } 
+
+    if (opcode == 0x6F) { // JAL (J-type)
+        imm = ((rawInstruction >> 21) & 0x3FF) << 1 |  // Bits [10:1]
+              ((rawInstruction >> 20) & 0x1) << 11 |   // Bit [11]
+              ((rawInstruction >> 12) & 0xFF) << 12 |  // Bits [19:12]
+              ((rawInstruction & 0x80000000) ? 0xFFF00000 : 0); // Sign-extend from bit 31
+    }
+    
     else if (opcode == 0x67 || opcode==0x13) { // JALR (I-type)
     imm = static_cast<int32_t>(rawInstruction) >> 20; // Sign-extend
     }

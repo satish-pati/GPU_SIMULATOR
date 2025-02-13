@@ -150,6 +150,7 @@ case 0x13: // I-type Instructions (Immediate ALU)
 
 void Core::run(int numInstructions) {
     for (int i = 0; i < numInstructions; i++) {
+        std::cout<<"ITERATION                  :"<<i<<std::endl;
         uint32_t rawInst = fetch();
         Instruction inst(rawInst);
         inst.decode();
