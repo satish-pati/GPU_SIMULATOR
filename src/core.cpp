@@ -116,6 +116,20 @@ case 0x67: // JALR (Jump and Link Register)
         }
     break;
 }
+case 0x13: // I-type Instructions (Immediate ALU)
+{
+    if (funct3 == 0x0) { // ADDI
+        registers[rd] = registers[rs1] + imm;
+        std::cout << "Core " << coreID << " - ADDI: Register x" << (int)rd 
+                  << " = " << registers[rs1] << " + " << imm 
+                  << " = " << registers[rd] << std::endl;
+    } 
+    else {
+        std::cerr << "[ERROR] Core " << coreID << " - Unknown I-type funct3: 0x" 
+                  << std::hex << (int)funct3 << std::dec << std::endl;
+    }
+    break;
+}
     default:
         std::cerr << "[ERROR] Core " << coreID << " - Unknown instruction: 0x" 
                   << std::hex << (int)opcode << std::dec << std::endl;
