@@ -25,7 +25,7 @@ void Core::execute(const Instruction &instruction) {
     uint8_t rd = instruction.getRd();
     uint8_t rs1 = instruction.getRs1();
     uint8_t rs2 = instruction.getRs2();
-    int16_t imm = instruction.getImm();
+    int32_t imm = instruction.getImm();
 
     switch (opcode) {
     case 0x33: // R-type instructions
@@ -37,9 +37,11 @@ void Core::execute(const Instruction &instruction) {
                           << (int)rd << " = " << registers[rs1] 
                           << " + " << registers[rs2] << " = " << registers[rd] 
                           << std::endl;
+                          registers[0]=0;
             } 
             else if (funct7 == 0x20) { // SUB
                 registers[rd] = registers[rs1] - registers[rs2];
+                registers[0]=0;
                 std::cout << "Core " << coreID << " - SUB: Register x" 
                           << (int)rd << " = " << registers[rd] << std::endl;
             } 
@@ -52,6 +54,7 @@ void Core::execute(const Instruction &instruction) {
         if (registers[rs1] != registers[rs2]) {
             pc-=4;
             pc += imm;
+            registers[0]=0;
         }
         std::cout << "Core " << coreID << " - BNE: Comparing x" 
                   << (int)rs1 << " (" << registers[rs1] << ") with x" 
@@ -73,6 +76,7 @@ case 0x03: // LW
               << " loaded with value " << registers[rd] 
               << " from memory address " << address 
               << std::endl;
+              registers[0]=0;
     break;
 }
 
@@ -88,6 +92,7 @@ case 0x23: // SW
     std::cout << "Core " << coreID << " - SW: Stored " << registers[rs2] 
               << " at memory address " << address 
               << std::endl;
+              registers[0]=0;
     break;
 }
 
@@ -98,6 +103,7 @@ case 0x6F: // JAL (Jump and Link)
     pc += imm;  // Jump to target address
     std::cout << "Core " << coreID << " - JAL: Jumping to " << pc 
               << ", storing return address in x" << (int)rd << std::endl;
+              registers[0]=0;
     break;
 }
 
@@ -114,25 +120,30 @@ case 0x67: // JALR (Jump and Link Register)
     else {
         std::cerr << "[ERROR] Core " << coreID << " - Unknown JALR funct3: 0x" << std::hex << (int)funct3 << std::dec << std::endl;
         }
+        registers[0]=0;
     break;
 }
 case 0x13: // I-type Instructions (Immediate ALU)
 {
     if (funct3 == 0x0) { // ADDI
-        registers[rd] = registers[rs1] + imm;
+        std::cout<<"just for fun"<<std::dec<<imm<<std::endl;
         std::cout << "Core " << coreID << " - ADDI: Register x" << (int)rd 
-                  << " = " << registers[rs1] << " + " << imm 
+                  << " = " << registers[rs1];
+        registers[rd] = registers[rs1] + imm;
+        std::cout << " + " << imm 
                   << " = " << registers[rd] << std::endl;
     } 
     else {
         std::cerr << "[ERROR] Core " << coreID << " - Unknown I-type funct3: 0x" 
                   << std::hex << (int)funct3 << std::dec << std::endl;
     }
+    registers[0]=0;
     break;
 }
     default:
         std::cerr << "[ERROR] Core " << coreID << " - Unknown instruction: 0x" 
                   << std::hex << (int)opcode << std::dec << std::endl;
+                  registers[0]=0;
         break;
     }
 }
