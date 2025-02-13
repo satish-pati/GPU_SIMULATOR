@@ -5,43 +5,34 @@
 #include <iostream>
 #include <vector>
 
-void executeCore(Core &core, int coreID) {
+void executeCore(Core &core, int coreID,int n) {
     std::cout << "\n[Core " << coreID << "] Initial Register State:" << std::endl;
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 31; i++) {
         std::cout << "[Core " << coreID << "] x" << i << " = " << core.registers[i] << std::endl;
     }
 
     std::cout << "\n[Core " << coreID << "] Executing Instructions...\n" << std::endl;
     
-    core.run(5);  
+    core.run(n);  
 
     std::cout << "\n[Core " << coreID << "] Final Register State:" << std::endl;
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 31; i++) {
         std::cout << "[Core " << coreID << "] x" << i << " = " << core.registers[i] << std::endl;
     }
 }
-
-//         0x002081b3, // ADD x3, x1, x2  (x3 = x1 + x2)
-
-//         0x40208233, // SUB x4, x1, x2  (x4 = x1 - x2)
-        
-//        0x00012283 , // LW x5, 0(x2)    (Load x5 from address x2)
-//        0x00432223, // SW x4, 4(x5)    (Store x4 at address x5 + 4)
-//  0x02418663, // BNE x3, x4, 8
 int main() {
     Memory memory;
     std::vector<uint32_t> program = {
+        0x02418663, // BNE x3, x4, 8
+        0x0040006F,
+        0x002081b3, // ADD x3, x1, x2  (x3 = x1 + x2)
+        0x40208233, // SUB x4, x1, x2  (x4 = x1 - x2) 
+        0x00012283 , // LW x5, 0(x2)    (Load x5 from address x2)
+        0x00432223, // SW x4, 4(x5)    (Store x4 at address x5 + 4)
+        
 
 
-0x002081b3, // ADD x3, x1, x2  (x3 = x1 + x2)
-0x40208233, // SUB x4, x1, x2  (x4 = x1 - x2)
-0x00012283, // LW x5, 0(x2)    (Load x5 from address x2)
-
-0x004000ef, // JAL x6, 4       (Jump and Link to PC+4, storing return address in x6)
-
-//0x00432223, // SW x4, 4(x5)    (Store x4 at address x5 + 4)
-0x02418663 , // BNE x3, x4, OFFSET  (Branch if x3 ≠ x4)
-0x00432223, // SW x4, 4(x5)    (Store x4 at address x5 + 4)
+   
     };
     // Load instructions into memory for all cores
 for (int core = 0; core < 4; core++) {
@@ -61,7 +52,7 @@ for (int core = 0; core < 4; core++) {
     }
 
     for (int i = 0; i < 4; i++) {
-    executeCore(cores[i], i);  // Run cores 
+    executeCore(cores[i], i,program.size());  // Run cores 
 }
 
     return 0;

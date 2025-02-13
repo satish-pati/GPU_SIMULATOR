@@ -50,6 +50,7 @@ void Core::execute(const Instruction &instruction) {
 {
     if (funct3 == 0x0) { // BNE 
         if (registers[rs1] != registers[rs2]) {
+            pc-=4;
             pc += imm;
         }
         std::cout << "Core " << coreID << " - BNE: Comparing x" 
@@ -100,15 +101,21 @@ case 0x6F: // JAL (Jump and Link)
     break;
 }
 
-// case 0x67: // JALR (Jump and Link Register)
-// {
-//     uint32_t temp = pc + 4;
-//     pc = (registers[rs1] + imm) & ~1; // Jump to (rs1 + imm), ensuring LSB is 0
-//     registers[rd] = temp; // Store return address
-//     std::cout << "Core " << coreID << " - JALR: Jumping to " << pc 
-//               << ", storing return address in x" << (int)rd << std::endl;
-//     break;
-// }
+case 0x67: // JALR (Jump and Link Register)
+{
+    if(funct3 == 0x0){
+    uint32_t temp = pc ;
+    pc-=4;
+    pc = (registers[rs1] + imm) & ~1; // Jump to (rs1 + imm), ensuring LSB is 0
+    registers[rd] = temp; // Store return address
+    std::cout << "Core " << coreID << " - JALR: Jumping to " << pc 
+              << ", storing return address in x" << (int)rd << std::endl;
+    }
+    else {
+        std::cerr << "[ERROR] Core " << coreID << " - Unknown JALR funct3: 0x" << std::hex << (int)funct3 << std::dec << std::endl;
+        }
+    break;
+}
     default:
         std::cerr << "[ERROR] Core " << coreID << " - Unknown instruction: 0x" 
                   << std::hex << (int)opcode << std::dec << std::endl;
@@ -123,4 +130,14 @@ void Core::run(int numInstructions) {
         inst.decode();
         execute(inst);
     }
+    
 }
+// uint32_t Core::getRegister(int reg) const {
+//     return registers[reg]; // Return the register value
+// }
+// void Core::setRegister(int reg, uint32_t value) {
+//     if (reg != 0) { // Prevent writing to x0 (registers[0])
+//         registers[reg] = value;
+//     }
+// }
+
