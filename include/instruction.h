@@ -15,7 +15,7 @@ public:
     uint8_t getRd() const { return rd; }
     uint8_t getRs1() const { return rs1; }
     uint8_t getRs2() const { return rs2; }
-        uint8_t getImm() const { return imm; }
+        int32_t getImm() const { return imm; }
         uint8_t getFunct3() const { return funct3; }
         uint8_t getFunct7() const { return funct7; }
 
