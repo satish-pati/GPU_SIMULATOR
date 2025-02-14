@@ -23,21 +23,20 @@ void executeCore(Core &core, int coreID,int n) {
 int main() {
     Memory memory;
     std::vector<uint32_t> program = {
-        0x01033063,
-        0x02418663, // BNE x3, x4, 8
-        0x0080006F,
-        0x00518193,
+      //  0xFE209CE3,// BNE x1, x2, -8
         0x002081b3, // ADD x3, x1, x2  (x3 = x1 + x2)
         0x40208233, // SUB x4, x1, x2  (x4 = x1 - x2) 
-       0x00012283 , // LW x5, 0(x2)    (Load x5 from address x2)
-        0x00432223, // SW x4, 4(x5)    (Store x4 at address x5 + 4)
+        0x08432423,//sw x4, 136(x5)
+        0x00432283, // lW x5, 4(x6)   
+        0x00412283 , // LW x5, 4(x2)    (Load x5 from address x2+4)
+        0x0080006F,
+        0x00518193,
         0x00518193,
         0x3E800F93,
         0x00A08293,
-        0x02A28293
+        0x02A28293,
+        0x01033063,
 
-
-   
     };
     // Load instructions into memory for all cores
 for (int core = 0; core < 4; core++) {
@@ -47,18 +46,15 @@ for (int core = 0; core < 4; core++) {
 }
     // Create 4 cores with shared memory
     Core cores[4] = { Core(memory, 0), Core(memory, 1), Core(memory, 2), Core(memory, 3) };
-
     // Initialize Registers for Each Core
     for (int i = 0; i < 4; i++) {
         cores[i].registers[1] = 10; // x1 = 10
-        cores[i].registers[2] = 0;//at adreess 0-2130355 is stored in above inst loading it-FOR LOAD 
+        cores[i].registers[2] = 3088;//at adreess 3084- 4268675 (instrns) is stored 
          cores[i].registers[6] = 3088;//STORED RANDOM ADDRESS IN X6
 
     }
-
     for (int i = 0; i < 4; i++) {
     executeCore(cores[i], i,program.size());  // Run cores 
 }
-
     return 0;
 }
