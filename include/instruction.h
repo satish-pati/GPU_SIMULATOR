@@ -4,7 +4,7 @@
 #include <cstdint>
 
 class Instruction {
-private:
+public:
     uint32_t rawInstruction;
     uint8_t opcode, funct3, funct7, rd, rs1, rs2;
     int32_t imm;
