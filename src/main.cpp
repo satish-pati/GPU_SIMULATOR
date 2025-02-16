@@ -44,28 +44,28 @@ uint32_t encodeRType(const std::string& instr, int rd, int rs1, int rs2) {
 
     return (funct7 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode;
 }
-
-// Function to encode I-type instructions (addi, lw)
 uint32_t encodeIType(const std::string& instr, int rd, int rs1, int imm) {
     uint32_t funct3;
     
     if (instr == "addi") funct3 = 0b000;
     else if (instr == "lw") funct3 = 0b010;
-    else return 0; // Unsupported
+    else return 0; // Unsupported instruction
 
-    return ((imm & 0xFFF) << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcodeTable[instr];
+    uint32_t imm12 = imm & 0xFFF;  // Extract lower 12 bits
+    if (imm < 0) imm12 |= 0xFFFFF000; // Sign-extend if negative
+
+    return (imm12 << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcodeTable[instr];
 }
-//Function to encode S-type instructions (sw)
 uint32_t encodeSType(const std::string& instr, int rs1, int rs2, int imm) {
-    uint32_t funct3 = 0b010; // sw funct3
-    uint32_t imm11_5 = (imm >> 5) & 0x7F;
-    uint32_t imm4_0 = imm & 0x1F;
-
-    return (imm11_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_0 << 7) | opcodeTable[instr];
+    uint32_t funct3 = 0b010; // funct3 for `sw`
+    uint32_t opcode = 0b0100011; // Opcode for `sw`
+    
+    uint32_t imm11_5 = imm  & 0x7F; // Extract upper 7 bits (bits 11-5)
+    //std::cout<<"7-bit Immediate : "<<imm11_5<<std::endl;
+    uint32_t imm4_0 = imm & 0x1F;         // Extract lower 5 bits (bits 4-0)
+    //std::cout<<"4-bit Immediate : "<<imm4_0<<std::endl;
+    return (imm11_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_0 << 7) | opcode;
 }
-
-
-
 // Function to encode B-type instructions (beq)
 uint32_t encodeBType(const std::string& instr, int rs1, int rs2, int imm) {
     uint32_t funct3 = 0b000; // beq funct3
@@ -156,42 +156,27 @@ uint32_t assembleInstruction(const std::string& line) {
         rs1 = std::stoi(rs1Str.substr(1)); // "x2" -> 2
         imm = std::stoi(immStr);           // "0"  -> 0
     
+        std::cout<<"rd :: "<<rd<<" rs1 :: "<<rs1<<" imm :"<<imm<<std::endl;
         return encodeIType("lw", rd, rs1, imm);
     }
-    // else if (instr == "sw") {
-    //     iss >> rs2 >> comma >> imm >> comma >> rs1;
-    //     return encodeSType(instr, rs1, rs2, imm);
-    // } 
     else if (instr == "sw") {
         std::string rs2Str, rs1Str, immStr;
         char paren1, paren2;
     
         // Read rs2, imm, and rs1 in the format "sw x5, 16(x2)"
-        getline(iss >> std::ws, rs2Str, ',');   // Read "x5"
+        getline(iss >> std::ws, rs1Str, ',');   // Read "x5"
         getline(iss >> std::ws, immStr, '(');  // Read "16"
-        getline(iss >> std::ws, rs1Str, ')');  // Read "x2"
+        getline(iss >> std::ws, rs2Str, ')');  // Read "x2"
     
         // Convert to integers
         rs2 = std::stoi(rs2Str.substr(1));   // "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1));   // "x2" -> 2
+        rs1 = std::stoi(rs1Str.substr(1));   // "x2" -> 2w
         imm = std::stoi(immStr);             // "16" -> 16
     
+        //std::cout<<"Immediate value : "<<imm<<std::endl;
+
         return encodeSType("sw", rs1, rs2, imm);
     }    
-    // else if (instr == "sw") {
-    //     std::string rs2Str, rs1Str, immStr;
-    //     char paren1, paren2;
-    
-    //     // Read "x5, 16(x2)"
-    //     iss >> rs2Str >> comma >> immStr >> paren1 >> rs1Str >> paren2;
-    
-    //     // Convert register and immediate values
-    //     rs2 = std::stoi(rs2Str.substr(1));   // Extract number from "x5"
-    //     rs1 = std::stoi(rs1Str.substr(1));   // Extract number from "x2"
-    //     imm = std::stoi(immStr);             // Convert "16" to integer
-    
-    //     return encodeSType("sw", rs1, rs2, imm);
-    // }    
     else if (instr == "beq") {
         iss >> rs1 >> comma >> rs2 >> comma >> imm;
         return encodeBType(instr, rs1, rs2, imm);
