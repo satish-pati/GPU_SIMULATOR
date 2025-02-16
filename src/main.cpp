@@ -66,15 +66,54 @@ uint32_t encodeSType(const std::string& instr, int rs1, int rs2, int imm) {
     //std::cout<<"4-bit Immediate : "<<imm4_0<<std::endl;
     return (imm11_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_0 << 7) | opcode;
 }
-// Function to encode B-type instructions (beq)
-uint32_t encodeBType(const std::string& instr, int rs1, int rs2, int imm) {
-    uint32_t funct3 = 0b000; // beq funct3
-    uint32_t imm12 = (imm >> 12) & 0x1;
-    uint32_t imm10_5 = (imm >> 5) & 0x3F;
-    uint32_t imm4_1 = (imm >> 1) & 0xF;
-    uint32_t imm11 = (imm >> 11) & 0x1;
+// // Function to encode B-type instructions (bne)
+// uint32_t encodeBType(const std::string& instr, int rs1, int rs2, int imm) {
+//     uint32_t funct3 = 0b001; // beq funct3
+//     uint32_t imm12 = (imm >> 12) & 0x1;
+//     uint32_t imm10_5 = (imm >> 5) & 0x3F;
+//     uint32_t imm4_1 = (imm >> 1) & 0xF;
+//     uint32_t imm11 = (imm >> 11) & 0x1;
 
-    return (imm12 << 31) | (imm11 << 7) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | opcodeTable[instr];
+//     return (imm12 << 31) | (imm11 << 7) | (imm10_5 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | opcodeTable[instr];
+// }
+
+// uint32_t encodeBType(const std::string& instr, int rs1, int rs2, int imm) {
+//     uint32_t funct3;
+
+//     if (instr == "beq") funct3 = 0b000;
+//     else if (instr == "bne") funct3 = 0b001;
+//     else return 0; // Unsupported branch instruction
+
+//     uint32_t opcode = 0b1100011; // Fixed opcode for all branch instructions
+
+//     // Extract the correct bit fields
+//     uint32_t imm12 = (imm >> 12) & 0x1;  // Bit 12 (MSB)
+//     uint32_t imm10_5 = (imm >> 5) & 0x3F; // Bits 10-5
+//     uint32_t imm4_1 = (imm >> 1) & 0xF;   // Bits 4-1
+//     uint32_t imm11 = (imm >> 11) & 0x1;   // Bit 11
+
+//     // Construct the 32-bit instruction
+//     return (imm12 << 31) | (imm11 << 7) | (imm10_5 << 25) | (rs2 << 20) |
+//            (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (opcode);
+// }
+uint32_t encodeBType(const std::string& instr, int rs1, int rs2, int imm) {
+    uint32_t funct3;
+
+    if (instr == "beq") funct3 = 0b000;
+    else if (instr == "bne") funct3 = 0b001;
+    else return 0; // Unsupported branch instruction
+
+    uint32_t opcode = 0b1100011; // Fixed opcode for all branch instructions
+
+    // Extract the correct bit fields
+    uint32_t imm12 = (imm >> 12) & 0x1;  // Bit 12 (MSB)
+    uint32_t imm10_5 = (imm >> 5) & 0x3F; // Bits 10-5
+    uint32_t imm4_1 = (imm >> 1) & 0xF;   // Bits 4-1
+    uint32_t imm11 = (imm >> 11) & 0x1;   // Bit 11
+
+    // Construct the 32-bit instruction in the correct order
+    return (imm12 << 31) | (imm11 << 7) | (imm10_5 << 25) | (rs2 << 20) |
+           (rs1 << 15) | (funct3 << 12) | (imm4_1 << 8) | (opcode);
 }
 
 // Function to encode J-type instructions (jump)
@@ -108,7 +147,7 @@ uint32_t assembleInstruction(const std::string& line) {
         rd = std::stoi(rdStr.substr(1));  // Remove 'x' and convert
         rs1 = std::stoi(rs1Str.substr(1));
         rs2 = std::stoi(rs2Str.substr(1));
-    
+        //std::cout<<"rd "<<rd<<" rs1 "<<rs1<<"rs2 "<<rs2<<std::endl;
         return encodeRType(instr, rd, rs1, rs2);
     }
     
@@ -124,7 +163,7 @@ uint32_t assembleInstruction(const std::string& line) {
         // Convert register strings to integer IDs
         rd = std::stoi(rdStr.substr(1));  // Remove 'x' and convert "x5" -> 5
         rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert "x2" -> 2
-    
+       // std::cout<<"rd "<<rd<< "rs1 "<<rs1<<" imm"<<imm<<std::endl;
         return encodeIType(instr, rd, rs1, imm);
     }
     
@@ -177,10 +216,22 @@ uint32_t assembleInstruction(const std::string& line) {
 
         return encodeSType("sw", rs1, rs2, imm);
     }    
-    else if (instr == "beq") {
-        iss >> rs1 >> comma >> rs2 >> comma >> imm;
-        return encodeBType(instr, rs1, rs2, imm);
-    } 
+    
+    else if (instr == "bne") {
+        std::string rs1Str, rs2Str, immStr;
+
+        // Read rs1, rs2, and offset (e.g., "bne x5, x6, 16")
+        getline(iss >> std::ws, rs1Str, ',');
+        getline(iss >> std::ws, rs2Str, ',');
+        iss >> imm;
+
+        // Convert to integers
+        rs1 = std::stoi(rs1Str.substr(1)); // "x5" -> 5
+        rs2 = std::stoi(rs2Str.substr(1)); // "x6" -> 6
+
+        return encodeBType("bne", rs1, rs2, imm);
+    }
+
     else if (instr == "j") {
         iss >> imm;
         return encodeJType(instr, 0, imm); // Jump target address

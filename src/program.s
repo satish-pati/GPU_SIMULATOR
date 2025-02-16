@@ -13,6 +13,7 @@
    addi x8,x0,11
    lw x5, 8(x2)
     add x10, x2, x3  
+    bne x2, x3, 8
     sub x11, x5, x6  
     sw x5, 16(x2) 
     add x7, x8, x9
