@@ -1,7 +1,8 @@
 #include "../include/core.h"
 #include <iostream>
-Core::Core(Memory &memRef, std::vector<std::tuple<std::string, int, int, int, int>> &prog ,int coreId)
-    : memory(memRef), program(prog), pc(0), coreID(coreId), baseAddress(coreId * 1024) ,isActive(true) {
+#include <unordered_map>
+Core::Core(Memory &memRef, std::vector<std::tuple<std::string, int, int, int, int,std::string>> &prog ,int coreId)
+    : memory(memRef), program(prog), pc(0), coreID(coreId), baseAddress(coreId * 1024) ,isActive(true){
     std::fill(std::begin(registers), std::end(registers), 0);
     registers[32] = coreId; //  core ID to register x32
 }
@@ -372,7 +373,7 @@ void Core::run(int numInstructions) {
 // // }
 
 */
-void Core::execute(const std::string &instruction, int rd, int rs1, int rs2, int imm) {
+void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int imm, const std::string &label, std::unordered_map<std::string, int> &labelMap) {
    // if (!isActive) return; // Stop execution if core is inactive
    if (rd == 32) {
     std::cout<<"Cannot write to X32,it is read -only & contains core ID"<<std::endl;
@@ -434,26 +435,57 @@ void Core::execute(const std::string &instruction, int rd, int rs1, int rs2, int
     else isActive=true;
 
 }
-    else if (instruction == "bne"||instruction == "BNE") {
-        //if (isActive) {
+//     else if (instruction == "bne"||instruction == "BNE") {
+//         //if (isActive) {
+//         if (registers[rs1] != registers[rs2]) {
+//             pc += (imm/4);
+//         }
+//         shouldIncrementPC=false;
+//         std::cout << "Core " << coreID << " - BEQ: Comparing x" << rs1 
+//                   << " and x" << rs2 << ", PC = " << pc << std::endl;
+//    // }
+//     }
+//     else if (instruction == "beq"||instruction == "BEQ") {
+//        // if (isActive) {
+//         if (registers[rs1] == registers[rs2]) {
+//             pc += (imm/4);
+//         }
+//         shouldIncrementPC=false;
+//         std::cout << "Core " << coreID << " - BEQ: Comparing x" << rs1 
+//                   << " and x" << rs2 << ", PC = " << pc << std::endl;
+//  //   }
+// }
+        else if (instruction == "bne") {
         if (registers[rs1] != registers[rs2]) {
-            pc += (imm/4);
+            std::cout << "Core " << coreID << " - BNE: x" << rs1 << " != x" << rs2 
+                      << " (Jumping to " << label << ")" << std::endl;
+            if (!label.empty()) {
+                pc = labelMap[label];  // Jump to label index
+            } else {
+                pc += imm;  // Fallback if label missing
+            }
+            shouldIncrementPC = false;
         }
-        shouldIncrementPC=false;
-        std::cout << "Core " << coreID << " - BEQ: Comparing x" << rs1 
-                  << " and x" << rs2 << ", PC = " << pc << std::endl;
-   // }
+        else{
+            std::cout<<"bne if condition failed"<<std::endl;
+        }
     }
-    else if (instruction == "beq"||instruction == "BEQ") {
-       // if (isActive) {
+    else if (instruction == "beq") {
         if (registers[rs1] == registers[rs2]) {
-            pc += (imm/4);
+            std::cout << "Core " << coreID << " - BEQ: x" << rs1 << " == x" << rs2 
+                      << " (Jumping to " << label << ")" << std::endl;
+            if (!label.empty()) {
+                pc = labelMap[label];  // Jump to label index
+            } else {
+                pc += imm;  // Fallback if label missing
+                
+            }
+            shouldIncrementPC = false;
         }
-        shouldIncrementPC=false;
-        std::cout << "Core " << coreID << " - BEQ: Comparing x" << rs1 
-                  << " and x" << rs2 << ", PC = " << pc << std::endl;
- //   }
-}
+        else{
+            std::cout<<"beq if condition failed"<<std::endl;
+        }
+    }
     else if(instruction == "addi"||instruction == "ADDI"){
         //if (isActive) {
             if(rd==0){
@@ -478,21 +510,41 @@ std::cout << " + " << imm
         << " = " << registers[rd] << std::endl;
     }  
 
-    else if(instruction == "jal"||instruction == "JAL"){
-       // if (isActive) {
-        std::cout << "Core " << coreID << " - jal: Register x" << (int)rd <<"imm"<<imm<<std::endl;
-           registers[rd] = pc ;
-           pc += (imm/4);
-           shouldIncrementPC=false;
-   // } 
-}
-    else if(instruction == "j"||instruction == "J"){
-       // if (isActive) {
-        std::cout << "Core " << coreID << " - j: Register x" << imm <<std::endl;
-        pc += (imm/4);
+//     else if(instruction == "jal"||instruction == "JAL"){
+//        // if (isActive) {
+//         std::cout << "Core " << coreID << " - jal: Register x" << (int)rd <<"imm"<<imm<<std::endl;
+//            registers[rd] = pc ;
+//            pc += (imm/4);
+//            shouldIncrementPC=false;
+//    // } 
+// }
+//     else if(instruction == "j"||instruction == "J"){
+//        // if (isActive) {
+//         std::cout << "Core " << coreID << " - j: Register x" << imm <<std::endl;
+//         pc += (imm/4);
 
-   // }   
-}
+//    // }   
+// }
+    else if (instruction == "jal") {
+        std::cout << "Core " << coreID << " - JAL: Saving return address in x" << rd 
+                  << ", jumping to " << label << std::endl;
+        registers[rd] = pc + 1;  // Save return address
+        if (!label.empty()) {
+            pc = labelMap[label];  // Jump to label
+        } else {
+            pc += imm;  // Fallback
+        }
+        shouldIncrementPC = false;
+    }
+    else if (instruction == "j") {
+        std::cout << "Core " << coreID << " - JUMP: Jumping to " << label << std::endl;
+        if (!label.empty()) {
+            pc = labelMap[label];  // Jump to label
+        } else {
+            pc += imm;  // Fallback
+        }
+        shouldIncrementPC = false;
+    }
     
 registers[0] = 0; // Ensure x0 is always zero
 registers[32] = coreID; // Ensure x32 is always core ID
@@ -506,4 +558,5 @@ void Core::printRegisters() const {
         std::cout << "x" << i << " = " << registers[i] << std::endl;
     }
 } 
+
 
