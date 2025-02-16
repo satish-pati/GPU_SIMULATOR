@@ -438,7 +438,7 @@ std::cout << " + " << imm
     } 
     else if(instruction == "j"){
         std::cout << "Core " << coreID << " - j: Register x" << imm <<std::endl;
-        pc += imm;
+        pc += imm/4;
 
     }   
     registers[0] = 0;
