@@ -1,8 +1,8 @@
 .text
   .text
-   ADD x32, x0, x32     # x1 = 10
-      ADD   x0,  x32, x32     # x1 = 10
-   ADD   x1,  x0, x32     # x1 = 10
+   ADD x32, x0, x32     #cannot write to x32
+      ADD   x0,  x32, x32     # can read 
+   ADD   x1,  x0, x32    
    ADDI x2, x0, 20     # x2 = 20
     ADDI x3, x0, 3000  # x3 = Address (assume 0x100 as base memory address)
     sw x1, 80(x3)
