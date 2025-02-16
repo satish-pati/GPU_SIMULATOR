@@ -400,7 +400,7 @@ void Core::execute(const std::string &instruction, int rd, int rs1, int rs2, int
     }
     else if (instruction == "bne") {
         if (registers[rs1] != registers[rs2]) {
-            pc += imm;
+            pc += imm/4;
 
         }
         shouldIncrementPC=false;
@@ -409,7 +409,7 @@ void Core::execute(const std::string &instruction, int rd, int rs1, int rs2, int
     }
     else if (instruction == "beq") {
         if (registers[rs1] == registers[rs2]) {
-            pc += imm;
+            pc += imm/4;
         }
         shouldIncrementPC=false;
         std::cout << "Core " << coreID << " - BEQ: Comparing x" << rs1 
@@ -432,7 +432,7 @@ std::cout << " + " << imm
     else if(instruction == "jal"){
         std::cout << "Core " << coreID << " - jal: Register x" << (int)rd <<"imm"<<imm<<std::endl;
            registers[rd] = pc ;
-           pc += imm;
+           pc += imm/4;
            shouldIncrementPC=false;
 
     } 
