@@ -7,28 +7,7 @@
 #include "../include/core.h"
 #include "../include/memory.h"
 #include <thread>
-void executeCore(Core &core, int coreID, int n, const std::vector<std::tuple<std::string, int, int, int, int>> &instructions)
-{
-    std::cout << "\n[Core " << coreID << "] Initial Register State:" << std::endl;
-    for (int i = 0; i < 32; i++)
-    {
-        std::cout << "[Core " << coreID << "] x" << i << " = " << core.registers[i] << std::endl;
-    }
 
-    std::cout << "\n[Core " << coreID << "] Executing Instructions...\n"
-              << std::endl;
-
-    for (const auto &inst : instructions)
-    {
-        core.execute(std::get<0>(inst), std::get<1>(inst), std::get<2>(inst), std::get<3>(inst), std::get<4>(inst));
-    };
-
-    std::cout << "\n[Core " << coreID << "] Final Register State:" << std::endl;
-    for (int i = 0; i < 32; i++)
-    {
-        std::cout << "[Core " << coreID << "] x" << i << " = " << core.registers[i] << std::endl;
-    }
-}
 std::unordered_map<std::string, uint32_t> opcodeTable = {
     {"add", 0b0110011}, // R-type
     {"sub", 0b0110011},
@@ -102,179 +81,6 @@ uint32_t encodeJType(const std::string &instr, int rd, int imm)
 
     return (imm20 << 31) | (imm19_12 << 12) | (imm11 << 20) | (imm10_1 << 21) | (rd << 7) | opcodeTable[instr];
 }
-/*
-// Function to parse instruction and call encoding function
-std::tuple<std::string, int, int, int, int> assembleInstruction(const std::string& line) {
-    std::istringstream iss(line);
-    std::string instr;
-    int rd = 0, rs1 = 0, rs2 = 0, imm = 0;
-    char comma;
-    iss >> instr;
-    if (instr == "add" || instr == "sub") {
-        std::string rdStr, rs1Str, rs2Str;
-        // Read register names as strings
-        iss >> rdStr;
-        iss.ignore();  // Ignore comma
-        iss >> rs1Str;
-        iss.ignore();  // Ignore comma
-        iss >> rs2Str;
-
-        // Convert register strings to integer IDs
-        rd = std::stoi(rdStr.substr(1));  // Remove 'x' and convert
-        rs1 = std::stoi(rs1Str.substr(1));
-        rs2 = std::stoi(rs2Str.substr(1));
-
-        return {instr, rd, rs1, rs2,imm};
-    }
-
-    if (instr == "addi") {
-        std::string rdStr, rs1Str;
-        int imm;
-
-        // Read the destination register, source register, and immediate value
-        getline(iss >> std::ws, rdStr, ',');  // Read rd (e.g., "x5"), trim spaces
-        getline(iss >> std::ws, rs1Str, ','); // Read rs1 (e.g., "x2"), trim spaces
-        iss >> imm;  // Read immediate (e.g., 1000)
-
-        // Convert register strings to integer IDs
-        rd = std::stoi(rdStr.substr(1));  // Remove 'x' and convert "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert "x2" -> 2
-
-        return {instr, rd, rs1, rs2,imm};
-    }
-
-    if (instr == "mv") {
-        std::string rdStr, rs1Str;
-
-        // Read destination (rd) and source (rs1) registers
-        getline(iss >> std::ws, rdStr, ',');
-        getline(iss >> std::ws, rs1Str, ',');
-
-        // Convert register names to integers
-        rd = std::stoi(rdStr.substr(1));   // "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1)); // "x8" -> 8
-
-        // Call encodeIType with immediate = 0 (addi x5, x8, 0)
-        return {instr, rd, rs1, rs2,imm};
-    }
-    else if (instr == "lw") {
-        std::string rdStr, rs1Str, immStr;
-        char paren1, paren2;
-        // Read rd, immediate, and rs1 in the format "lw x5, 0(x2)"
-        getline(iss >> std::ws, rdStr, ',');   // Read "x5"
-        getline(iss >> std::ws, immStr, '(');  // Read "0"
-        getline(iss >> std::ws, rs1Str, ')');  // Read "x2"
-        // Convert to integers
-        rd = std::stoi(rdStr.substr(1));   // "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1)); // "x2" -> 2
-        imm = std::stoi(immStr);           // "0"  -> 0
-        return {instr, rd, rs1, rs2,imm};
-    }
-
-    else if (instr == "sw") {
-        std::string rs2Str, rs1Str, immStr;
-        char paren1, paren2;
-
-        // Read rs2, imm, and rs1 in the format "sw x5, 16(x2)"
-        getline(iss >> std::ws, rs2Str, ',');   // Read "x5"
-        getline(iss >> std::ws, immStr, '(');  // Read "16"
-        getline(iss >> std::ws, rs1Str, ')');  // Read "x2"
-
-        // Convert to integers
-        rs2 = std::stoi(rs2Str.substr(1));   // "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1));   // "x2" -> 2
-        imm = std::stoi(immStr);             // "16" -> 16
-
-        return {instr, rd, rs1, rs2,imm};
-    }
-
-    else if (instr == "beq") {
-        iss >> rs1 >> comma >> rs2 >> comma >> imm;
-        return {instr, rd, rs1, rs2,imm};
-    }
-
-    else if (instr == "j") {
-        iss >> imm;
-        return {instr, rd, rs1, rs2,imm};// Jump target address
-    }
-    return {"",0,0,0,0}; // Unsupported instruction
-}
-std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(const std::string &filename) {
-    std::vector<std::tuple<std::string, int, int, int, int>> program;
-    std::ifstream file(filename);
-    std::unordered_map<std::string, int> labelMap;
-
-
-    // Check if file opened successfully
-    if (!file.is_open()) {
-        std::cout << "Error: Unable to open file " << filename << std::endl;
-        return program;
-    }
-    else
-    {
-        std::cout<<"File opened successfully"<<std::endl;
-    }
-
-    std::string line;
-    bool inTextSection = false;
-    int currentAddress = 0;
-    while (std::getline(file, line)) {
-        line.erase(0, line.find_first_not_of(" \t"));
-        line.erase(line.find_last_not_of(" \t") + 1);
-
-        if (line.empty() || line[0] == '#') continue;
-
-        if (line.back() == ':') {
-            labelMap[line.substr(0, line.size() - 1)] = currentAddress;
-        } else {
-            currentAddress++;
-        }
-    }
-
-    file.clear();
-    file.seekg(0);
-    currentAddress = 0;
-
-
-    while (std::getline(file, line)) {
-        // Trim leading/trailing spaces
-        line.erase(0, line.find_first_not_of(" \t\r\n"));
-        line.erase(line.find_last_not_of(" \t\r\n") + 1);
-
-        if (line.empty() || line[0] == '#' || line.back() == ':') continue; // Skip empty lines
-
-        // Handle `.text` section
-        if (line.find(".text") != std::string::npos) {
-            inTextSection = true;
-            continue;
-        }
-
-        if (inTextSection) {
-            // Ignore comments (assuming '#' or '//')
-            size_t commentPos = line.find('#');
-            if (commentPos == std::string::npos) commentPos = line.find("//");
-            if (commentPos != std::string::npos) {
-                line = line.substr(0, commentPos);
-            }
-
-            // Trim again after removing comments
-            line.erase(0, line.find_first_not_of(" \t\r\n"));
-            line.erase(line.find_last_not_of(" \t\r\n") + 1);
-
-            if (line.empty()) continue; // Skip if only a comment was present
-
-            auto Instr = assembleInstruction(line);
-            if (std::get<0>(Instr).empty()) {
-                std::cout << "Warning: Unrecognized instruction -> " << line << std::endl;
-            } else {
-                program.push_back(Instr);
-            }
-        }
-    }
-
-    return program;
-}
-*/
 std::tuple<std::string, int, int, int, int> assembleInstruction(const std::string &line)
 {
     std::istringstream iss(line);
@@ -282,7 +88,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
     int rd = 0, rs1 = 0, rs2 = 0, imm = 0;
     char comma;
     iss >> instr;
-    if (instr == "add" || instr == "sub")
+    if (instr == "add" || instr == "sub"||instr == "ADD" || instr == "SUB")
     {
         std::string rdStr, rs1Str, rs2Str;
         // Read register names as strings
@@ -300,7 +106,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         return {instr, rd, rs1, rs2, imm};
     }
 
-    if (instr == "addi")
+    if (instr == "addi"||instr == "ADDI")
     {
         std::string rdStr, rs1Str;
         int imm;
@@ -317,7 +123,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         return {instr, rd, rs1, rs2, imm};
     }
 
-    if (instr == "mv")
+    if (instr == "mv"||instr == "MV")
     {
         std::string rdStr, rs1Str;
 
@@ -332,7 +138,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         // Call encodeIType with immediate = 0 (addi x5, x8, 0)
         return {instr, rd, rs1, rs2, imm};
     }
-    else if (instr == "lw")
+    else if (instr == "lw"||instr == "LW")
     {
         std::string rdStr, rs1Str, immStr;
         char paren1, paren2;
@@ -347,7 +153,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         return {instr, rd, rs1, rs2, imm};
     }
 
-    else if (instr == "sw")
+    else if (instr == "sw"||instr == "SW")
     {
         std::string rs2Str, rs1Str, immStr;
         char paren1, paren2;
@@ -356,7 +162,6 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         getline(iss >> std::ws, rs2Str, ','); // Read "x5"
         getline(iss >> std::ws, immStr, '('); // Read "16"
         getline(iss >> std::ws, rs1Str, ')'); // Read "x2"
-
         // Convert to integers
         rs2 = std::stoi(rs2Str.substr(1)); // "x5" -> 5
         rs1 = std::stoi(rs1Str.substr(1)); // "x2" -> 2
@@ -365,12 +170,12 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         return {instr, rd, rs1, rs2, imm};
     }
 
-    else if (instr == "beq")
+    else if (instr == "beq"||instr == "BEQ")
     {
         iss >> rs1 >> comma >> rs2 >> comma >> imm;
         return {instr, rd, rs1, rs2, imm};
     }
-    else if (instr == "j")
+    else if (instr == "j"||instr == "J")
     {
         iss >> imm;
         return {instr, rd, rs1, rs2, imm}; // Jump target address
@@ -444,20 +249,75 @@ std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(con
 
     return program;
 }
-
-int main()
-{
-    Memory memory;
-    std::vector<std::tuple<std::string, int, int, int, int>> program = loadProgramFromFile("program.s");
-    Memory sharedMemory; // 4KB total, 1KB per core
-    Core cores[4] = {Core(sharedMemory, program, 0),
-                     Core(sharedMemory, program, 1),
-                     Core(sharedMemory, program, 2),
-                     Core(sharedMemory, program, 3)};
-    for (int i = 0; i < 4; i++)
-    {
-        executeCore(cores[i], i, program.size(), program);
+class Simulator {
+    public:
+        Memory memory;
+            std::vector<Core> cores;
+        int clock;
+        std::vector<std::tuple<std::string, int, int, int, int>> program;
+    
+    public:
+        Simulator(const std::string &filename) : clock(0), memory() {
+            program = loadProgramFromFile("program.s");
+                for (int i = 0; i < 4; i++) {
+                    cores.emplace_back(memory, program, i); // Directly construct objects in the vector
+                }
+            }
+        
+           
+            void executeCore(Core &core, int coreID, int instructionIndex) {
+                // Fetch instruction at 'instructionIndex'
+               /* std::cout << "\n[Core " << coreID << "] Initial Register State:" << std::endl;
+                for (int i = 0; i < 32; i++)
+                {
+                    std::cout << "[Core " << coreID << "] x" << i << " = " << core.registers[i] << std::endl;
+                }*/
+            
+            
+                if (instructionIndex < program.size()) {
+                    auto &inst = program[instructionIndex];
+        
+                    std::cout << "\n[Core " << coreID << "] Executing: " << std::get<0>(inst) << std::endl;
+                    core.execute(std::get<0>(inst), std::get<1>(inst), std::get<2>(inst), std::get<3>(inst), std::get<4>(inst));
+                }
+              
+            
+               
+            
+            }
+            void run() {
+                int totalInstructions = program.size();
+                while (clock < totalInstructions) {
+                    std::cout << "\n--- Clock Cycle: " << clock << " ---\n";
+        
+                    for (int i = 0; i < 4; i++) {
+                        executeCore(cores[i], i, clock);
+                    }
+        
+                    clock++; // Increment clock after executing one instruction on all cores
+                }
+                 // Display final register and memory states
+        std::cout << "\nFinal State of Registers After Execution:\n";
+        for (int i = 0; i < 4; i++) {
+            std::cout << "Core " << i << " Registers:\n";
+            cores[i].printRegisters();
+        }
+        std::cout << "\nFinal State of Memory After Execution:\n";
+        for (int i = 0; i < 4; i++) {
+            std::cout << "Core " << i << " Registers:\n";
+            memory.printMem(i);
+        }
+    
     }
 
+
+
+
+};
+int main()
+{
+    Simulator simulator("program.s");
+    simulator.run();
+    std::cout<<"No.of clock Cycles : "<<simulator.clock<<std::endl;
     return 0;
 }
