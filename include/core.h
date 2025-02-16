@@ -12,16 +12,18 @@ private:
     int coreID;
     uint32_t baseAddress;
     //uint32_t registers[33] = {0};
-   
+    std::vector<std::tuple<std::string, int, int, int, int>> &program ;// Reference to loaded instructions
+
 public:
-    Core(Memory& memRef, int coreId); // Fix constructor declaration
-  
+    Core(Memory& memRef, std::vector<std::tuple<std::string, int, int, int, int>>& program, int coreId); // Fix constructor declaration
 
      uint32_t registers[33] = {0};
      
     uint32_t fetch(); // Fetch an instruction from memory
-    void execute(const Instruction& instruction); // Execute an instruction
     void run(int numInstructions); // Run the core for a number of instructions
+
+    void execute(const std::string &instruction, int rd, int rs1, int rs2, int imm);
+
 
     //---------------added lines ---//
     // uint32_t getRegister(int reg) const;
