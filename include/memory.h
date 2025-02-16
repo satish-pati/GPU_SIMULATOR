@@ -14,11 +14,11 @@ private:
 public:
     Memory(); // Constructor initializes memory to zero
     // Load word (4 bytes) from memory
-    uint32_t loadWord(uint32_t address,int coreID) const;
+    uint32_t loadWord(uint32_t address,int coreID,bool &isactive) const;
     // Store word (4 bytes) in memory
-    void storeWord(uint32_t address, uint32_t value, int coreID);
+    void storeWord(uint32_t address, uint32_t value, int coreID,bool &isactive);
     // Print memory content for debugging
-    void printMemory( int coreID) const;
+    void printMem(int coreID) const;
 };
 
 #endif // MEMORY_H
