@@ -1,20 +1,25 @@
 .text
-   
-   addi x2,x0,25
-   mv x31,x2
-  # addi x3,x0,33
-   mv x30,x3
-   addi x5,x0,300
-   mv x29,x5
-   addi x6,x0,88
-   mv x28,x6
-   addi x7,x0,22
-   mv x27,x7
-   addi x8,x0,11
-   lw x5, 8(x2)
-    add x10, x2, x3  
-    bne x2, x3, 8
-    sub x11, x5, x6  
-    sw x5, 16(x2) 
-    add x7, x8, x9
-    addi x22,x11,777
+  .text
+   ADD x32, x0, x32     # x1 = 10
+      ADD   x0,  x32, x32     # x1 = 10
+   ADD   x1,  x0, x32     # x1 = 10
+   ADDI x2, x0, 20     # x2 = 20
+    ADDI x3, x0, 3000  # x3 = Address (assume 0x100 as base memory address)
+    sw x1, 80(x3)
+    sw x1, 0(x3)       
+    sw x2, 4(x3) 
+        lw x4 ,80(x3)  #if trying to access a invalid mem through load  then reg value rd remains same as before   
+    lw x4, 0(x3)        
+    LW x5, 4(x3)  
+    addi x3,x0,1028 
+    sw  x1,0(x3) 
+    lw x5, 0(x3)   
+    add x6, x4, x5      
+    sub x7, x5, x4
+    sw    x7,1020(x3)
+    sw    x7,3064(x3)
+    # comment    
+    sw x6, 8(x3)       
+    sw x7, 12(x3)      
+    lw x8, 8(x3)        
+    lw x9, 12(x3)       
