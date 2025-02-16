@@ -9,12 +9,12 @@ Instruction::Instruction(uint32_t rawInstruction) {
     funct7 = (rawInstruction >> 25) & 0x7F;
 if (opcode == 0x63) { // B-type 
     imm = ((rawInstruction >> 7) & 0x1) << 11 |   // bit [11]
-          ((rawInstruction >> 8) & 0xF) << 1 |    // bits [4:1]
+          ((rawInstruction >> 8) & 0xF) << 1 |    // bits [4:1]s
           ((rawInstruction >> 25) & 0x3F) << 5 |  // bits [10:5]
           ((rawInstruction >> 31) ? 0xFFFFF000 : 0); // Sign-extend
     imm <<= 1; 
 }
-    else if (opcode == 0x03 || opcode == 0x13) { // Load & Immediate
+    else if (opcode == 0x03 || opcode == 0x13 || opcode ==0x67) { // Load & Immediate
         imm = static_cast<int32_t>(rawInstruction) >> 20; // sign-extend
         std::cout << "IMM: " << imm << std::endl;
     } 
@@ -37,9 +37,9 @@ if (rawInstruction & 0x80000000) imm |= 0xFFFFF000; // Sign-extend
               ((rawInstruction & 0x80000000) ? 0xFFF00000 : 0); // Sign-extend from bit 31
     }
     
-    else if (opcode == 0x67 || opcode==0x13) { // JALR (I-type) and ADDI(I-type)
-    imm = static_cast<int32_t>(rawInstruction) >> 20; // Sign-extend
-    }
+    // else if (opcode == 0x67 || opcode==0x13 || opcode==0x3 ) { // JALR (I-type) and ADDI(I-type)
+    // imm = static_cast<int32_t>(rawInstruction) >> 20; // Sign-extend
+    // }
 
     else {
         imm = 0;
