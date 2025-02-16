@@ -1,7 +1,7 @@
 #include "../include/core.h"
 #include <iostream>
 Core::Core(Memory &memRef, std::vector<std::tuple<std::string, int, int, int, int>> &prog ,int coreId)
-    : memory(memRef), program(prog), pc(0), coreID(coreId), baseAddress(coreId * 1024) {
+    : memory(memRef), program(prog), pc(0), coreID(coreId), baseAddress(coreId * 1024) ,isActive(true) {
     std::fill(std::begin(registers), std::end(registers), 0);
     registers[32] = coreId; //  core ID to register x32
 }
@@ -373,77 +373,137 @@ void Core::run(int numInstructions) {
 
 */
 void Core::execute(const std::string &instruction, int rd, int rs1, int rs2, int imm) {
+   // if (!isActive) return; // Stop execution if core is inactive
+   if (rd == 32) {
+    std::cout<<"Cannot write to X32,it is read -only & contains core ID"<<std::endl;
+    return; // Prevent modifying x32 (always core ID)
+   }
+
     bool shouldIncrementPC = true;
-    if (instruction == "add") {
+    if (instruction == "add"||instruction == "ADD") {
+       // if (isActive) {
+       if(rd==0){
+        std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+        return;
+       }
         registers[rd] = registers[rs1] + registers[rs2];
         std::cout << "Core " << coreID << " - ADD: x" << rd << " = "
                   << registers[rs1] << " + " << registers[rs2] 
                   << " = " << registers[rd] << std::endl;
     } 
-    else if (instruction == "sub") {
+//}
+    else if (instruction == "sub"||instruction == "SUB") {
+        //if (isActive) {
+            if(rd==0){
+                std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+                return;
+               }
         registers[rd] = registers[rs1] - registers[rs2];
         std::cout << "Core " << coreID << " - SUB: x" << rd << " = "
                   << registers[rs1] << " - " << registers[rs2] 
-                  << " = " << registers[rd] << std::endl;
-    }
-    else if (instruction == "lw") {
+                  << " = " << registers[rd] << std::endl;}
+   // }
+    else if (instruction == "lw"||instruction == "LW") {
+        
+        if(rd==0){
+            std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+            return;
+           }
         uint32_t address = registers[rs1] + imm;
-        registers[rd] = memory.loadWord(address,coreID);
+        auto temp=registers[rd];
+        registers[rd] = memory.loadWord(address,coreID,isActive);
+       if (isActive) {
         std::cout << "Core " << coreID << " - LW: x" << rd << " loaded with "
                   << registers[rd] << " from address " << address << std::endl;
     }
-    else if (instruction == "sw") {
+    else {
+        std::cout<<'x'<<rd<<" contains its previously loaded value(if not loaded contains 0)"<<std::endl;
+        registers[rd]=temp;//if invalid memory set rd to its previous value only
+        isActive=true;
+    }
+
+}
+    else if (instruction == "sw"||instruction == "SW") {
+       
         uint32_t address = registers[rs1] + imm;
-        memory.storeWord(address, registers[rs2],coreID);
+        memory.storeWord(address, registers[rs2],coreID,isActive);
+        if (isActive) {
         std::cout << "Core " << coreID << " - SW,: Stored " << registers[rs2] 
                   << " at address " << address << std::endl;
     }
-    else if (instruction == "bne") {
-        if (registers[rs1] != registers[rs2]) {
-            pc += imm/4;
+    else isActive=true;
 
+}
+    else if (instruction == "bne"||instruction == "BNE") {
+        //if (isActive) {
+        if (registers[rs1] != registers[rs2]) {
+            pc += (imm/4);
         }
         shouldIncrementPC=false;
         std::cout << "Core " << coreID << " - BEQ: Comparing x" << rs1 
                   << " and x" << rs2 << ", PC = " << pc << std::endl;
+   // }
     }
-    else if (instruction == "beq") {
+    else if (instruction == "beq"||instruction == "BEQ") {
+       // if (isActive) {
         if (registers[rs1] == registers[rs2]) {
-            pc += imm/4;
+            pc += (imm/4);
         }
         shouldIncrementPC=false;
         std::cout << "Core " << coreID << " - BEQ: Comparing x" << rs1 
                   << " and x" << rs2 << ", PC = " << pc << std::endl;
-    }
-    else if(instruction == "addi"){
+ //   }
+}
+    else if(instruction == "addi"||instruction == "ADDI"){
+        //if (isActive) {
+            if(rd==0){
+                std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+                return;
+               }
         std::cout << "Core " << coreID << " - ADDI: Register x" << (int)rd 
         << " = " << registers[rs1];
 registers[rd] = registers[rs1] + imm;
 std::cout << " + " << imm 
         << " = " << registers[rd] << std::endl;
     }
-    else if(instruction == "mv"){
+    else if(instruction == "mv"||instruction == "MV"){
+        if(rd==0){
+            std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+            return;
+           }
         std::cout << "Core " << coreID << " - mv: Register x" << (int)rd 
         << " = " << registers[rs1];
 registers[rd] = registers[rs1] + imm;
 std::cout << " + " << imm 
         << " = " << registers[rd] << std::endl;
     }  
-    else if(instruction == "jal"){
+
+    else if(instruction == "jal"||instruction == "JAL"){
+       // if (isActive) {
         std::cout << "Core " << coreID << " - jal: Register x" << (int)rd <<"imm"<<imm<<std::endl;
            registers[rd] = pc ;
-           pc += imm/4;
+           pc += (imm/4);
            shouldIncrementPC=false;
-
-    } 
-    else if(instruction == "j"){
+   // } 
+}
+    else if(instruction == "j"||instruction == "J"){
+       // if (isActive) {
         std::cout << "Core " << coreID << " - j: Register x" << imm <<std::endl;
-        pc += imm/4;
+        pc += (imm/4);
 
-    }   
-    registers[0] = 0;
+   // }   
+}
+    
+registers[0] = 0; // Ensure x0 is always zero
+registers[32] = coreID; // Ensure x32 is always core ID
     if (shouldIncrementPC) {
         pc += 1;
     }
 }
+void Core::printRegisters() const {
+    std::cout << "\nRegister Dump for Core " << coreID << ":\n";
+    for (int i = 0; i < 33; i++) {
+        std::cout << "x" << i << " = " << registers[i] << std::endl;
+    }
+} 
 
