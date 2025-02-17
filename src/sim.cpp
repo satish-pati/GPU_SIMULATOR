@@ -309,9 +309,9 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
         std::string rdStr, rs1Str, rs2Str;
         // Read register names as strings
         iss >> rdStr;
-        iss.ignore(); // Ignore comma
+        if (iss.peek() == ',') iss.ignore();
         iss >> rs1Str;
-        iss.ignore(); // Ignore comma
+        if (iss.peek() == ',') iss.ignore();
         iss >> rs2Str;
 
         // Convert register strings to integer IDs
@@ -324,35 +324,48 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
 
     if (instr == "addi"||instr == "ADDI")
     {
-        std::string rdStr, rs1Str;
-        int imm;
+       std::string rdStr, rs1Str;
+    int imm;
 
-        // Read the destination register, source register, and immediate value
+    // Check if the input uses commas or spaces as separators
+    if (line.find(',') != std::string::npos) {
+        // Comma-separated format
         getline(iss >> std::ws, rdStr, ',');  // Read rd (e.g., "x5"), trim spaces
         getline(iss >> std::ws, rs1Str, ','); // Read rs1 (e.g., "x2"), trim spaces
         iss >> imm;                           // Read immediate (e.g., 1000)
+    } else {
+        // Space-separated format
+        iss >> rdStr >> rs1Str >> imm;        // Read rd, rs1, and immediate
+    }
 
-        // Convert register strings to integer IDs
-        rd = std::stoi(rdStr.substr(1));   // Remove 'x' and convert "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert "x2" -> 2
+    // Convert register strings to integer IDs
+    rd = std::stoi(rdStr.substr(1));   // Remove 'x' and convert "x5" -> 5
+    rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert "x2" -> 2
 
-        return {instr, rd, rs1, rs2, imm,""};
+    return {instr, rd, rs1, rs2, imm, ""};
     }
 
     if (instr == "mv"||instr == "MV")
     {
         std::string rdStr, rs1Str;
+    int imm = 0;  // imm is always 0 for `mv`
 
-        // Read destination (rd) and source (rs1) registers
-        getline(iss >> std::ws, rdStr, ',');
-        getline(iss >> std::ws, rs1Str, ',');
+    // Check if the input uses commas or spaces as separators
+    if (line.find(',') != std::string::npos) {
+        // Comma-separated format (e.g., mv x3,x4)
+        getline(iss >> std::ws, rdStr, ',');  // Read rd (e.g., "x3")
+        getline(iss >> std::ws, rs1Str, ','); // Read rs1 (e.g., "x4")
+    } else {
+        // Space-separated format (e.g., mv x3 x4)
+        iss >> rdStr >> rs1Str;  // Read rd and rs1
+    }
 
-        // Convert register names to integers
-        rd = std::stoi(rdStr.substr(1));   // "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1)); // "x8" -> 8
+    // Convert register strings to integer IDs
+    rd = std::stoi(rdStr.substr(1));   // Remove 'x' and convert "x3" -> 3
+    rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert "x4" -> 4
 
-        // Call encodeIType with immediate = 0 (addi x5, x8, 0)
-        return {instr, rd, rs1, rs2, imm,""};
+    // Call encodeIType with immediate = 0 (mv is equivalent to addi with imm = 0)
+    return {instr, rd, rs1, rs2, imm, ""};
     }    
     else if (instr == "lw"||instr == "LW") {
 
@@ -370,28 +383,40 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
     return {instr, rd, rs1, rs2, imm,""};
 }
     else if (instr == "la"||instr == "lA") {
-        std::string rdStr, rs1Str, immStr;
+       std::string rdStr, rs1Str, immStr;
         char paren1, paren2;
-        
-        getline(iss >> std::ws, rdStr, ',');  // Read "x5"
-        getline(iss >> std::ws, immStr, '('); // Read "0" or label
-        getline(iss >> std::ws, rs1Str, ')'); // Read "x2" if present
-        
-        rd = std::stoi(rdStr.substr(1));
-        
+    
+        // Check if comma is present in the input
+        if (line.find(',') != std::string::npos) {
+            // Comma-separated format (e.g., la x2, array)
+            getline(iss >> std::ws, rdStr, ',');  // Read "x2"
+            getline(iss >> std::ws, immStr, '('); // Read "array" or immediate
+            getline(iss >> std::ws, rs1Str, ')'); // Read "x2" (if present)
+        } else {
+            // Space-separated format (e.g., la x2 array)
+            iss >> rdStr;          // Read "x2"
+            iss >> immStr;         // Read "array" (label or immediate)
+        }
+    
+        // Convert the destination register to integer
+        rd = std::stoi(rdStr.substr(1));   // "x2" -> 2
+    
+        // Check if immStr is a number (immediate addressing)
         if (isdigit(immStr[0]) || (immStr[0] == '-' && isdigit(immStr[1]))) {
             // Immediate addressing
             imm = std::stoi(immStr);
-            rs1 = std::stoi(rs1Str.substr(1));
+            rs1 = 0; // Base register is zero when using immediate addressing
         } else {
             // Label-based addressing
             if (dataLabels.find(immStr) != dataLabels.end()) {
                 imm = dataLabels[immStr];
-                //rs1 = -1; // Base register is zero when using absolute address
+                rs1 = 0; // Base register is zero when using label-based addressing
             } else {
                 std::cerr << "Error: Undefined data label '" << immStr << "'" << std::endl;
+                return {};
             }
         }
+    
         return {instr, rd, rs1, rs2, imm, ""};
     }
 
@@ -412,30 +437,48 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
 
         return {instr, rd, rs1, rs2, imm,""};
     }
-    else if (instr == "bne" || instr == "beq"||instr == "ble") {
-        std::string rs1Str, rs2Str, labelStr;
-        getline(iss >> std::ws, rs1Str, ',');
-        getline(iss >> std::ws, rs2Str, ',');
-        iss >> labelStr;
-        rs1 = std::stoi(rs1Str.substr(1));
-        rs2 = std::stoi(rs2Str.substr(1));
-        label = labelStr; // Store label name to resolve later
+    else if (instr == "bne" || instr == "beq"||instr == "ble" || instr == "BNE" || instr == "BEQ"||instr == "BLE") {
+         std::string rs1Str, rs2Str, labelStr;
+        
+        // Check if the input uses commas or spaces as separators
+        if (line.find(',') != std::string::npos) {
+            // Comma-separated format (e.g., bne x2, x3, label)
+            getline(iss >> std::ws, rs1Str, ',');  // Read "x2"
+            getline(iss >> std::ws, rs2Str, ',');  // Read "x3"
+            iss >> labelStr;                      // Read "label"
+        } else {
+            // Space-separated format (e.g., bne x2 x3 label)
+            iss >> rs1Str >> rs2Str >> labelStr;    // Read "x2", "x3", and "label"
+        }
+    
+        // Convert registers to integers
+        rs1 = std::stoi(rs1Str.substr(1));  // "x2" -> 2
+        rs2 = std::stoi(rs2Str.substr(1));  // "x3" -> 3
+        label = labelStr;  // Store label name to resolve later
+    
         return {instr, rd, rs1, rs2, imm, label};
     }
    
-    else if (instr == "j" ) {
+    else if (instr == "j" || instr=="J" ) {
         std::string labelStr;
         iss >> labelStr;
         label = labelStr; // Store label name to resolve later
         return {instr, rd, rs1, rs2, imm, label};
     }
 
-    else if (instr == "jal") {
+    else if (instr == "jal" || instr== "JAL") {
         std::string rdStr, labelStr;
-        
-        if (!(iss >> rdStr >> labelStr)) {  // Extract rd and label
-            std::cerr << "Error: Invalid JAL instruction format!" << std::endl;
-            return {};  // Return an empty instruction structure
+    
+        // Check if the input uses commas or spaces as separators
+        if (line.find(',') != std::string::npos) {
+            // Comma-separated format (e.g., jal x7, label)
+            if (!(iss >> rdStr >> labelStr)) {  // Extract rd and label
+                std::cerr << "Error: Invalid JAL instruction format!" << std::endl;
+                return {};  // Return an empty instruction structure
+            }
+        } else {
+            // Space-separated format (e.g., jal x4 label)
+            iss >> rdStr >> labelStr;  // Extract rd and label
         }
     
         // Extract register number from "x7"
@@ -446,7 +489,7 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
         int rd = std::stoi(rdStr);  // Convert to integer
         label = labelStr;  // Assign label
     
-        return {instr, rd, 0, 0, 0, label};  // JAL does not use rs1, rs2, or immediate
+        return {instr, rd, 0, 0, 0, label};  
     }
     
 
@@ -495,48 +538,151 @@ loadProgramFromFile(const std::string &filename,Memory & memory) {
             inTextSection = true;
             continue;
         }
+        // if (inDataSection) {
+        //     std::istringstream iss(line);
+        //     std::string token;
+        //     iss >> token; // Read first token
+        //     bool is=true;
+
+        //     size_t colonPos = token.find(':');
+        //     if (colonPos != std::string::npos) { 
+        //         // It's a label
+        //         std::string label = token.substr(0, colonPos);
+        //         label.erase(0, label.find_first_not_of(" \t\r\n"));
+        //         label.erase(label.find_last_not_of(" \t\r\n") + 1);
+                
+        //         if (!label.empty()) {
+        //             std::cout << "Data Label found: " << label << " at address " << dataAddress << std::endl;
+        //             dataLabels[label] = dataAddress;
+        //         }
+        //         // Read the remaining values in the line (e.g., `.word 10, 20, 30`)
+        //         while (iss >> token) {
+        //             if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+        //                 int value = std::stoi(token);
+        //               // memory[dataAddress / 4] = value;
+        //               for(int coreID=0;coreID<4;coreID++){
+        //               memory.storeWord(coreID*1024+dataAddress, value,coreID,is);
+        //             }
+        //             dataAddress += 4;
+        //         }
+        //         }
+        //     } else {
+        //         // Line without a label, possible continuation of `.word` values
+        //         while (iss >> token) {
+        //             if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+        //                 int value = std::stoi(token);
+        //                 for(int coreID=0;coreID<4;coreID++){
+        //                     memory.storeWord(coreID*1024+dataAddress , value,coreID,is);
+        //                   }
+        //                   dataAddress += 4;
+        //             }
+        //         }
+        //     }
+    
+        //     }
         if (inDataSection) {
             std::istringstream iss(line);
             std::string token;
             iss >> token; // Read first token
-            bool is=true;
-
+            bool is = true;
+            size_t commentPos = line.find('#');
+            if (commentPos != std::string::npos) {
+                line = line.substr(0, commentPos);  // Ignore the comment part
+            }
+        
+            // Trim leading and trailing spaces from the line
+            line.erase(0, line.find_first_not_of(" \t\r\n"));
+            line.erase(line.find_last_not_of(" \t\r\n") + 1);
+        
+            iss.clear();  // Clear the stringstream state
+            iss.str(line);  // Reinitialize the stringstream with the trimmed line
+        
+            // Read the first token to check for a label (e.g., arr:)
+            iss >> token;
+        
             size_t colonPos = token.find(':');
-            if (colonPos != std::string::npos) { 
+            if (colonPos != std::string::npos) {
                 // It's a label
                 std::string label = token.substr(0, colonPos);
                 label.erase(0, label.find_first_not_of(" \t\r\n"));
                 label.erase(label.find_last_not_of(" \t\r\n") + 1);
-                
+        
                 if (!label.empty()) {
                     std::cout << "Data Label found: " << label << " at address " << dataAddress << std::endl;
                     dataLabels[label] = dataAddress;
                 }
+        
                 // Read the remaining values in the line (e.g., `.word 10, 20, 30`)
                 while (iss >> token) {
-                    if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
-                        int value = std::stoi(token);
-                      // memory[dataAddress / 4] = value;
-                      for(int coreID=0;coreID<4;coreID++){
-                      memory.storeWord(coreID*1024+dataAddress, value,coreID,is);
+                    // Token might be something like "10, 20, 30" so split it by commas
+                    size_t commaPos;
+                    while ((commaPos = token.find(',')) != std::string::npos) {
+                        std::string valueStr = token.substr(0, commaPos);
+                        valueStr.erase(0, valueStr.find_first_not_of(" \t\r\n"));
+                        valueStr.erase(valueStr.find_last_not_of(" \t\r\n") + 1);
+        
+                        if (!valueStr.empty() && (isdigit(valueStr[0]) || (valueStr[0] == '-' && isdigit(valueStr[1])))) {
+                            int value = std::stoi(valueStr);
+                            // Store the value in all cores' memory
+                            for (int coreID = 0; coreID < 4; coreID++) {
+                                memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
+                            }
+                            dataAddress += 4;
+                        }
+        
+                        token = token.substr(commaPos + 1);  // Update the token to the part after the comma
                     }
-                    dataAddress += 4;
-                }
+        
+                    // After the last value in the token, process it
+                    token.erase(0, token.find_first_not_of(" \t\r\n"));
+                    token.erase(token.find_last_not_of(" \t\r\n") + 1);
+        
+                    if (!token.empty() && (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1])))) {
+                        int value = std::stoi(token);
+                        // Store the value in all cores' memory
+                        for (int coreID = 0; coreID < 4; coreID++) {
+                            memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
+                        }
+                        dataAddress += 4;
+                    }
                 }
             } else {
                 // Line without a label, possible continuation of `.word` values
                 while (iss >> token) {
-                    if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+                    // Token might be something like "10, 20, 30" so split it by commas
+                    size_t commaPos;
+                    while ((commaPos = token.find(',')) != std::string::npos) {
+                        std::string valueStr = token.substr(0, commaPos);
+                        valueStr.erase(0, valueStr.find_first_not_of(" \t\r\n"));
+                        valueStr.erase(valueStr.find_last_not_of(" \t\r\n") + 1);
+        
+                        if (!valueStr.empty() && (isdigit(valueStr[0]) || (valueStr[0] == '-' && isdigit(valueStr[1])))) {
+                            int value = std::stoi(valueStr);
+                            // Store the value in all cores' memory
+                            for (int coreID = 0; coreID < 4; coreID++) {
+                                memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
+                            }
+                            dataAddress += 4;
+                        }
+        
+                        token = token.substr(commaPos + 1);  // Update the token to the part after the comma
+                    }
+        
+                    // After the last value in the token, process it
+                    token.erase(0, token.find_first_not_of(" \t\r\n"));
+                    token.erase(token.find_last_not_of(" \t\r\n") + 1);
+        
+                    if (!token.empty() && (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1])))) {
                         int value = std::stoi(token);
-                        for(int coreID=0;coreID<4;coreID++){
-                            memory.storeWord(coreID*1024+dataAddress , value,coreID,is);
-                          }
-                          dataAddress += 4;
+                        // Store the value in all cores' memory
+                        for (int coreID = 0; coreID < 4; coreID++) {
+                            memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
+                        }
+                        dataAddress += 4;
                     }
                 }
             }
-    
-            }
+        }
         
         if (inTextSection) {
             // 🔹 Properly handle labels (trim spaces before checking ':')
