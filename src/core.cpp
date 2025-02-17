@@ -443,7 +443,7 @@ else if (instruction == "la"||instruction == "LA") {
     registers[rd] = coreID*1024+imm;
    if (isActive) {
     std::cout << "Core " << coreID << " - La: x" << rd << " loaded with "
-              << registers[rd] << " from addresscintaining val " <<memory.loadWord(coreID*1024+imm,coreID,isActive) << std::endl;
+              << registers[rd] << " from address containing val " <<memory.loadWord(coreID*1024+imm,coreID,isActive) << std::endl;
 }
 }
     else if (instruction == "sw"||instruction == "SW") {
