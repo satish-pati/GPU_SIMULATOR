@@ -182,7 +182,7 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
     //     return {instr, rd, rs1, rs2, imm}; // Jump target address
     // }
 
-     else if (instr == "bne" || instr == "beq") {
+     else if (instr == "bne" || instr == "beq" ||instr == "BEQ") {
         std::string rs1Str, rs2Str, labelStr;
         getline(iss >> std::ws, rs1Str, ',');
         getline(iss >> std::ws, rs2Str, ',');
@@ -193,21 +193,20 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
         label = labelStr; // Store label name to resolve later
         return {instr, rd, rs1, rs2, imm, label};
     }
-    else if (instr == "j" ) {
+    else if (instr == "j" ||instr == "J") {
         std::string labelStr;
         iss >> labelStr;
         label = labelStr; // Store label name to resolve later
         return {instr, rd, rs1, rs2, imm, label};
     }
 
-    else if (instr == "jal") {
+    else if (instr == "jal"||instr == "JAL") {
         std::string rdStr, labelStr;
         
         if (!(iss >> rdStr >> labelStr)) {  // Extract rd and label
             std::cerr << "Error: Invalid JAL instruction format!" << std::endl;
             return {};  // Return an empty instruction structure
         }
-    
         // Extract register number from "x7"
         if (rdStr[0] == 'x') {
             rdStr = rdStr.substr(1);  // Remove 'x' prefix
@@ -217,11 +216,15 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
     
         return {instr, rd, 0, 0, 0, label};  // JAL does not use rs1, rs2, or immediate
     }
-    return {"", 0, 0, 0, 0,""}; // Unsupported instruction
+    // return {"", 0, 0, 0, 0,""}; // Unsupported instruction
+    else {
+        std::cout<<"None"<<std::endl;
+        return {instr, rd, rs1, rs2, imm, ""};
+    }
 }
-std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(const std::string &filename)
+std::vector<std::tuple<std::string, int, int, int, int,std::string>> loadProgramFromFile(const std::string &filename)
 {
-    std::vector<std::tuple<std::string, int, int, int, int>> program;
+    std::vector<std::tuple<std::string, int, int, int, int,std::string>> program;
     std::ifstream file(filename);
 
     // Check if file opened successfully
