@@ -417,7 +417,8 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
 
             return;
            }
-        uint32_t address = registers[rs1] + imm;
+        uint32_t address = (rs1 == -1) ? imm : (registers[rs1] + imm);
+        //uint32_t address = registers[rs1] + imm;
         auto temp=registers[rd];
         registers[rd] = memory.loadWord(address,coreID,isActive);
        if (isActive) {
@@ -430,6 +431,20 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
         isActive=true;
     }
 
+}
+else if (instruction == "la"||instruction == "LA") {
+        
+    if(rd==0){
+        std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+        pc += 1;
+        return;
+       }
+   
+    registers[rd] = coreID*1024+imm;
+   if (isActive) {
+    std::cout << "Core " << coreID << " - La: x" << rd << " loaded with "
+              << registers[rd] << " from addresscintaining val " <<memory.loadWord(coreID*1024+imm,coreID,isActive) << std::endl;
+}
 }
     else if (instruction == "sw"||instruction == "SW") {
        
