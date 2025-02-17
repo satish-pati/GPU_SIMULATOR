@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include<map>
 #include "../include/core.h"
 #include "../include/memory.h"
 #include <thread>
@@ -30,6 +31,7 @@
 //     }
 // }
 std::unordered_map<std::string, int> labelMap;
+std::map<std::string, int> dataLabels;
 void executeCore(Core &core, int coreID, int n, const std::vector<std::tuple<std::string, int, int, int, int, std::string>> &instructions) {
     std::cout << "\n[Core " << coreID << "] Initial Register State:\n";
     for (int i = 0; i < 32; i++) {
@@ -352,19 +354,55 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
         // Call encodeIType with immediate = 0 (addi x5, x8, 0)
         return {instr, rd, rs1, rs2, imm,""};
     }
-    else if (instr == "lw")
-    {
+    else if (instr == "lw") {
         std::string rdStr, rs1Str, immStr;
         char paren1, paren2;
-        // Read rd, immediate, and rs1 in the format "lw x5, 0(x2)"
+        
         getline(iss >> std::ws, rdStr, ',');  // Read "x5"
-        getline(iss >> std::ws, immStr, '('); // Read "0"
-        getline(iss >> std::ws, rs1Str, ')'); // Read "x2"
-        // Convert to integers
-        rd = std::stoi(rdStr.substr(1));   // "x5" -> 5
-        rs1 = std::stoi(rs1Str.substr(1)); // "x2" -> 2
-        imm = std::stoi(immStr);           // "0"  -> 0
-        return {instr, rd, rs1, rs2, imm,""};
+        getline(iss >> std::ws, immStr, '('); // Read "0" or label
+        getline(iss >> std::ws, rs1Str, ')'); // Read "x2" if present
+        
+        rd = std::stoi(rdStr.substr(1));
+        
+        if (isdigit(immStr[0]) || (immStr[0] == '-' && isdigit(immStr[1]))) {
+            // Immediate addressing
+            imm = std::stoi(immStr);
+            rs1 = std::stoi(rs1Str.substr(1));
+        } else {
+            // Label-based addressing
+            if (dataLabels.find(immStr) != dataLabels.end()) {
+                imm = dataLabels[immStr];
+                rs1 = -1; // Base register is zero when using absolute address
+            } else {
+                std::cerr << "Error: Undefined data label '" << immStr << "'" << std::endl;
+            }
+        }
+        return {instr, rd, rs1, rs2, imm, ""};
+    }
+    else if (instr == "la") {
+        std::string rdStr, rs1Str, immStr;
+        char paren1, paren2;
+        
+        getline(iss >> std::ws, rdStr, ',');  // Read "x5"
+        getline(iss >> std::ws, immStr, '('); // Read "0" or label
+        getline(iss >> std::ws, rs1Str, ')'); // Read "x2" if present
+        
+        rd = std::stoi(rdStr.substr(1));
+        
+        if (isdigit(immStr[0]) || (immStr[0] == '-' && isdigit(immStr[1]))) {
+            // Immediate addressing
+            imm = std::stoi(immStr);
+            rs1 = std::stoi(rs1Str.substr(1));
+        } else {
+            // Label-based addressing
+            if (dataLabels.find(immStr) != dataLabels.end()) {
+                imm = dataLabels[immStr];
+                //rs1 = -1; // Base register is zero when using absolute address
+            } else {
+                std::cerr << "Error: Undefined data label '" << immStr << "'" << std::endl;
+            }
+        }
+        return {instr, rd, rs1, rs2, imm, ""};
     }
 
     else if (instr == "sw")
@@ -430,8 +468,9 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
 
     
 }
+
 std::vector<std::tuple<std::string, int, int, int, int, std::string>> 
-loadProgramFromFile(const std::string &filename) {
+loadProgramFromFile(const std::string &filename,Memory & memory) {
     std::vector<std::tuple<std::string, int, int, int, int, std::string>> program;
     std::ifstream file(filename);
 
@@ -445,6 +484,9 @@ loadProgramFromFile(const std::string &filename) {
 
     std::string line;
     bool inTextSection = false;
+    bool inDataSection = false;
+    int dataAddress = 0x0; // Start of the data section
+    //int memoryAddress = 0x10010000; // Starting address for .data section
     int instructionIndex = 0;
 
     // 🔹 First Pass: Identify Labels
@@ -454,12 +496,58 @@ loadProgramFromFile(const std::string &filename) {
         line.erase(line.find_last_not_of(" \t\r\n") + 1);
 
         if (line.empty()) continue; // Skip empty lines
-
+        if (line.find(".data") != std::string::npos) {
+            inDataSection = true;
+            continue;
+        } 
         if (line.find(".text") != std::string::npos) {
+            inDataSection = false;
             inTextSection = true;
             continue;
         }
+        if (inDataSection) {
+            std::istringstream iss(line);
+            std::string token;
+            iss >> token; // Read first token
+            bool is=true;
 
+            size_t colonPos = token.find(':');
+            if (colonPos != std::string::npos) { 
+                // It's a label
+                std::string label = token.substr(0, colonPos);
+                label.erase(0, label.find_first_not_of(" \t\r\n"));
+                label.erase(label.find_last_not_of(" \t\r\n") + 1);
+                
+                if (!label.empty()) {
+                    std::cout << "Data Label found: " << label << " at address " << dataAddress << std::endl;
+                    dataLabels[label] = dataAddress;
+                }
+                // Read the remaining values in the line (e.g., `.word 10, 20, 30`)
+                while (iss >> token) {
+                    if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+                        int value = std::stoi(token);
+                      // memory[dataAddress / 4] = value;
+                      for(int coreID=0;coreID<4;coreID++){
+                      memory.storeWord(coreID*1024+dataAddress, value,coreID,is);
+                    }
+                    dataAddress += 4;
+                }
+                }
+            } else {
+                // Line without a label, possible continuation of `.word` values
+                while (iss >> token) {
+                    if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+                        int value = std::stoi(token);
+                        for(int coreID=0;coreID<4;coreID++){
+                            memory.storeWord(coreID*1024+dataAddress , value,coreID,is);
+                          }
+                          dataAddress += 4;
+                    }
+                }
+            }
+    
+            }
+        
         if (inTextSection) {
             // 🔹 Properly handle labels (trim spaces before checking ':')
             size_t colonPos = line.find(':');
@@ -472,12 +560,12 @@ loadProgramFromFile(const std::string &filename) {
                     std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
                     labelMap[label] = instructionIndex;
                 }
-
-                // After the label, check if there's an instruction
-                line = line.substr(colonPos + 1);
-                line.erase(0, line.find_first_not_of(" \t\r\n")); // Trim spaces after the label
-                
-                if (line.empty()) continue; // If only label was present, skip line
+                continue; // Skip label-only lines
+                 // After the label, check if there's an instruction
+                 line = line.substr(colonPos + 1);
+                 line.erase(0, line.find_first_not_of(" \t\r\n")); // Trim spaces after the label
+                 
+                 if (line.empty()) continue; // If only label was present, skip line
             }
 
             // Ignore comments (assuming '#' or '//')
@@ -492,7 +580,7 @@ loadProgramFromFile(const std::string &filename) {
             line.erase(line.find_last_not_of(" \t\r\n") + 1);
 
             if (line.empty()) continue; // Skip if only a comment was present
-
+            
             // Parse the instruction
             auto Instr = assembleInstruction(line);
             if (std::get<0>(Instr).empty()) {
@@ -513,7 +601,11 @@ loadProgramFromFile(const std::string &filename) {
         std::string &label = std::get<5>(instr); // Fetch stored label
         if (!label.empty() && labelMap.find(label) != labelMap.end()) {
             std::get<4>(instr) = labelMap[label]; // Replace label with instruction index
-        } else if (!label.empty()) {
+        } else if (!label.empty() && dataLabels.find(label) != dataLabels.end()) {
+            // Data Label Resolution (Replace with Memory Address)
+            std::get<4>(instr) = dataLabels[label];
+            std::cout << "Resolved Data Label '" << label << "' to Address: " << dataLabels[label] << std::endl;
+        }else if (!label.empty()) {
             std::cerr << "Error: Undefined label '" << label << "'" << std::endl;
         }
     }
@@ -530,7 +622,7 @@ class Simulator {
     
     public:
         Simulator(const std::string &filename) : clock(0), memory() {
-            program = loadProgramFromFile("program.s");
+            program = loadProgramFromFile("program.s", memory);
             std::cout << "\n=== Label Map ===\n";
     for (const auto &entry : labelMap) {
         std::cout << "Label: " << entry.first << " -> Instruction Index: " << entry.second << "\n";
@@ -572,7 +664,6 @@ class Simulator {
                             running = true;  // At least one core is still running
                         }
                     }
-                   // if(clock==20) break;
                     if (!running) break;
                     clock++;
                 }
