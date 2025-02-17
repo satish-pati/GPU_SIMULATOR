@@ -417,7 +417,7 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
 
             return;
            }
-        uint32_t address = (rs1 == -1) ? imm : (registers[rs1] + imm);
+        uint32_t address =  (registers[rs1] + imm);
         //uint32_t address = registers[rs1] + imm;
         auto temp=registers[rd];
         registers[rd] = memory.loadWord(address,coreID,isActive);
@@ -443,7 +443,7 @@ else if (instruction == "la"||instruction == "LA") {
     registers[rd] = coreID*1024+imm;
    if (isActive) {
     std::cout << "Core " << coreID << " - La: x" << rd << " loaded with "
-              << registers[rd] << " from address containing val " <<memory.loadWord(coreID*1024+imm,coreID,isActive) << std::endl;
+              << registers[rd] << " from addresscintaining val " <<memory.loadWord(coreID*1024+imm,coreID,isActive) << std::endl;
 }
 }
     else if (instruction == "sw"||instruction == "SW") {
@@ -494,6 +494,22 @@ else if (instruction == "la"||instruction == "LA") {
     }
     else if (instruction == "beq"||instruction == "BEQ") {
         if (registers[rs1] == registers[rs2]) {
+            std::cout << "Core " << coreID << " - BEQ: x" << rs1 << " == x" << rs2 
+                      << " (Jumping to " << label << ")" << std::endl;
+            if (!label.empty()) {
+                pc = labelMap[label];  // Jump to label index
+            } else {
+                pc += imm;  // Fallback if label missing
+                
+            }
+            shouldIncrementPC = false;
+        }
+        else{
+            std::cout<<"In BEQ Instruction if condition is not taken"<<std::endl;
+        }
+    }
+    else if (instruction == "ble"||instruction == "BLE") {
+        if (registers[rs1] <= registers[rs2]) {
             std::cout << "Core " << coreID << " - BEQ: x" << rs1 << " == x" << rs2 
                       << " (Jumping to " << label << ")" << std::endl;
             if (!label.empty()) {
