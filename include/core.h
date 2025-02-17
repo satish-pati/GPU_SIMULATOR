@@ -4,6 +4,7 @@
 #include "memory.h"
 #include <cstdint>
 #include "../include/instruction.h"
+#include <unordered_map>
 
 class Core {
 private:
