@@ -81,11 +81,12 @@ uint32_t encodeJType(const std::string &instr, int rd, int imm)
 
     return (imm20 << 31) | (imm19_12 << 12) | (imm11 << 20) | (imm10_1 << 21) | (rd << 7) | opcodeTable[instr];
 }
-std::tuple<std::string, int, int, int, int> assembleInstruction(const std::string &line)
+std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(const std::string &line)
 {
     std::istringstream iss(line);
     std::string instr;
     int rd = 0, rs1 = 0, rs2 = 0, imm = 0;
+    std::string label;
     char comma;
     iss >> instr;
     if (instr == "add" || instr == "sub"||instr == "ADD" || instr == "SUB")
@@ -103,7 +104,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         rs1 = std::stoi(rs1Str.substr(1));
         rs2 = std::stoi(rs2Str.substr(1));
 
-        return {instr, rd, rs1, rs2, imm};
+        return {instr, rd, rs1, rs2, imm,""};
     }
 
     if (instr == "addi"||instr == "ADDI")
@@ -120,7 +121,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         rd = std::stoi(rdStr.substr(1));   // Remove 'x' and convert "x5" -> 5
         rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert "x2" -> 2
 
-        return {instr, rd, rs1, rs2, imm};
+        return {instr, rd, rs1, rs2, imm,""};
     }
 
     if (instr == "mv"||instr == "MV")
@@ -136,7 +137,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         rs1 = std::stoi(rs1Str.substr(1)); // "x8" -> 8
 
         // Call encodeIType with immediate = 0 (addi x5, x8, 0)
-        return {instr, rd, rs1, rs2, imm};
+        return {instr, rd, rs1, rs2, imm,""};
     }
     else if (instr == "lw"||instr == "LW")
     {
@@ -150,7 +151,7 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         rd = std::stoi(rdStr.substr(1));   // "x5" -> 5
         rs1 = std::stoi(rs1Str.substr(1)); // "x2" -> 2
         imm = std::stoi(immStr);           // "0"  -> 0
-        return {instr, rd, rs1, rs2, imm};
+        return {instr, rd, rs1, rs2, imm,""};
     }
 
     else if (instr == "sw"||instr == "SW")
@@ -167,20 +168,56 @@ std::tuple<std::string, int, int, int, int> assembleInstruction(const std::strin
         rs1 = std::stoi(rs1Str.substr(1)); // "x2" -> 2
         imm = std::stoi(immStr);           // "16" -> 16
 
-        return {instr, rd, rs1, rs2, imm};
+        return {instr, rd, rs1, rs2, imm,""};
     }
 
-    else if (instr == "beq"||instr == "BEQ")
-    {
-        iss >> rs1 >> comma >> rs2 >> comma >> imm;
-        return {instr, rd, rs1, rs2, imm};
+    // else if (instr == "beq"||instr == "BEQ")
+    // {
+    //     iss >> rs1 >> comma >> rs2 >> comma >> imm;
+    //     return {instr, rd, rs1, rs2, imm};
+    // }
+    // else if (instr == "j"||instr == "J")
+    // {
+    //     iss >> imm;
+    //     return {instr, rd, rs1, rs2, imm}; // Jump target address
+    // }
+
+     else if (instr == "bne" || instr == "beq") {
+        std::string rs1Str, rs2Str, labelStr;
+        getline(iss >> std::ws, rs1Str, ',');
+        getline(iss >> std::ws, rs2Str, ',');
+        iss >> labelStr;
+
+        rs1 = std::stoi(rs1Str.substr(1));
+        rs2 = std::stoi(rs2Str.substr(1));
+        label = labelStr; // Store label name to resolve later
+        return {instr, rd, rs1, rs2, imm, label};
     }
-    else if (instr == "j"||instr == "J")
-    {
-        iss >> imm;
-        return {instr, rd, rs1, rs2, imm}; // Jump target address
+    else if (instr == "j" ) {
+        std::string labelStr;
+        iss >> labelStr;
+        label = labelStr; // Store label name to resolve later
+        return {instr, rd, rs1, rs2, imm, label};
     }
-    return {"", 0, 0, 0, 0}; // Unsupported instruction
+
+    else if (instr == "jal") {
+        std::string rdStr, labelStr;
+        
+        if (!(iss >> rdStr >> labelStr)) {  // Extract rd and label
+            std::cerr << "Error: Invalid JAL instruction format!" << std::endl;
+            return {};  // Return an empty instruction structure
+        }
+    
+        // Extract register number from "x7"
+        if (rdStr[0] == 'x') {
+            rdStr = rdStr.substr(1);  // Remove 'x' prefix
+        }
+         int rd = std::stoi(rdStr);  // Convert to integer
+        label = labelStr;  // Assign label
+    
+        return {instr, rd, 0, 0, 0, label};  // JAL does not use rs1, rs2, or immediate
+    }
+    return {"", 0, 0, 0, 0,""}; // Unsupported instruction
 }
 std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(const std::string &filename)
 {
@@ -200,6 +237,7 @@ std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(con
 
     std::string line;
     bool inTextSection = false;
+    int instructionIndex = 0;
 
     while (std::getline(file, line))
     {
@@ -219,6 +257,20 @@ std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(con
 
         if (inTextSection)
         {
+            // To Properly handle labels (trim spaces before checking ':')
+            size_t colonPos = line.find(':');
+            if (colonPos != std::string::npos) {
+                std::string label = line.substr(0, colonPos);
+                label.erase(0, label.find_first_not_of(" \t\r\n"));  // Trim spaces
+                label.erase(label.find_last_not_of(" \t\r\n") + 1);
+                
+                if (!label.empty()) {
+                    std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
+                    labelMap[label] = instructionIndex;
+                }
+                continue; // Skip label-only lines
+            }
+            
             // Ignore comments (assuming '#' or '//')
             size_t commentPos = line.find('#');
             if (commentPos == std::string::npos)
@@ -243,10 +295,25 @@ std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(con
             else
             {
                 program.push_back(Instr);
+                instructionIndex++;
             }
         }
     }
 
+     // 🔹 Reset file for second pass
+    file.clear();  // Clear EOF flag
+    file.seekg(0); // Move read position to the start
+
+    //  Second Pass: Resolve Labels
+    for (auto &instr : program) {
+        std::string &label = std::get<5>(instr); // Fetch stored label
+        if (!label.empty() && labelMap.find(label) != labelMap.end()) {
+            std::get<4>(instr) = labelMap[label]; // Replace label with instruction index
+        } else if (!label.empty()) {
+            std::cerr << "Error: Undefined label '" << label << "'" << std::endl;
+        }
+    }
+    
     return program;
 }
 class Simulator {
@@ -254,7 +321,8 @@ class Simulator {
         Memory memory;
             std::vector<Core> cores;
         int clock;
-        std::vector<std::tuple<std::string, int, int, int, int>> program;
+        std::vector<std::tuple<std::string, int, int, int, int,std::string>> program;
+        std::unordered_map<std::string, int> labelMap;
     
     public:
         Simulator(const std::string &filename) : clock(0), memory() {
@@ -278,7 +346,7 @@ class Simulator {
                     auto &inst = program[instructionIndex];
         
                     std::cout << "\n[Core " << coreID << "] Executing: " << std::get<0>(inst) << std::endl;
-                    core.execute(std::get<0>(inst), std::get<1>(inst), std::get<2>(inst), std::get<3>(inst), std::get<4>(inst));
+                    core.execute(std::get<0>(inst), std::get<1>(inst), std::get<2>(inst), std::get<3>(inst), std::get<4>(inst),std::get<5>(inst),labelMap);
                 }
               
             
