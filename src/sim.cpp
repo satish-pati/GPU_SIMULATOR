@@ -7,7 +7,7 @@
 #include "../include/core.h"
 #include "../include/memory.h"
 #include <thread>
-
+std::unordered_map<std::string, int> labelMap;
 std::unordered_map<std::string, uint32_t> opcodeTable = {
     {"add", 0b0110011}, // R-type
     {"sub", 0b0110011},
