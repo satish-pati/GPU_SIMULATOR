@@ -377,6 +377,8 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
    // if (!isActive) return; // Stop execution if core is inactive
    if (rd == 32) {
     std::cout<<"Cannot write to X32,it is read -only & contains core ID"<<std::endl;
+    pc += 1;
+
     return; // Prevent modifying x32 (always core ID)
    }
 
@@ -385,6 +387,7 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
        // if (isActive) {
        if(rd==0){
         std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+        pc += 1;
         return;
        }
         registers[rd] = registers[rs1] + registers[rs2];
@@ -397,6 +400,8 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
         //if (isActive) {
             if(rd==0){
                 std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+                pc += 1;
+
                 return;
                }
         registers[rd] = registers[rs1] - registers[rs2];
@@ -408,6 +413,8 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
         
         if(rd==0){
             std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+            pc += 1;
+
             return;
            }
         uint32_t address = registers[rs1] + imm;
@@ -509,22 +516,6 @@ registers[rd] = registers[rs1] + imm;
 std::cout << " + " << imm 
         << " = " << registers[rd] << std::endl;
     }  
-
-//     else if(instruction == "jal"||instruction == "JAL"){
-//        // if (isActive) {
-//         std::cout << "Core " << coreID << " - jal: Register x" << (int)rd <<"imm"<<imm<<std::endl;
-//            registers[rd] = pc ;
-//            pc += (imm/4);
-//            shouldIncrementPC=false;
-//    // } 
-// }
-//     else if(instruction == "j"||instruction == "J"){
-//        // if (isActive) {
-//         std::cout << "Core " << coreID << " - j: Register x" << imm <<std::endl;
-//         pc += (imm/4);
-
-//    // }   
-// }
     else if (instruction == "jal"||instruction == "JAL") {
         std::cout << "Core " << coreID << " - JAL: Saving return address in x" << rd 
                   << ", jumping to " << label << std::endl;
