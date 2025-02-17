@@ -304,7 +304,7 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
     std::string label;
     char comma;
     iss >> instr;
-    if (instr == "add" || instr == "sub")
+    if (instr == "add" || instr == "sub"||instr == "ADD"||instr == "SUB")
     {
         std::string rdStr, rs1Str, rs2Str;
         // Read register names as strings
@@ -322,7 +322,7 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
         return {instr, rd, rs1, rs2, imm,""};
     }
 
-    if (instr == "addi")
+    if (instr == "addi"||instr == "ADDI")
     {
         std::string rdStr, rs1Str;
         int imm;
@@ -339,7 +339,7 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
         return {instr, rd, rs1, rs2, imm,""};
     }
 
-    if (instr == "mv")
+    if (instr == "mv"||instr == "MV")
     {
         std::string rdStr, rs1Str;
 
@@ -353,33 +353,23 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
 
         // Call encodeIType with immediate = 0 (addi x5, x8, 0)
         return {instr, rd, rs1, rs2, imm,""};
-    }
-    else if (instr == "lw") {
-        std::string rdStr, rs1Str, immStr;
-        char paren1, paren2;
-        
-        getline(iss >> std::ws, rdStr, ',');  // Read "x5"
-        getline(iss >> std::ws, immStr, '('); // Read "0" or label
-        getline(iss >> std::ws, rs1Str, ')'); // Read "x2" if present
-        
-        rd = std::stoi(rdStr.substr(1));
-        
-        if (isdigit(immStr[0]) || (immStr[0] == '-' && isdigit(immStr[1]))) {
-            // Immediate addressing
-            imm = std::stoi(immStr);
-            rs1 = std::stoi(rs1Str.substr(1));
-        } else {
-            // Label-based addressing
-            if (dataLabels.find(immStr) != dataLabels.end()) {
-                imm = dataLabels[immStr];
-                rs1 = -1; // Base register is zero when using absolute address
-            } else {
-                std::cerr << "Error: Undefined data label '" << immStr << "'" << std::endl;
-            }
-        }
-        return {instr, rd, rs1, rs2, imm, ""};
-    }
-    else if (instr == "la") {
+    }    
+    else if (instr == "lw"||instr == "LW") {
+
+    std::string rdStr, rs1Str, immStr;
+    char paren1, paren2;
+    // Read rd, immediate, and rs1 in the format "lw x5, 0(x2)"
+    
+    getline(iss >> std::ws, rdStr, ',');  // Read "x5"
+    getline(iss >> std::ws, immStr, '('); // Read "0"
+    getline(iss >> std::ws, rs1Str, ')'); // Read "x2"
+    // Convert to integers
+    rd = std::stoi(rdStr.substr(1));   // "x5" -> 5
+    rs1 = std::stoi(rs1Str.substr(1)); // "x2" -> 2
+    imm = std::stoi(immStr);           // "0"  -> 0
+    return {instr, rd, rs1, rs2, imm,""};
+}
+    else if (instr == "la"||instr == "lA") {
         std::string rdStr, rs1Str, immStr;
         char paren1, paren2;
         
@@ -405,7 +395,7 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
         return {instr, rd, rs1, rs2, imm, ""};
     }
 
-    else if (instr == "sw")
+    else if (instr == "sw"||instr == "SW")
     {
         std::string rs2Str, rs1Str, immStr;
         char paren1, paren2;
@@ -422,17 +412,17 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
 
         return {instr, rd, rs1, rs2, imm,""};
     }
-    else if (instr == "bne" || instr == "beq") {
+    else if (instr == "bne" || instr == "beq"||instr == "ble") {
         std::string rs1Str, rs2Str, labelStr;
         getline(iss >> std::ws, rs1Str, ',');
         getline(iss >> std::ws, rs2Str, ',');
         iss >> labelStr;
-
         rs1 = std::stoi(rs1Str.substr(1));
         rs2 = std::stoi(rs2Str.substr(1));
         label = labelStr; // Store label name to resolve later
         return {instr, rd, rs1, rs2, imm, label};
     }
+   
     else if (instr == "j" ) {
         std::string labelStr;
         iss >> labelStr;
