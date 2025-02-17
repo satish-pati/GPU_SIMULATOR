@@ -1,10 +1,11 @@
+.data
+array:   .word 10, 20, 30, 40
+value:   .word 100
+
 .text
-  addi x2,x0,2
-  LABELx:
-add x0, x0, x1 #rd, rs1, rs2
-sub x0, x0, x1 #rd, rs1, rs2
-bne x0, x2, LABELy #rs1, rs2, offset ( but label willsuffice )
-sw x0, 0(x3) #rd , offset (rs 1)
-LABELy: 
-sub x0, x0, x2
-jal x0, LABELx #rd , offset (again , label will work )
+    la x10, array       # Load base address of 'array' into t0
+    la x11, value       # Load address of 'value' into t1
+    lw x1, 0(x10)       # Load first value (10) of 'array' into x1
+    lw x2, 4(x10)       # Load 'value' (100) into x2
+    lw x3, 8(x10)       # Load second value (20) of 'array' into x3
+    lw x4, 12(x10)       # Load second value (20) of 'array' into x3
