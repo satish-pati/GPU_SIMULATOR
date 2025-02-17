@@ -430,7 +430,6 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
 
     
 }
-
 std::vector<std::tuple<std::string, int, int, int, int, std::string>> 
 loadProgramFromFile(const std::string &filename) {
     std::vector<std::tuple<std::string, int, int, int, int, std::string>> program;
@@ -473,7 +472,12 @@ loadProgramFromFile(const std::string &filename) {
                     std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
                     labelMap[label] = instructionIndex;
                 }
-                continue; // Skip label-only lines
+
+                // After the label, check if there's an instruction
+                line = line.substr(colonPos + 1);
+                line.erase(0, line.find_first_not_of(" \t\r\n")); // Trim spaces after the label
+                
+                if (line.empty()) continue; // If only label was present, skip line
             }
 
             // Ignore comments (assuming '#' or '//')
@@ -488,7 +492,7 @@ loadProgramFromFile(const std::string &filename) {
             line.erase(line.find_last_not_of(" \t\r\n") + 1);
 
             if (line.empty()) continue; // Skip if only a comment was present
-            
+
             // Parse the instruction
             auto Instr = assembleInstruction(line);
             if (std::get<0>(Instr).empty()) {
@@ -568,7 +572,7 @@ class Simulator {
                             running = true;  // At least one core is still running
                         }
                     }
-                    if(clock==20) break;
+                   // if(clock==20) break;
                     if (!running) break;
                     clock++;
                 }
