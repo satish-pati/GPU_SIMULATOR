@@ -455,7 +455,7 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
 //                   << " and x" << rs2 << ", PC = " << pc << std::endl;
 //  //   }
 // }
-        else if (instruction == "bne") {
+        else if (instruction == "bne"||instruction == "BNE") {
         if (registers[rs1] != registers[rs2]) {
             std::cout << "Core " << coreID << " - BNE: x" << rs1 << " != x" << rs2 
                       << " (Jumping to " << label << ")" << std::endl;
@@ -467,10 +467,10 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
             shouldIncrementPC = false;
         }
         else{
-            std::cout<<"bne if condition failed"<<std::endl;
+            std::cout<<"In BNE Instruction if condition not taken"<<std::endl;
         }
     }
-    else if (instruction == "beq") {
+    else if (instruction == "beq"||instruction == "BEQ") {
         if (registers[rs1] == registers[rs2]) {
             std::cout << "Core " << coreID << " - BEQ: x" << rs1 << " == x" << rs2 
                       << " (Jumping to " << label << ")" << std::endl;
@@ -483,7 +483,7 @@ void Core::execute(const std::string& instruction, int rd, int rs1, int rs2, int
             shouldIncrementPC = false;
         }
         else{
-            std::cout<<"beq if condition failed"<<std::endl;
+            std::cout<<"In BEQ Instruction if condition is not taken"<<std::endl;
         }
     }
     else if(instruction == "addi"||instruction == "ADDI"){
@@ -525,7 +525,7 @@ std::cout << " + " << imm
 
 //    // }   
 // }
-    else if (instruction == "jal") {
+    else if (instruction == "jal"||instruction == "JAL") {
         std::cout << "Core " << coreID << " - JAL: Saving return address in x" << rd 
                   << ", jumping to " << label << std::endl;
         registers[rd] = pc + 1;  // Save return address
@@ -536,7 +536,7 @@ std::cout << " + " << imm
         }
         shouldIncrementPC = false;
     }
-    else if (instruction == "j") {
+    else if (instruction == "j"||instruction == "J") {
         std::cout << "Core " << coreID << " - JUMP: Jumping to " << label << std::endl;
         if (!label.empty()) {
             pc = labelMap[label];  // Jump to label
