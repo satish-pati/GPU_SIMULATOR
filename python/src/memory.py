@@ -42,3 +42,9 @@ class Memory:
                 dummy_active = True
                 print(self.load_word(i + j, core_id, dummy_active), end=" ")
             print()
+# Inside Memory class
+def get_memory_str(self, core_id):
+    memory_str = ""
+    for addr in range(core_id * 1024, (core_id + 1) * 1024, 4):
+        memory_str += f"0x{addr:X}: {self.load_word(addr, core_id)}\n"
+    return memory_str
