@@ -131,8 +131,8 @@ class Simulator:
                         #         for core_id in range(4):
                         #             self.memory.store_word(core_id * 1024 + data_address, value, core_id, True)
                         #         data_address += 4
-                          values=[]
-                          if tokens and tokens[0] == ".word":  # Ensure it's a .word declaration
+                        values=[]
+                        if tokens and tokens[0] == ".word":  # Ensure it's a .word declaration
                             if len(tokens) > 1: 
                               values = re.split(r'[,\s]+', " ".join(tokens[1:]))  # Handle spaces and commas
                               values = [v for v in values if v]  # Remove empty strings
