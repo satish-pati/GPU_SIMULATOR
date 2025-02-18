@@ -1,3 +1,4 @@
+from core import Core
 class Memory:
     MEMORY_SIZE = 4096  # Define total memory size
     CORE_BLOCK_SIZE = 1024  # Each core gets 1KB of memory
@@ -5,27 +6,28 @@ class Memory:
     def __init__(self):
         self.mem = [0] * self.MEMORY_SIZE
 
-    def load_word(self, address, core_id, is_active):
+    def load_word(self, address, core_id, is_act,lst=[True]):
         base = core_id * self.CORE_BLOCK_SIZE
         if address < base or address >= base + self.CORE_BLOCK_SIZE:
             print(f"Core {core_id} - ERROR: Invalid memory access for lw at address {address}")
-            is_active = False
+            lst[0]= False
             return 0
         if address % 4 != 0 or address + 3 >= self.MEMORY_SIZE:
             print(f"Core {core_id} - ERROR: Unaligned memory access at {address}")
-            is_active = False
+            lst[0] = False
             return 0
         return (self.mem[address] | (self.mem[address + 1] << 8) |
                 (self.mem[address + 2] << 16) | (self.mem[address + 3] << 24))
 
-    def store_word(self, address, value, core_id, is_active):
+    def store_word(self, address, value, core_id, bl,lst=[True]):
         base = core_id * self.CORE_BLOCK_SIZE
         if address < base or address >= base + self.CORE_BLOCK_SIZE:
             print(f"Core {core_id} - ERROR: Memory Access Violation for sw at address {address}")
-            is_active = False
+            lst[0] = False
             return
         if address % 4 != 0 or address + 3 >= self.MEMORY_SIZE:
             print(f"Core {core_id} - ERROR: Unaligned memory access for sw at {address}")
+            lst[0] = False
             return
         self.mem[address] = value & 0xFF
         self.mem[address + 1] = (value >> 8) & 0xFF
