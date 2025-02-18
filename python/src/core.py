@@ -24,7 +24,7 @@ class Core:
                 self.pc += 1
                 return
             self.registers[rd] = self.registers[rs1] + self.registers[rs2]
-            print(f"Core {self.core_id} - ADD: x{rd} = {self.registers[rs1]} + {self.registers[rs2]} = {self.registers[rd]}")
+             #print(f"Core {self.core_id} - ADD: x{rd} = {self.registers[rs1]} + {self.registers[rs2]} = {self.registers[rd]}")
             self.pc += 1
 
         
@@ -34,7 +34,7 @@ class Core:
                 self.pc += 1
                 return
             self.registers[rd] = self.registers[rs1] - self.registers[rs2]
-            print(f"Core {self.core_id} - SUB: x{rd} = {self.registers[rs1]} - {self.registers[rs2]} = {self.registers[rd]}")
+             #print(f"Core {self.core_id} - SUB: x{rd} = {self.registers[rs1]} - {self.registers[rs2]} = {self.registers[rd]}")
             self.pc += 1
         elif instruction.lower() == "lw":
             if rd == 0:
@@ -46,9 +46,10 @@ class Core:
             self.registers[rd] = self.memory.load_word(address, self.core_id, self.is_active,lst)
 
             if lst[0]:
-                print(f"Core {self.core_id} - LW: x{rd} loaded with {self.registers[rd]} from address {address}")
+                 self.is_active=True
+                 #print(f"Core {self.core_id} - LW: x{rd} loaded with {self.registers[rd]} from address {address}")
             else:
-                print(f"x{rd} contains its previously loaded value (if not loaded contains 0)")
+                 #print(f"x{rd} contains its previously loaded value (if not loaded contains 0)")
                 self.registers[rd] = temp
                 lst[0] = [True]
             self.pc += 1
@@ -58,20 +59,21 @@ class Core:
                 self.pc += 1
                 return
             self.registers[rd] = self.core_id * 1024 + imm
-            print(f"Core {self.core_id} - LA: x{rd} loaded with {self.registers[rd]} from address containing val {self.memory.load_word(self.core_id * 1024 + imm, self.core_id, self.is_active)}")
+             #print(f"Core {self.core_id} - LA: x{rd} loaded with {self.registers[rd]} from address containing val {self.memory.load_word(self.core_id * 1024 + imm, self.core_id, self.is_active)}")
             self.pc += 1
         elif instruction.lower() == "sw":
             address = self.registers[rs1] + imm
             self.memory.store_word(address, self.registers[rs2], self.core_id, self.is_active,lst)
             print(lst[0])
             if lst[0]:
-                print(f"Core {self.core_id} - SW: Stored {self.registers[rs2]} at address {address}")
+                self.is_active=True
+                 #print(f"Core {self.core_id} - SW: Stored {self.registers[rs2]} at address {address}")
             else:
                 lst[0] = [True]
             self.pc += 1
         elif instruction.lower() == "bne":
             if self.registers[rs1] != self.registers[rs2]:
-                print(f"Core {self.core_id} - BNE: x{rs1} != x{rs2} (Jumping to {label})")
+                 #print(f"Core {self.core_id} - BNE: x{rs1} != x{rs2} (Jumping to {label})")
                 if label:
                  should_increment_pc = False
                  self.pc = label_map[label]
@@ -83,7 +85,7 @@ class Core:
         
         elif instruction.lower() == "beq":
             if self.registers[rs1] == self.registers[rs2]:
-                print(f"Core {self.core_id} - BEQ: x{rs1} == x{rs2} (Jumping to {label})")
+                 #print(f"Core {self.core_id} - BEQ: x{rs1} == x{rs2} (Jumping to {label})")
                 if label:
                  should_increment_pc = False
                  self.pc = label_map[label]
@@ -92,11 +94,11 @@ class Core:
                 
             else:
                 self.pc += 1
-                print("In BEQ Instruction if condition not taken")
+                 #print("In BEQ Instruction if condition not taken")
         
         elif instruction.lower() == "ble":
             if self.registers[rs1] <= self.registers[rs2]:
-                print(f"Core {self.core_id} - BLE: x{rs1} <= x{rs2} (Jumping to {label})")
+                 #print(f"Core {self.core_id} - BLE: x{rs1} <= x{rs2} (Jumping to {label})")
                 if label:
                  should_increment_pc = False
                  self.pc = label_map[label]
@@ -105,14 +107,14 @@ class Core:
                 
             else:
                 self.pc += 1
-                print("In BLE Instruction if condition not taken")
+                 #print("In BLE Instruction if condition not taken")
         
         elif instruction.lower() == "addi":
             if rd == 0:
                 self.pc += 1
                 print("X0 is hardwired to 0 & contains x0=0")
                 return
-            print(f"Core {self.core_id} - ADDI: Register x{rd} = {self.registers[rs1]} + {imm}")
+             #print(f"Core {self.core_id} - ADDI: Register x{rd} = {self.registers[rs1]} + {imm}")
             self.registers[rd] = self.registers[rs1] + imm
             self.pc += 1
         elif instruction.lower() == "mv":
@@ -120,11 +122,11 @@ class Core:
                 self.pc += 1
                 print("X0 is hardwired to 0 & contains x0=0")
                 return
-            print(f"Core {self.core_id} - MV: Register x{rd} = {self.registers[rs1]} + {imm}")
+             #print(f"Core {self.core_id} - MV: Register x{rd} = {self.registers[rs1]} + {imm}")
             self.registers[rd] = self.registers[rs1] + imm
             self.pc += 1
         elif instruction == "jal" or instruction == "JAL":
-           print(f"Core {self.core_id}- JAL: Saving return address in x{rd}, jumping to {label}")
+            #print(f"Core {self.core_id}- JAL: Saving return address in x{rd}, jumping to {label}")
            self.registers[rd] = self.pc + 1  # Save return address
            if label:
                shouldIncrementPC = False
@@ -133,7 +135,7 @@ class Core:
                self.pc  += imm  # Fallback
         
         elif instruction == "j" or instruction == "J":
-            print(f"Core {self.core_id} - JUMP: Jumping to {label}")
+             #print(f"Core {self.core_id} - JUMP: Jumping to {label}")
             shouldIncrementPC = False
             self.pc = label_map[label] if label else self.pc + imm
 
