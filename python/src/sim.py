@@ -211,6 +211,7 @@ class Simulator:
                                     for core_id in range(4):
                                         self.memory.store_word(core_id * 1024 + data_address, num, core_id, True)
                                     data_address += 4
+                            
                                 except ValueError:
                                     print(f"Warning: Invalid integer '{value}' in .word declaration")
 
@@ -265,7 +266,7 @@ class Simulator:
     def run(self):
      total_instructions = len(self.program)
      running = True
-
+     
      while running:
         running = False  # Assume all cores are finished
 
