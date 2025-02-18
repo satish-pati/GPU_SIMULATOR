@@ -116,18 +116,36 @@ class Simulator:
                             continue
                         
                         if ':' in tokens[0]:
-                            label = tokens[0].replace(':', '').strip()
+                            # label = tokens[0].replace(':', '').strip()
+                            # self.data_labels[label] = data_address
+                            # tokens = tokens[1:]
+                            label, *rest = tokens[0].split(':', 1)  # Split label and the rest
+                            label = label.strip()
                             self.data_labels[label] = data_address
-                            tokens = tokens[1:]
-                        
-                        for token in tokens:
-                            token = token.strip(',')
-                            if token.lstrip('-').isdigit():
-                                value = int(token)
+                            tokens = rest + tokens[1:]  # Merge back the rest with other tokens
+                            
+                        # for token in tokens:
+                        #     token = token.strip(',')
+                        #     if token.lstrip('-').isdigit():
+                        #         value = int(token)
+                        #         for core_id in range(4):
+                        #             self.memory.store_word(core_id * 1024 + data_address, value, core_id, True)
+                        #         data_address += 4
+                    values=[]
+                        if tokens and tokens[0] == ".word":  # Ensure it's a .word declaration
+                           if len(tokens) > 1: 
+                              values = re.split(r'[,\s]+', " ".join(tokens[1:]))  # Handle spaces and commas
+                              values = [v for v in values if v]  # Remove empty strings
+
+                        for value in values:
+                            try:
+                                num = int(value)  # Ensure it's a valid integer
                                 for core_id in range(4):
-                                    self.memory.store_word(core_id * 1024 + data_address, value, core_id, True)
+                                    self.memory.store_word(core_id * 1024 + data_address, num, core_id, True)
                                 data_address += 4
-                    
+                            except ValueError:
+                                print(f"Warning: Invalid integer '{value}' in .word declaration")
+                                
                     elif in_text_section:
                         label_match = re.match(r'^(\w+):', line)
                         if label_match:
