@@ -10,6 +10,7 @@ class Core:
         self.registers[32] = core_id  # Core ID stored in register x32
 
     def execute(self, instruction, rd, rs1, rs2, imm, label, label_map):
+        lst=[True]
         if rd == 32:
             print("Cannot write to X32, it is read-only & contains core ID")
             self.pc += 1
@@ -42,13 +43,14 @@ class Core:
                 return
             address = self.registers[rs1] + imm
             temp = self.registers[rd]
-            self.registers[rd] = self.memory.load_word(address, self.core_id, self.is_active)
-            if self.is_active:
+            self.registers[rd] = self.memory.load_word(address, self.core_id, self.is_active,lst)
+
+            if lst[0]:
                 print(f"Core {self.core_id} - LW: x{rd} loaded with {self.registers[rd]} from address {address}")
             else:
                 print(f"x{rd} contains its previously loaded value (if not loaded contains 0)")
                 self.registers[rd] = temp
-                self.is_active = True
+                lst[0] = [True]
             self.pc += 1
         elif instruction.lower() == "la":
             if rd == 0:
@@ -60,11 +62,12 @@ class Core:
             self.pc += 1
         elif instruction.lower() == "sw":
             address = self.registers[rs1] + imm
-            self.memory.store_word(address, self.registers[rs2], self.core_id, self.is_active)
-            if self.is_active:
+            self.memory.store_word(address, self.registers[rs2], self.core_id, self.is_active,lst)
+            print(lst[0])
+            if lst[0]:
                 print(f"Core {self.core_id} - SW: Stored {self.registers[rs2]} at address {address}")
             else:
-                self.is_active = True
+                lst[0] = [True]
             self.pc += 1
         elif instruction.lower() == "bne":
             if self.registers[rs1] != self.registers[rs2]:
