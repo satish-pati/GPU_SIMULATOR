@@ -145,3 +145,7 @@ class Core:
         print(f"\nRegister Dump for Core {self.core_id}:")
         for i in range(33):
             print(f"x{i} = {self.registers[i]}")
+
+ # Inside Core class
+def get_registers_str(self):
+    return "\n".join([f"X{i}: {self.registers[i]}" for i in range(len(self.registers))])
