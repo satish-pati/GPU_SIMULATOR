@@ -58,8 +58,22 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 
 ## Meeting Minutes
-### **Meeting 1 (28-Jan-2025)**
-- **Members**: Alice, Bob, Charlie, Dave
+### **Meeting 1 (20-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  - Finalize the README file for submission.
+  - Ensure all instructions execute correctly without errors.
+  - Perform a final review of the documentation and code
+  - Validate instruction parsing and execution one last time.
+- **Tasks**:
+  - Satish:
+   -  Made the README file and ensured clarity .
+   -  Performed final testing to confirm everything works as expected .
+  - Niharika:
+   - Revalidated instruction parsing and execution .
+   - Perform a final review of the code and documentation.
+### **Meeting 1 (19-Feb-2025)**
+- **Members**: Satish,Niharika
 - **Decisions**:
   - Chose Python for implementation.
   - Decided to support only basic instructions in Phase 1.
@@ -72,7 +86,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Integrate components.
   - Run test cases.
 ### **Meeting 1 (28-Jan-2025)**
-- **Members**: Alice, Bob, Charlie, Dave
+- **Members**: Satish,Niharika
 - **Decisions**:
   - Chose Python for implementation.
   - Decided to support only basic instructions in Phase 1.
@@ -85,20 +99,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Integrate components.
   - Run test cases.
 ### **Meeting 1 (28-Jan-2025)**
-- **Members**: Alice, Bob, Charlie, Dave
-- **Decisions**:
-  - Chose Python for implementation.
-  - Decided to support only basic instructions in Phase 1.
-- **Tasks**:
-  - Alice: Memory model implementation (Deadline: 5-Feb-2025)
-  - Bob: Instruction parsing and execution (Deadline: 7-Feb-2025)
-  - Charlie: Register implementation (Deadline: 6-Feb-2025)
-  - Dave: Assembly file reading (Deadline: 8-Feb-2025)
-- **Next Steps**:
-  - Integrate components.
-  - Run test cases.
-### **Meeting 1 (28-Jan-2025)**
-- **Members**: Alice, Bob, Charlie, Dave
+- **Members**: Satish,Niharika
 - **Decisions**:
   - Chose Python for implementation.
   - Decided to support only basic instructions in Phase 1.
