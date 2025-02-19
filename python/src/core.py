@@ -64,7 +64,7 @@ class Core:
         elif instruction.lower() == "sw":
             address = self.registers[rs1] + imm
             self.memory.store_word(address, self.registers[rs2], self.core_id, self.is_active,lst)
-            print(lst[0])
+            
             if lst[0]:
                 self.is_active=True
                  #print(f"Core {self.core_id} - SW: Stored {self.registers[rs2]} at address {address}")
