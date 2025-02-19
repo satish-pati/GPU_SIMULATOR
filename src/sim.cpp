@@ -298,23 +298,36 @@ std::vector<std::tuple<std::string, int, int, int, int>> loadProgramFromFile(con
 */
 std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(const std::string &line)
 {
+    
     std::istringstream iss(line);
     std::string instr;
     int rd = 0, rs1 = 0, rs2 = 0, imm = 0;
     std::string label;
     char comma;
     iss >> instr;
+    
+    
     if (instr == "add" || instr == "sub"||instr == "ADD"||instr == "SUB")
     {
+       
+    
         std::string rdStr, rs1Str, rs2Str;
         // Read register names as strings
-        iss >> rdStr;
-        if (iss.peek() == ',') iss.ignore();
-        iss >> rs1Str;
-        if (iss.peek() == ',') iss.ignore();
-        iss >> rs2Str;
+        std::getline(iss, rdStr, ',');
+    std::getline(iss, rs1Str, ',');
+    std::getline(iss, rs2Str);
 
+    auto trim = [](std::string &str) {
+        str.erase(0, str.find_first_not_of(" \t\r\n"));
+        str.erase(str.find_last_not_of(" \t\r\n") + 1);
+    };
+
+    trim(rdStr);
+    trim(rs1Str);
+    trim(rs2Str);
+        std::cout << "Decoded registers: " << rdStr << ", " << rs1Str << ", " << rs2Str << std::endl;
         // Convert register strings to integer IDs
+        std::cout<<rdStr<<" "<<rs1Str<<" "<<rs2Str<<std::endl;
         rd = std::stoi(rdStr.substr(1)); // Remove 'x' and convert
         rs1 = std::stoi(rs1Str.substr(1));
         rs2 = std::stoi(rs2Str.substr(1));
