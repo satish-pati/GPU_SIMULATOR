@@ -39,7 +39,7 @@ class CodeEditorWindow:
         )
         self.code_input_section.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.output_section = scrolledtext.ScrolledText(
-            self.master, wrap=tk.WORD, state=tk.DISABLED, bg=text_bg, fg=text_fg, insertbackground="black",height=10
+            self.master, wrap=tk.WORD, state=tk.DISABLED, bg=text_bg, fg=text_fg, insertbackground="black",height=15
         )
         self.output_section.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         self.button_frame = tk.Frame(self.master, bg="white")
