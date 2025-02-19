@@ -21,17 +21,17 @@ class Simulator:
      instr = parts[0].lower()
      rd, rs1, rs2, imm, label = 0, 0, 0, 0, None  # Label is now None by default
 
-     if instr in {"add", "sub"}:
+     if instr.lower() in {"add", "sub"}:
         if len(parts) >= 4:
             rd, rs1, rs2 = map(lambda x: int(x[1:]), parts[1:4])
         return instr, rd, rs1, rs2, imm, label
 
-     elif instr == "addi":
+     elif instr.lower() == "addi":
         if len(parts) >= 4:
             rd, rs1, imm = int(parts[1][1:]), int(parts[2][1:]), int(parts[3])
         return instr, rd, rs1, rs2, imm, label
 
-     elif instr == "mv":
+     elif instr.lower() == "mv":
         if len(parts) >= 3:
             rd, rs1 = int(parts[1][1:]), int(parts[2][1:])
         return "addi", rd, rs1, 0, imm, label
@@ -45,7 +45,7 @@ class Simulator:
             rs1 = int(rs1[:-1][1:])
         return instr, rd, rs1, rs2, imm, label
 
-     elif instr == "la":
+     elif instr.lower() == "la":
         if len(parts) >= 3:
             rd = int(parts[1][1:])
             imm_label = parts[2]
@@ -56,7 +56,7 @@ class Simulator:
                 return None
         return instr, rd, 0, 0, imm, imm_label  # Store label correctly
 
-     elif instr == "sw":
+     elif instr.lower() == "sw":
         if len(parts) >= 3:
             rs2, imm_rs1 = parts[1], parts[2]
             rs2 = int(rs2[1:])
@@ -65,12 +65,12 @@ class Simulator:
             rs1 = int(rs1[:-1][1:])
         return instr, 0, rs1, rs2, imm, label
 
-     elif instr in {"bne", "beq", "ble"}:
+     elif instr.lower() in {"bne", "beq", "ble"}:
         if len(parts) >= 4:
             rs1, rs2, label = int(parts[1][1:]), int(parts[2][1:]), parts[3]
         return instr, 0, rs1, rs2, imm, label  # Store actual label
 
-     elif instr == "j":
+     elif instr.lower() == "j":
         if len(parts) > 1:
              
             label = parts[1]  # Store label correctly
