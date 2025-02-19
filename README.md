@@ -46,7 +46,7 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
   - `ADDI`,`MV`
   - `BEQ`,`BLE`
   - `J`,`JALR`
-  - **Additional (Optional) Features**:
+- **Additional (Optional) Features**:
   - Graphical interface in python version.
 - **Execution Model**:
   - Reads assembly file.
