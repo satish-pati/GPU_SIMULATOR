@@ -85,7 +85,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Test the excecution of BubbleSort in both version.
   - Final Error solving & reviewing code in both version
 - **Next Steps**:
-      - Satish:
+  - Satish:
        - Implement the Simulator Class in python (by 16-Feb-2025)
        - Test the excecution of BubbleSort in both version(by 17-Feb-2025)
   
@@ -101,8 +101,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Fix the parsing issuess  .data and  .text sections in assembly file reading.
   - Implement the code for bubbleSort in RISCV to test.
 - **Next Steps**:
-    - **Tasks**:
-      - Satish:
+  - Satish:
        - Implement the Core Class in python (by 16-Feb-2025)
        - Worked on assembly code of BubbleSort (by 17-Feb-2025)
          
@@ -118,7 +117,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implement the logic to handle labels in assembly file.(CPP)
   - Add the additional instructions BEQ,MV in CPP version.
 - **Tasks**:
-      - Satish:
+  - Satish:
        - Implement the .data section handling in CPP (by 16-Feb-2025)
        - Reimplement the Memory class in Python(by 17-Feb-2025)
   
@@ -133,7 +132,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Add and implement the instructions SW,BLE,J,JALR,JAL in new format.
   - Reimplement the previous instructions(hexcodes format) to normal decoding and execution.
 - **Tasks**:
-      - Satish:
+  - Satish:
        - Reimplement all the previous instructions in the new format.(by 11-Feb-2025)
        - Add and implement the instructions SW,BLE.(by 11-Feb-2025)
   
