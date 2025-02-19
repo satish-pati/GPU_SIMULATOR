@@ -176,7 +176,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
        - Create a github Repo and intial project files setup.(by 9-Feb-2025)
        - Design the classes needed for implementation.(by 9-Feb-2025)    
- -Niharika:
+   -Niharika:
        - Study how cores and memory interact, instruction handling, and assembly parsing.(by 9-Feb-2025)
        - Understand the execution logic for basic instructions.(by 9-Feb-2025)
 
