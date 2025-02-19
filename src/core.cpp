@@ -528,6 +528,7 @@ else if (instruction == "la"||instruction == "LA") {
         //if (isActive) {
             if(rd==0){
                 std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
+                pc += 1;
                 return;
                }
         std::cout << "Core " << coreID << " - ADDI: Register x" << (int)rd 
@@ -538,6 +539,7 @@ std::cout << " + " << imm
     }
     else if(instruction == "mv"||instruction == "MV"){
         if(rd==0){
+            pc+=1;
             std::cout<<" X0 is hardwired to 0 & contains x0=0"<<std::endl;
             return;
            }
