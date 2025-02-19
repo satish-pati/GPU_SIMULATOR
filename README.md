@@ -71,5 +71,44 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Next Steps**:
   - Integrate components.
   - Run test cases.
+### **Meeting 1 (28-Jan-2025)**
+- **Members**: Alice, Bob, Charlie, Dave
+- **Decisions**:
+  - Chose Python for implementation.
+  - Decided to support only basic instructions in Phase 1.
+- **Tasks**:
+  - Alice: Memory model implementation (Deadline: 5-Feb-2025)
+  - Bob: Instruction parsing and execution (Deadline: 7-Feb-2025)
+  - Charlie: Register implementation (Deadline: 6-Feb-2025)
+  - Dave: Assembly file reading (Deadline: 8-Feb-2025)
+- **Next Steps**:
+  - Integrate components.
+  - Run test cases.
+### **Meeting 1 (28-Jan-2025)**
+- **Members**: Alice, Bob, Charlie, Dave
+- **Decisions**:
+  - Chose Python for implementation.
+  - Decided to support only basic instructions in Phase 1.
+- **Tasks**:
+  - Alice: Memory model implementation (Deadline: 5-Feb-2025)
+  - Bob: Instruction parsing and execution (Deadline: 7-Feb-2025)
+  - Charlie: Register implementation (Deadline: 6-Feb-2025)
+  - Dave: Assembly file reading (Deadline: 8-Feb-2025)
+- **Next Steps**:
+  - Integrate components.
+  - Run test cases.
+### **Meeting 1 (28-Jan-2025)**
+- **Members**: Alice, Bob, Charlie, Dave
+- **Decisions**:
+  - Chose Python for implementation.
+  - Decided to support only basic instructions in Phase 1.
+- **Tasks**:
+  - Alice: Memory model implementation (Deadline: 5-Feb-2025)
+  - Bob: Instruction parsing and execution (Deadline: 7-Feb-2025)
+  - Charlie: Register implementation (Deadline: 6-Feb-2025)
+  - Dave: Assembly file reading (Deadline: 8-Feb-2025)
+- **Next Steps**:
+  - Integrate components.
+  - Run test cases.
 
 
