@@ -67,11 +67,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Validate instruction parsing and execution one last time.
 - **Tasks**:
   - Satish:
-   -  Made the README file and ensured clarity .
-   -  Performed final testing to confirm everything works as expected .
+     -  Made the README file and ensured clarity .
+     -  Performed final testing to confirm everything works as expected .
   - Niharika:
-   - Revalidated instruction parsing and execution .
-   - Perform a final review of the code and documentation.
+     - Revalidated instruction parsing and execution .
+     - Perform a final review of the code and documentation.
 ### **Meeting 1 (19-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
