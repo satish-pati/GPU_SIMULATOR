@@ -42,14 +42,17 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
   - `ADD`, `SUB`
   - `BNE`, `JAL`
   - `LW`, `SW`
-  - **One additional instruction of choice**
-  - Optional: `JALR` for function calls
+  - **Additional instruction of choice**
+  - `ADDI`,`MV`
+  - `BEQ`,`BLE`
+  - `J`,`JALR`
+  - **Additional (Optional) Features**:
+  - Graphical interface in python version.
 - **Execution Model**:
   - Reads assembly file.
   - Executes instructions across all cores.
   - Displays **final register and memory state**.
-- **Additional (Optional) Features**:
-  - Graphical interface in python version.
+
 ## Bubble Sort Implementation
 The simulator is capable of running a **bubble sort program** across all cores.
 
