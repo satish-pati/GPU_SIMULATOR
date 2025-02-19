@@ -88,7 +88,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
        - Implement the Simulator Class in python (by 16-Feb-2025)
        - Test the excecution of BubbleSort in both version(by 17-Feb-2025)
-  -Niharika:
+  - Niharika:
        - Add GUI for Python Version(by 17-Feb-2025)
        - Final Error solving & reviewing code in both versions(by 17-Feb-2025)
  
@@ -103,7 +103,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
        - Implement the Core Class in python (by 16-Feb-2025)
        - Worked on assembly code of BubbleSort (by 17-Feb-2025)      
-  -Niharika:
+  - Niharika:
        - Fix the parsing issuess  .data and  .text sections in assembly file reading(by 17-Feb-2025)
        - Testing of all instructions implemented till now with test cases(by 17-Feb-2025)
   
@@ -118,7 +118,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
        - Implement the .data section handling in CPP (by 16-Feb-2025)
        - Reimplement the Memory class in Python(by 17-Feb-2025)
-  -Niharika:
+  - Niharika:
        - Implement the labels  handling in CPP(by 17-Feb-2025)
        - Add the additional instructions BEQ,MV. (by 16-Feb-2025)
 
@@ -132,7 +132,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
        - Reimplement all the previous instructions in the new format.(by 11-Feb-2025)
        - Add and implement the instructions SW,BLE.(by 11-Feb-2025)
-  -Niharika:
+  - Niharika:
        - Implement the execution of instructions J,JALR,JAL.(by 11-Feb-2025)
        - Implement the proper reading of .text in Assembly file.(by 11-Feb-2025)
 ### **Meeting 1 (11-Feb-2025)**
@@ -145,7 +145,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
    - Satish:
        - Implement the Simulator class .(by 11-Feb-2025)
        - Implement the execution of instructions ADD,SUB,LW.(by 11-Feb-2025)  
-  -Niharika:
+  - Niharika:
        - Implement the execution of instructions ADDI,BNE,JAL.(by 11-Feb-2025)
        - Implement the logic for parsing and reading from Assembly File.(by 11-Feb-2025)
 
@@ -159,7 +159,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
    - Satish:
        - Implement basic Core, Memory, and Instruction classes.(by 11-Feb-2025)
        - Implement the logic for fetching instructions & execution of decoded instructions .(by 11-Feb-2025)
-  -Niharika:
+  - Niharika:
        - Implement the parsing of instructions &  converting them to hexcodes .(by 11-Feb-2025)
        - Implemente encoding & Decoding of hexcodes to match corresponding instructions.(by 11-Feb-2025)
 
@@ -176,7 +176,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
        - Create a github Repo and intial project files setup.(by 9-Feb-2025)
        - Design the classes needed for implementation.(by 9-Feb-2025)    
-   -Niharika:
+   - Niharika:
        - Study how cores and memory interact, instruction handling, and assembly parsing.(by 9-Feb-2025)
        - Understand the execution logic for basic instructions.(by 9-Feb-2025)
 
