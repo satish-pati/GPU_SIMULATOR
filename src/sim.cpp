@@ -696,7 +696,6 @@ loadProgramFromFile(const std::string &filename,Memory & memory) {
                     std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
                     labelMap[label] = instructionIndex;
                 }
-                continue; // Skip label-only lines
                  // After the label, check if there's an instruction
                  line = line.substr(colonPos + 1);
                  line.erase(0, line.find_first_not_of(" \t\r\n")); // Trim spaces after the label
