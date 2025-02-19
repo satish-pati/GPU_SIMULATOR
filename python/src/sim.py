@@ -268,7 +268,6 @@ class Simulator:
      while running:
         running = False  # Assume all cores are finished
 
-        print(f"\n--- Clock Cycle: {self.clock} ---")
 
         for i in range(4):
             if self.cores[i].pc < total_instructions:
