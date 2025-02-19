@@ -3,26 +3,6 @@
 ## Overview
 This project is a multi-core simulator inspired by [Ripes](https://github.com/mortbopet/Ripes). The simulator models a **4-core RISC-V processor**, that execute instructions concurrently while sharing memory. This is **Phase 1** of the project, with a future goal to convert the cores into GPU cores.
 
-## Features
-- **4-Core Simulation**: Each core operates independently but shares memory.
-- - **Memory Architecture**:
-  - **4KB memory**, divided equally among cores.
-  - Core 0 → First 1KB, Core 1 → Next 1KB, etc.
-- **Supported RISC-V Instructions**:
-  - `ADD`, `SUB`
-  - `BNE`, `JAL`
-  - `LW`, `SW`
-  - **One additional instruction of choice**
-  - Optional: `JALR` for function calls
-- **Execution Model**:
-  - Reads assembly file.
-  - Executes instructions across all cores.
-  - Displays **final register and memory state**.
-- **Additional (Optional) Features**:
-  - Graphical interface in python version.
-## Bubble Sort Implementation
-The simulator is capable of running a **bubble sort program** across all cores.
-
 ### Steps to Run
 ## Python Version
 1. Clone the repository:
@@ -46,13 +26,32 @@ The simulator is capable of running a **bubble sort program** across all cores.
    ```
 2. Compile and run:
    ```sh
- g++ -o simulator core.cpp memory.cpp sim.cpp Instruction.cpp
-
- ./simulator
+   g++ -o simulator core.cpp memory.cpp sim.cpp Instruction.cpp
+   
+   ./simulator
    ```
 3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
 4. View **register and memory outputs** after execution
 
+## Features
+- **4-Core Simulation**: Each core operates independently but shares memory.
+- - **Memory Architecture**:
+  - **4KB memory**, divided equally among cores.
+  - Core 0 → First 1KB, Core 1 → Next 1KB, etc.
+- **Supported RISC-V Instructions**:
+  - `ADD`, `SUB`
+  - `BNE`, `JAL`
+  - `LW`, `SW`
+  - **One additional instruction of choice**
+  - Optional: `JALR` for function calls
+- **Execution Model**:
+  - Reads assembly file.
+  - Executes instructions across all cores.
+  - Displays **final register and memory state**.
+- **Additional (Optional) Features**:
+  - Graphical interface in python version.
+## Bubble Sort Implementation
+The simulator is capable of running a **bubble sort program** across all cores.
 
 
 ## Meeting Minutes
