@@ -61,7 +61,7 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
 - **4-Core Simulation**: Each core operates independently but shares memory.
 - - **Memory Architecture**:
   - **4KB memory**, divided equally among cores.
-  - Core 0 → First 1KB, Core 1 → Next 1KB, etc.
+  - Core 0 → First 1KB, Core 1 → Next 1KB, Core 2 → Next 1KB,Core 3 → Next 1KB
 - **Supported RISC-V Instructions**:
   - `ADD`, `SUB`
   - `BNE`, `JAL`
