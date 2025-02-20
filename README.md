@@ -82,7 +82,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 
 ## Meeting Minutes
-### **Meeting 8 (20-Feb-2025)**
+### **Meeting 9 (20-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Finalize the README file for submission .
