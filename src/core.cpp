@@ -524,6 +524,38 @@ else if (instruction == "la"||instruction == "LA") {
             std::cout<<"In BEQ Instruction if condition is not taken"<<std::endl;
         }
     }
+    else if (instruction == "bge"||instruction == "BGE") {
+        if (registers[rs1] >= registers[rs2]) {
+            std::cout << "Core " << coreID << " - BEQ: x" << rs1 << " == x" << rs2 
+                      << " (Jumping to " << label << ")" << std::endl;
+            if (!label.empty()) {
+                pc = labelMap[label];  // Jump to label index
+            } else {
+                pc += imm;  // Fallback if label missing
+                
+            }
+            shouldIncrementPC = false;
+        }
+        else{
+            std::cout<<"In BEQ Instruction if condition is not taken"<<std::endl;
+        }
+    }
+    else if (instruction == "blt"||instruction == "BLT") {
+        if (registers[rs1] < registers[rs2]) {
+            std::cout << "Core " << coreID << " - BEQ: x" << rs1 << " == x" << rs2 
+                      << " (Jumping to " << label << ")" << std::endl;
+            if (!label.empty()) {
+                pc = labelMap[label];  // Jump to label index
+            } else {
+                pc += imm;  // Fallback if label missing
+                
+            }
+            shouldIncrementPC = false;
+        }
+        else{
+            std::cout<<"In BEQ Instruction if condition is not taken"<<std::endl;
+        }
+    }
     else if(instruction == "addi"||instruction == "ADDI"){
         //if (isActive) {
             if(rd==0){
