@@ -77,13 +77,14 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Decisions**:
   - Finalize the README file for submission .
   - Ensure all instructions execute correctly without errors.
+  - Add Instructions BGE,BLT in both versions
   - Perform a final review of the documentation and code.
   - Validate instruction parsing and execution one last time.
   - All the tasks should be completed before 20-Feb-2025 & submit the project.
 - **Tasks**:(done by 20-Feb-2025)
   - Satish:
      -  Made the README file and ensured clarity .
-     -  Performed final testing to confirm everything works as expected .
+     -  Added nstructions BGE,BLT in both versions & Performed final testing to confirm everything works as expected .
      -  Submitted the Project
   - Niharika:
      - Revalidated instruction parsing and execution .
@@ -94,7 +95,6 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Modify UI for Python version.
-  - Addition of instrutions BGE,BLT in both versions.
   - Test the excecution of BubbleSort in Python version.
   - Final Error solving & reviewing code in Python version
   - Fix parsing issues in  python vesrion.
@@ -102,9 +102,9 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Tasks**:
   - Satish:
      - Modifiy UI for Python version .( by 20-Feb-2025)
-     -  Add Instructions BGE,BLT in both versions.( by 20-Feb-2025)
+     - Test the excecution of BubbleSort in Python version.( by 20-Feb-2025)
   - Niharika:
-     - Fix parsing issues in  python vesrion and Test the excecution of BubbleSort in Python version.( by 20-Feb-2025)
+     - Fix parsing issues in  python version  .( by 20-Feb-2025)
      - Final Error solving & reviewing code in Python version( by 20-Feb-2025)
      
 ### **Meeting 7 (18-Feb-2025)**
