@@ -84,7 +84,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Tasks**:(done by 20-Feb-2025)
   - Satish:
      -  Made the README file and ensured clarity .
-     -  Added nstructions BGE,BLT in both versions & Performed final testing to confirm everything works as expected .
+     -  Added instructions BGE,BLT in both versions & Performed final testing to confirm everything works as expected .
      -  Submitted the Project
   - Niharika:
      - Revalidated instruction parsing and execution .
@@ -98,11 +98,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Test the excecution of BubbleSort in Python version.
   - Final Error solving & reviewing code in Python version
   - Fix parsing issues in  python vesrion.
+  - Fix some logical errors in cpp Version
 
 - **Tasks**:
   - Satish:
-     - Modifiy UI for Python version .( by 20-Feb-2025)
-     - Test the excecution of BubbleSort in Python version.( by 20-Feb-2025)
+     - Modifiy GUI for Python version .( by 20-Feb-2025)
+     - FIx errors in CPP version && Test the excecution of BubbleSort in Python version.( by 20-Feb-2025)
   - Niharika:
      - Fix parsing issues in  python version  .( by 20-Feb-2025)
      - Final Error solving & reviewing code in Python version( by 20-Feb-2025)
@@ -119,7 +120,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        - Implement the Simulator Class in python (by 19-Feb-2025)
        - Test the excecution of BubbleSort in CPP version(by 19-Feb-2025)
   - Niharika:
-       - Add intial GUI for Python Version(by 19-Feb-2025)
+       - Add  GUI for Python Version(by 19-Feb-2025)
        - Final Error solving & reviewing code in CPP versions(by 19-Feb-2025)
  
 ### **Meeting 6 (17-Feb-2025)**
@@ -187,7 +188,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   -Decoding hex codes into instructions.
 - **Tasks**:
    - Satish:
-       - Implement basic Core, Memory, and Instruction classes.(by 11-Feb-2025)
+       - Implement Core, Memory, and Instruction classes.(by 11-Feb-2025)
        - Implement the logic for fetching instructions & execution of decoded instructions .(by 11-Feb-2025)
   - Niharika:
        - Implement the parsing of instructions &  converting them to hexcodes .(by 11-Feb-2025)
