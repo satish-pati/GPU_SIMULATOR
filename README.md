@@ -4,19 +4,6 @@
 This project is a multi-core simulator inspired by [Ripes](https://github.com/mortbopet/Ripes). The simulator models a **4-core RISC-V processor**, that execute instructions concurrently while sharing memory. This is **Phase 1** of the project, currently developed in **Python and C++**, with a future goal to extend one based on feasibility and convert the cores into GPU cores.
 
 ### Steps to Run
-## Python Version
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
-   
-   cd python/src
-   ```
-2. Compile and run:
-   ```sh
-   python sim.py  
-   ```
-3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
-4. View **register and memory outputs** after execution.
 ## CPP Version
 1. Clone the repository:
    ```sh
@@ -32,6 +19,21 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
    ```
 3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
 4. View **register and memory outputs** after execution
+ 
+## Python Version
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
+   
+   cd python/src
+   ```
+2. Compile and run:
+   ```sh
+   python sim.py  
+   ```
+3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
+4. View **register and memory outputs** after execution.
+
 
 ## Features
 - **4-Core Simulation**: Each core operates independently but shares memory.
