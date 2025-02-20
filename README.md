@@ -120,7 +120,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Tasks**:
   - Satish:
      - Modifiy GUI for Python version .( by 20-Feb-2025)
-     - FIx errors in CPP version && Test the excecution of BubbleSort in Python version.( by 20-Feb-2025)
+     - Fix errors in CPP version && Test the excecution of BubbleSort & other instructions in Python version.( by 20-Feb-2025)
   - Niharika:
      - Fix parsing issues in  python version  .( by 20-Feb-2025)
      - Final Error solving & reviewing code in Python version( by 20-Feb-2025)
@@ -150,7 +150,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Tasks**:
   - Satish:
        - Implement the Core Class in python (by 18-Feb-2025)
-       - Worked on assembly code of BubbleSort (by 18-Feb-2025)      
+       - Work on assembly code of BubbleSort (by 18-Feb-2025)      
   - Niharika:
        - Fix the parsing issuess  .data and  .text sections in assembly file reading(by 18-Feb-2025)
        - Testing of all instructions implemented till now with test cases(by 18-Feb-2025)
@@ -191,7 +191,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implement the logic for parsing and reading from Assembly file.
 - **Tasks**:
    - Satish:
-       - Implement the Simulator class .(by 13-Feb-2025)
+       - Implement the Simulator class with header file & connect Cores ,memory and simulator class. .(by 13-Feb-2025)
        - Implement the execution of instructions ADD,SUB,LW.(by 13-Feb-2025)  
   - Niharika:
        - Implement the execution of instructions ADDI,BNE,JAL.(by 13-Feb-2025)
@@ -205,7 +205,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Decoding hex codes into instructions.
 - **Tasks**:
    - Satish:
-       - Implement Core, Memory, and Instruction classes.(by 11-Feb-2025)
+       - Implement the Core, Memory, and Instruction classes & Header files .(by 11-Feb-2025)
        - Implement the logic for fetching instructions & execution of decoded instructions .(by 11-Feb-2025)
   - Niharika:
        - Implement the parsing of instructions &  converting them to hexcodes .(by 11-Feb-2025)
@@ -223,7 +223,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Tasks**:
   - Satish:
        - Create a github Repo and intial project files setup.(by 9-Feb-2025)
-       - Design the classes needed for implementation.(by 9-Feb-2025)    
+       - Design and understand the Core,memory,Simulator classes needed for implementation.(by 9-Feb-2025)    
    - Niharika:
        - Study how cores and memory interact, instruction handling, and assembly parsing.(by 9-Feb-2025)
        - Understand the execution logic for basic instructions.(by 9-Feb-2025)
