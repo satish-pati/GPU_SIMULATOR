@@ -65,7 +65,7 @@ class Simulator:
             rs1 = int(rs1[:-1][1:])
         return instr, 0, rs1, rs2, imm, label
 
-     elif instr.lower() in {"bne", "beq", "ble"}:
+     elif instr.lower() in {"bne", "beq", "ble", "blt", "bge", "bgt"}:
         if len(parts) >= 4:
             rs1, rs2, label = int(parts[1][1:]), int(parts[2][1:]), parts[3]
         return instr, 0, rs1, rs2, imm, label  # Store actual label
@@ -258,7 +258,6 @@ class Simulator:
         
         except FileNotFoundError:
             print(f"Error: Unable to open file {filename}")
-        
         return program
     def execute_core(self,core, core_id, instruction_index, program, label_map):
      if instruction_index < len(program):
