@@ -450,9 +450,8 @@ std::tuple<std::string, int, int, int, int,std::string> assembleInstruction(cons
 
         return {instr, rd, rs1, rs2, imm,""};
     }
-    else if (instr == "bne" || instr == "beq"||instr == "ble" || instr == "BNE" || instr == "BEQ"||instr == "BLE") {
+    else if (instr == "bne" || instr == "beq"||instr == "ble" || instr == "BNE" || instr == "BEQ"||instr == "BLE"||instr == "BLT" || instr == "blt"||instr == "BGE"||instr == "bge") {
          std::string rs1Str, rs2Str, labelStr;
-        
         // Check if the input uses commas or spaces as separators
         if (line.find(',') != std::string::npos) {
             // Comma-separated format (e.g., bne x2, x3, label)
