@@ -29,10 +29,15 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
    ```
 2. Compile and run:
    ```sh
+   python gui.py  
+   ```
+    or
+   
+   ```sh
    python sim.py  
    ```
-3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
-4. View **register and memory outputs** after execution.
+4. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
+5. View **register and memory outputs** after execution.
 
 
 ## Features
