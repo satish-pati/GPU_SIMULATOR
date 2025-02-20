@@ -110,7 +110,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ### **Meeting 7 (18-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
-  - Add core GUI for Python Version.
+  - Add GUI for Python Version.
   - Implement the Simulator Class in python.
   - Test the excecution of BubbleSort in CPP version.
   - Final Error solving & reviewing code in CPP version
@@ -119,7 +119,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        - Implement the Simulator Class in python (by 19-Feb-2025)
        - Test the excecution of BubbleSort in CPP version(by 19-Feb-2025)
   - Niharika:
-       - Add GUI for Python Version(by 19-Feb-2025)
+       - Add intial GUI for Python Version(by 19-Feb-2025)
        - Final Error solving & reviewing code in CPP versions(by 19-Feb-2025)
  
 ### **Meeting 6 (17-Feb-2025)**
