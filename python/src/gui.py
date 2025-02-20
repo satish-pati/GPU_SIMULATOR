@@ -1,4 +1,4 @@
-import sys 
+import sys  
 import tkinter as tk
 from tkinter import scrolledtext
 from sim import Simulator
@@ -72,11 +72,24 @@ class CodeEditorWindow:
             activebackground="#005F99", activeforeground="white",
             relief="flat", padx=15, pady=5
         )
-        self.run_button.pack(pady=5)
+        self.run_button.pack(side=tk.LEFT, expand=True, padx=10, pady=5)  # Centered
+
+        # Clear Code Button
+        self.clear_button = tk.Button(
+            self.button_frame, text="🗑 Clear Code", command=self.clear_code,
+            bg="#FF5733", fg="white", font=("Arial", 14, "bold"),
+            activebackground="#CC4626", activeforeground="white",
+            relief="flat", padx=15, pady=5
+        )
+        self.clear_button.pack(side=tk.LEFT, expand=True, padx=10, pady=5)
 
         # Loader Label
         self.loader_label = tk.Label(self.master, text="", font=("Arial", 14), bg="#121212", fg="white")
         self.loader_label.grid(row=2, column=0, columnspan=2, pady=10)
+
+    def clear_code(self):
+        """Clear the code editor."""
+        self.code_input_section.delete("1.0", tk.END)
 
     def syntax_highlighting(self, event=None):
         """
@@ -109,6 +122,7 @@ class CodeEditorWindow:
         self.highlight_pattern(numbers, "number", number_color)
         self.highlight_pattern(comments, "comment", comment_color)
         self.highlight_pattern(directives, "directive", directive_color)
+
     def highlight_pattern(self, pattern, tag, color):
         """
         Highlight text matching a regex pattern.
@@ -128,6 +142,10 @@ class CodeEditorWindow:
         """
         Run the code entered in the editor.
         """
+        code = self.code_input_section.get("1.0", tk.END).strip()
+        if not code:  # Check if the code editor is empty
+          self.loader_label.config(text="Error: Code editor is empty!", fg="red")
+          return
         self.save_code()
         self.run_button.config(state=tk.DISABLED)
         self.loader_label.config(text="Running simulation... Please wait.")
