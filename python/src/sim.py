@@ -69,7 +69,13 @@ class Simulator:
         if len(parts) >= 4:
             rs1, rs2, label = int(parts[1][1:]), int(parts[2][1:]), parts[3]
         return instr, 0, rs1, rs2, imm, label  # Store actual label
-
+     elif instr.lower() in {"jal"}:
+        if len(parts) > 2:
+         rd, label = int(parts[1][1:]), parts[2]  # Extract destination register and label
+        elif len(parts) == 2:
+         rd, label = 1, parts[1]  # Default rd to x1 (return address) if not provided
+        return instr, rd, 0, 0, imm, label  
+       
      elif instr.lower() == "j":
         if len(parts) > 1:
              
@@ -257,7 +263,7 @@ class Simulator:
     def execute_core(self,core, core_id, instruction_index, program, label_map):
      if instruction_index < len(program):
         inst = program[instruction_index]
-        #print(f"\n[Core {core_id}] Executing: {inst[0]}")
+        print(f"\n[Core {core_id}] Executing: {inst[0]}")
         core.execute(inst[0], inst[1], inst[2], inst[3], inst[4], inst[5], label_map)
 
 
