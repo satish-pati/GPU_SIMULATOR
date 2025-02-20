@@ -69,7 +69,8 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
   - **Additional instruction of choice**
   - `ADDI`,`MV`
   - `BEQ`,`BLE`
-  - `J`,`BGE`,`BLT`
+  - `BLT`,`LA`
+  - `J`,`BGE`,
 - **Additional (Optional) Features**:
   - Graphical User interface in python version.
 - **Execution Model**:
@@ -167,12 +168,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Decided to switch from hexcodes to simpler decoding based on words of instruction.
-  - Add and implement the instructions SW,BLE,J,JALR,JAL in new format.
+  - Add and implement the instructions SW,BLE,J,JALR,JAL,LA in new format.
   - Reimplement the previous instructions(hexcodes format) to normal decoding and execution.
 - **Tasks**:
   - Satish:
        - Reimplement all the previous instructions in the new format.(by 15-Feb-2025)
-       - Add and implement the instructions SW,BLE.(by 15-Feb-2025)
+       - Add and implement the instructions SW,BLE,LA.(by 15-Feb-2025)
   - Niharika:
        - Implement the execution of instructions J,JALR,JAL.(by 15-Feb-2025)
        - Implement the proper reading of .text in Assembly file.(by 15-Feb-2025)
