@@ -72,7 +72,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 
 ## Meeting Minutes
-### **Meeting 8 (19-Feb-2025)**
+### **Meeting 8 (20-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Finalize the README file for submission .
@@ -84,27 +84,43 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
      -  Made the README file and ensured clarity .
      -  Performed final testing to confirm everything works as expected .
-       
      -  Submitted the Project
   - Niharika:
      - Revalidated instruction parsing and execution .
      - Perform a final review of the code and documentation.
      - Submitted the Project
 
+### **Meeting 8 (19-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  - Modify UI for Python version.
+  - Addition of instrutions BGE,BLT in both versions.
+  - Test the excecution of BubbleSort in Python version.
+  - Final Error solving & reviewing code in Python version
+  - Fix parsing issues in  python vesrion.
+
+- **Tasks**:
+  - Satish:
+     - Modifiy UI for Python version .( by 20-Feb-2025)
+     -  Add Instructions BGE,BLT in both versions.( by 20-Feb-2025)
+  - Niharika:
+     - Fix parsing issues in  python vesrion and Test the excecution of BubbleSort in Python version.( by 20-Feb-2025)
+     - Final Error solving & reviewing code in Python version( by 20-Feb-2025)
+     
 ### **Meeting 7 (18-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
-  - Add GUI for Python Version.(18-Feb-2025)
+  - Add core GUI for Python Version.
   - Implement the Simulator Class in python.
-  - Test the excecution of BubbleSort in both version.
-  - Final Error solving & reviewing code in both version
+  - Test the excecution of BubbleSort in CPP version.
+  - Final Error solving & reviewing code in CPP version
 - **Tasks**:
   - Satish:
-       - Implement the Simulator Class in python (by 16-Feb-2025)
-       - Test the excecution of BubbleSort in both version(by 17-Feb-2025)
+       - Implement the Simulator Class in python (by 19-Feb-2025)
+       - Test the excecution of BubbleSort in CPP version(by 19-Feb-2025)
   - Niharika:
-       - Add GUI for Python Version(by 17-Feb-2025)
-       - Final Error solving & reviewing code in both versions(by 17-Feb-2025)
+       - Add GUI for Python Version(by 19-Feb-2025)
+       - Final Error solving & reviewing code in CPP versions(by 19-Feb-2025)
  
 ### **Meeting 6 (17-Feb-2025)**
 - **Members**: Satish,Niharika
@@ -115,11 +131,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implement the code for bubbleSort in RISCV to test.
 - **Tasks**:
   - Satish:
-       - Implement the Core Class in python (by 16-Feb-2025)
-       - Worked on assembly code of BubbleSort (by 17-Feb-2025)      
+       - Implement the Core Class in python (by 18-Feb-2025)
+       - Worked on assembly code of BubbleSort (by 18-Feb-2025)      
   - Niharika:
-       - Fix the parsing issuess  .data and  .text sections in assembly file reading(by 17-Feb-2025)
-       - Testing of all instructions implemented till now with test cases(by 17-Feb-2025)
+       - Fix the parsing issuess  .data and  .text sections in assembly file reading(by 18-Feb-2025)
+       - Testing of all instructions implemented till now with test cases(by 18-Feb-2025)
   
 ### **Meeting 5 (15-Feb-2025)**
 - **Members**: Satish,Niharika
@@ -144,11 +160,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Reimplement the previous instructions(hexcodes format) to normal decoding and execution.
 - **Tasks**:
   - Satish:
-       - Reimplement all the previous instructions in the new format.(by 11-Feb-2025)
-       - Add and implement the instructions SW,BLE.(by 11-Feb-2025)
+       - Reimplement all the previous instructions in the new format.(by 15-Feb-2025)
+       - Add and implement the instructions SW,BLE.(by 15-Feb-2025)
   - Niharika:
-       - Implement the execution of instructions J,JALR,JAL.(by 11-Feb-2025)
-       - Implement the proper reading of .text in Assembly file.(by 11-Feb-2025)
+       - Implement the execution of instructions J,JALR,JAL.(by 15-Feb-2025)
+       - Implement the proper reading of .text in Assembly file.(by 15-Feb-2025)
 ### **Meeting 3 (11-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
@@ -157,11 +173,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   -Implement the logic for parsing and reading from Assembly file.
 - **Tasks**:
    - Satish:
-       - Implement the Simulator class .(by 11-Feb-2025)
-       - Implement the execution of instructions ADD,SUB,LW.(by 11-Feb-2025)  
+       - Implement the Simulator class .(by 13-Feb-2025)
+       - Implement the execution of instructions ADD,SUB,LW.(by 13-Feb-2025)  
   - Niharika:
-       - Implement the execution of instructions ADDI,BNE,JAL.(by 11-Feb-2025)
-       - Implement the logic for parsing and reading from Assembly File.(by 11-Feb-2025)
+       - Implement the execution of instructions ADDI,BNE,JAL.(by 13-Feb-2025)
+       - Implement the logic for parsing and reading from Assembly File.(by 13-Feb-2025)
 
 ### **Meeting 2 (9-Feb-2025)**
 - **Members**: Satish,Niharika
