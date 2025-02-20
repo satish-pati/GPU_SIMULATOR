@@ -263,7 +263,7 @@ class Simulator:
     def execute_core(self,core, core_id, instruction_index, program, label_map):
      if instruction_index < len(program):
         inst = program[instruction_index]
-        print(f"\n[Core {core_id}] Executing: {inst[0]}")
+        #print(f"\n[Core {core_id}] Executing: {inst[0]}")
         core.execute(inst[0], inst[1], inst[2], inst[3], inst[4], inst[5], label_map)
 
 
