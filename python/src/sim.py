@@ -223,7 +223,7 @@ class Simulator:
 
                                 
                     elif in_text_section:
-                        label_match = re.match(r'^(\w+):', line)
+                        label_match = re.match(r'^(\w+)\s*:', line)
                         if label_match:
                             label = label_match.group(1)
                             self.label_map[label] = instruction_index
