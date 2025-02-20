@@ -108,6 +108,29 @@ class Core:
             else:
                 self.pc += 1
                  #print("In BLE Instruction if condition not taken")
+        elif instruction.lower() == "blt":
+            if self.registers[rs1] < self.registers[rs2]:
+                 #print(f"Core {self.core_id} - BEQ: x{rs1} == x{rs2} (Jumping to {label})")
+                if label:
+                 should_increment_pc = False
+                 self.pc = label_map[label]
+                else :
+                 self.pc+=imm
+                
+            else:
+                self.pc += 1
+        elif instruction.lower() == "bge":
+            if self.registers[rs1] >= self.registers[rs2]:
+                 #print(f"Core {self.core_id} - BEQ: x{rs1} == x{rs2} (Jumping to {label})")
+                if label:
+                 should_increment_pc = False
+                 self.pc = label_map[label]
+                else :
+                 self.pc+=imm
+                
+            else:
+                self.pc += 1
+        
         
         elif instruction.lower() == "addi":
             if rd == 0:
