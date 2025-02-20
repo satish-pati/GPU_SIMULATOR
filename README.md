@@ -60,7 +60,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 
 ## Meeting Minutes
-### **Meeting 1 (19-Feb-2025)**
+### **Meeting 8 (19-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Finalize the README file for submission .
@@ -79,7 +79,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
      - Perform a final review of the code and documentation.
      - Submitted the Project
 
-### **Meeting 1 (18-Feb-2025)**
+### **Meeting 7 (18-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Add GUI for Python Version.(18-Feb-2025)
@@ -94,7 +94,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        - Add GUI for Python Version(by 17-Feb-2025)
        - Final Error solving & reviewing code in both versions(by 17-Feb-2025)
  
-### **Meeting 1 (17-Feb-2025)**
+### **Meeting 6 (17-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Decided to test all instructions implemented till now with test cases.
@@ -109,7 +109,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        - Fix the parsing issuess  .data and  .text sections in assembly file reading(by 17-Feb-2025)
        - Testing of all instructions implemented till now with test cases(by 17-Feb-2025)
   
-### **Meeting 1 (15-Feb-2025)**
+### **Meeting 5 (15-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Decided to also make simluator in python and extend it based on feasibility in phase2.
@@ -124,7 +124,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        - Implement the labels  handling in CPP(by 17-Feb-2025)
        - Add the additional instructions BEQ,MV. (by 16-Feb-2025)
 
-### **Meeting 1 (13-Feb-2025)**
+### **Meeting 4 (13-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Decided to switch from hexcodes to simpler decoding based on words of instruction.
@@ -137,7 +137,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Niharika:
        - Implement the execution of instructions J,JALR,JAL.(by 11-Feb-2025)
        - Implement the proper reading of .text in Assembly file.(by 11-Feb-2025)
-### **Meeting 1 (11-Feb-2025)**
+### **Meeting 3 (11-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   -Decided to Implemement the simulator class .
@@ -151,7 +151,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        - Implement the execution of instructions ADDI,BNE,JAL.(by 11-Feb-2025)
        - Implement the logic for parsing and reading from Assembly File.(by 11-Feb-2025)
 
-### **Meeting 1 (9-Feb-2025)**
+### **Meeting 2 (9-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   -Use hex codes for instruction decoding.
