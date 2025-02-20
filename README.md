@@ -4,25 +4,6 @@
 This project is a multi-core simulator inspired by [Ripes](https://github.com/mortbopet/Ripes). The simulator models a **4-core RISC-V processor**, that execute instructions concurrently while sharing memory. This is **Phase 1** of the project, currently developed in **Python and C++**, with a future goal to extend one based on feasibility and convert the cores into GPU cores.
 
 ### Steps to Run
-## CPP Version
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
-   
-   ```
-    ```sh
-      cd src
-      ```
-
-2. Compile and run:
-   ```sh
-   g++ -o simulator core.cpp memory.cpp sim.cpp Instruction.cpp
-   
-   ./simulator
-   ```
-3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
-4. View **register and memory outputs** after execution
- 
 ## Python Version
 1. Clone the repository:
    ```sh
@@ -46,6 +27,26 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
 5. View **register and memory outputs** after execution.
 
 
+## CPP Version
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
+   
+   ```
+    ```sh
+      cd src
+      ```
+
+2. Compile and run:
+   ```sh
+   g++ -o simulator core.cpp memory.cpp sim.cpp Instruction.cpp
+   
+   ./simulator
+   ```
+3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
+4. View **register and memory outputs** after execution
+ 
+
 ## Features
 - **4-Core Simulation**: Each core operates independently but shares memory.
 - - **Memory Architecture**:
@@ -57,7 +58,8 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
   - `LW`, `SW`
   - **Additional instruction of choice**
   - `ADDI`,`MV`
-  - `BEQ`,`BLE`,`J`
+  - `BEQ`,`BLE`
+  - `J`,`BGE`,`BLT`
 - **Additional (Optional) Features**:
   - Graphical User interface in python version.
 - **Execution Model**:
@@ -96,7 +98,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implement the Simulator Class in python.
   - Test the excecution of BubbleSort in both version.
   - Final Error solving & reviewing code in both version
-- **Next Steps**:
+- **Tasks**:
   - Satish:
        - Implement the Simulator Class in python (by 16-Feb-2025)
        - Test the excecution of BubbleSort in both version(by 17-Feb-2025)
@@ -111,7 +113,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implement the core Class in Python.
   - Fix the parsing issuess  .data and  .text sections in assembly file reading.
   - Implement the code for bubbleSort in RISCV to test.
-- **Next Steps**:
+- **Tasks**:
   - Satish:
        - Implement the Core Class in python (by 16-Feb-2025)
        - Worked on assembly code of BubbleSort (by 17-Feb-2025)      
@@ -153,7 +155,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   -Decided to Implemement the simulator class .
   -Implement the basic Primary Instructions ADD,SUB,LW,ADDI,BNE,JAL.
   -Implement the logic for parsing and reading from Assembly file.
-- **Next Steps**:
+- **Tasks**:
    - Satish:
        - Implement the Simulator class .(by 11-Feb-2025)
        - Implement the execution of instructions ADD,SUB,LW.(by 11-Feb-2025)  
@@ -167,7 +169,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   -Use hex codes for instruction decoding.
   -Implement basic Core, Memory, and Instruction classes.
   -Decoding hex codes into instructions.
-- **Next Steps**:
+- **Tasks**:
    - Satish:
        - Implement basic Core, Memory, and Instruction classes.(by 11-Feb-2025)
        - Implement the logic for fetching instructions & execution of decoded instructions .(by 11-Feb-2025)
@@ -184,7 +186,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 -Analyzed the given project architecture (RISCV) for better understanding.
 -Decided on the set of basic instructions to be implemented in Phase 1.
 -Assigned initial tasks  for development.
-- **Next Steps**:
+- **Tasks**:
   - Satish:
        - Create a github Repo and intial project files setup.(by 9-Feb-2025)
        - Design the classes needed for implementation.(by 9-Feb-2025)    
