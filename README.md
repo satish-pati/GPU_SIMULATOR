@@ -57,8 +57,7 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
   - `LW`, `SW`
   - **Additional instruction of choice**
   - `ADDI`,`MV`
-  - `BEQ`,`BLE`
-  - `J`,`JALR`
+  - `BEQ`,`BLE`,`J`
 - **Additional (Optional) Features**:
   - Graphical User interface in python version.
 - **Execution Model**:
