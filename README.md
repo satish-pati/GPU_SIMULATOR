@@ -2,6 +2,8 @@
 
 ## Overview
 This project is a multi-core simulator inspired by [Ripes](https://github.com/mortbopet/Ripes). The simulator models a **4-core RISC-V processor**, that execute instructions concurrently while sharing memory. This is **Phase 1** of the project, currently developed in **Python and C++**, with a future goal to extend one based on feasibility and convert the cores into GPU cores.
+
+
 ![Screenshot 2025-02-20 155636](https://github.com/user-attachments/assets/ebebad1a-c1d5-48b3-86e6-b05d03200218)
 
 
