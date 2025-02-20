@@ -168,9 +168,9 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ### **Meeting 3 (11-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
-  -Decided to Implemement the simulator class .
-  -Implement the basic Primary Instructions ADD,SUB,LW,ADDI,BNE,JAL.
-  -Implement the logic for parsing and reading from Assembly file.
+  - Decided to Implemement the simulator class .
+  - Implement the basic Primary Instructions ADD,SUB,LW,ADDI,BNE,JAL.
+  - Implement the logic for parsing and reading from Assembly file.
 - **Tasks**:
    - Satish:
        - Implement the Simulator class .(by 13-Feb-2025)
@@ -197,11 +197,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ### **Meeting 1 (7-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
--Decided to use C++ for implementation of Simulator.
--Designed the initial project structure and identified necessary files.
--Analyzed the given project architecture (RISCV) for better understanding.
--Decided on the set of basic instructions to be implemented in Phase 1.
--Assigned initial tasks  for development.
+- Decided to use C++ for implementation of Simulator.
+- Designed the initial project structure and identified necessary files.
+- Analyzed the given project architecture (RISCV) for better understanding.
+- Decided on the set of basic instructions to be implemented in Phase 1.
+- Assigned initial tasks  for development.
 - **Tasks**:
   - Satish:
        - Create a github Repo and intial project files setup.(by 9-Feb-2025)
