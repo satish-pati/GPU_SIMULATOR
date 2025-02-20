@@ -7,7 +7,9 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
 ![Screenshot 2025-02-20 155636](https://github.com/user-attachments/assets/ebebad1a-c1d5-48b3-86e6-b05d03200218)
 
 
-![Screenshot 2025-02-20 155615](https://github.com/user-attachments/assets/af1b3a46-3ea5-40da-ad47-957488dfb541)
+
+![Screenshot 2025-02-20 175130](https://github.com/user-attachments/assets/f4c66400-72e1-4c78-b66a-193cfb8043fe)
+
 
 
 
