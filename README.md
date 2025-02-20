@@ -9,8 +9,11 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
    ```sh
    git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
    
-   cd src
    ```
+    ```sh
+      cd src
+      ```
+
 2. Compile and run:
    ```sh
    g++ -o simulator core.cpp memory.cpp sim.cpp Instruction.cpp
@@ -25,8 +28,11 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
    ```sh
    git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
    
-   cd python/src
    ```
+    ```sh
+      cd python/src
+     ```
+
 2. Compile and run:
    ```sh
    python gui.py  
