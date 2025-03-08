@@ -277,7 +277,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 ## Meeting Minutes
 ---
-### **Meeting 7 (18-Feb-2025)**
+### **Meeting 7 (10-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   -Finalize the README file for submission .
@@ -289,7 +289,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        
   - Niharika:
        
-### **Meeting 6 (17-Feb-2025)**
+### **Meeting 6 (9-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   -Implementation of `MUL` intruction as it is needed .
@@ -300,7 +300,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Niharika:
        
   
-### **Meeting 5 (15-Feb-2025)**
+### **Meeting 5 (8-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   -Branch Instruction Implementation with CID specification.
@@ -311,7 +311,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Niharika:
        
 
-### **Meeting 4 (13-Feb-2025)**
+### **Meeting 4 (6-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   -Designed stall detection for cycles affected by hazards.
@@ -322,7 +322,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
        
   - Niharika:
        
-### **Meeting 3 (11-Feb-2025)**
+### **Meeting 3 (4-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Implemenatation of hazard detection.
@@ -334,7 +334,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Niharika:
     
 
-### **Meeting 2 (9-Feb-2025)**
+### **Meeting 2 (2-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
@@ -345,7 +345,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Niharika:
        
   
-### **Meeting 1 (29-Feb-2025)**
+### **Meeting 1 (28-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Decided to just focus on implementation using `cpp`.
