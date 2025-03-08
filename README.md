@@ -227,7 +227,135 @@ The simulator is capable of running a **bubble sort program** across all cores.
    - Niharika:
        - Study how cores and memory interact, instruction handling, and assembly parsing.(by 9-Feb-2025)
        - Understand the execution logic for basic instructions.(by 9-Feb-2025)
+---
+# PHASE-2
+---
+**Note** : we decided to continue development only in c++    language. `.cpp`
 
+### Features
+---
+#### Pipelining with 5 stages:
+
+- **Instruction Fetch (IF)**: Fetches the instruction from memory. Global fetch unit shared by all cores, each core fetches instructions simultaneously.
+- **Instruction Decode (ID)**: Decodes the instruction, reads register values, and prepares operands.
+- **Execute (EX)**: Performs arithmetic, logical and  memory address calculations.
+- **Memory Access (MEM)**: Handles loading and storing data by interacting with shared memory.
+- **Write Back (WB)**: Stores the computed results back into registers.
+
+#### Data Forwarding :
+- Eliminates unnecessary stalls by forwarding results from later pipeline stages directly to earlier ones.
+- Ensures that dependent instructions do not have to wait for data to be written back.
+
+#### Hazard Management:
+
+- Data Hazards: Fully resolved using data forwarding, reducing performance penalties.
+- Stall cycles introduced only when absolutely necessary, ensuring minimal delays.
+#### Configurable Instruction Latencies:
+
+- Each arithmetic instruction can be assigned a custom execution cycle count.Example: ADD = 1 cycle, MUL = 3 cycles, ensuring flexibility in execution modeling.
+
+#### Merged Compute Units for Efficiency:
+
+- A single global fetch unit services all cores, ensuring synchronized instruction execution.
+- Each core maintains its own independent decode, execute, memory, and writeback stages.
+- This setup balances resource sharing with parallel execution efficiency.
+
+#### CID-Based Conditional Execution (Only for Branch Instructions):
+
+- All cores fetch the same instruction, but branch execution depends on the Core ID (CID) register.
+- Enables selective branching per core while maintaining a unified instruction stream.
+
+#### Parallel Array Summation Across Cores:
+
+- A 100-element array is divided across four cores.
+
+- Each core computes a partial sum (first 25, next 25, etc.), with only Core 0 printing the final sum.
+
+#### Instructions Implemented:
+
+- `MUL`,`li`,`ecall`
+
+## Meeting Minutes
+---
+### **Meeting 7 (18-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  -Finalize the README file for submission .
+  - Ensure all instructions execute correctly without errors.
+  - Perform a final review of the documentation and code.
+  - Validate instruction parsing and execution one last time.
+- **Tasks**:
+  - Satish:
+       
+  - Niharika:
+       
+### **Meeting 6 (17-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  -Implementation of `MUL` intruction as it is needed .
+  -Implemenatation of `li` and `ecall` Instructions.
+- **Tasks**:
+  - Satish:
+       
+  - Niharika:
+       
+  
+### **Meeting 5 (15-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  -Branch Instruction Implementation with CID specification.
+  -Assembly code Implementation for for loop execution as specified
+- **Tasks**:
+  - Satish:
+       
+  - Niharika:
+       
+
+### **Meeting 4 (13-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  -Designed stall detection for cycles affected by hazards.
+  - Checking if all present instructions are working with and without forwarding.
+  - Implemented user-configurable instruction latencies.
+- **Tasks**:
+  - Satish:
+       
+  - Niharika:
+       
+### **Meeting 3 (11-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  - Implemenatation of hazard detection.
+  - Checking if hazards are correctly detected.
+  - Data Forwarding Implementation with enable and disable options.
+- **Tasks**:
+   - Satish:
+       
+  - Niharika:
+    
+
+### **Meeting 2 (9-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
+  - Implementation of all Instructions as per pipeline.
+- **Tasks**:
+   - Satish:
+      
+  - Niharika:
+       
+  
+### **Meeting 1 (29-Feb-2025)**
+- **Members**: Satish,Niharika
+- **Decisions**:
+  - Decided to just focus on implementation using `cpp`.
+  - analyzed the complete phase 2 project details and decided on how to proceed.
+  - Assigned  tasks and deadlines for development.
+- **Tasks**:
+  - Satish:
+  
+   - Niharika:
+      
 
 
 
