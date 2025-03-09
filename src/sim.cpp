@@ -59,9 +59,9 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
         trim(rdStr);
         trim(rs1Str);
         trim(rs2Str);
-        std::cout << "Decoded registers: " << rdStr << ", " << rs1Str << ", " << rs2Str << std::endl;
+        //std::cout << "Decoded registers: " << rdStr << ", " << rs1Str << ", " << rs2Str << std::endl;
         // Convert register strings to integer IDs
-        std::cout << rdStr << " " << rs1Str << " " << rs2Str << std::endl;
+        //std::cout << rdStr << " " << rs1Str << " " << rs2Str << std::endl;
         rd = std::stoi(rdStr.substr(1)); // Remove 'x' and convert
         rs1 = std::stoi(rs1Str.substr(1));
         rs2 = std::stoi(rs2Str.substr(1));
@@ -286,11 +286,11 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
             if (instr == "BLT" || instr == "blt")
                 instr = "bltcid";
 
-            cout << "cidDummy:" << cidDummy << "    cidValue:" << cidValue << endl;
-            std::cout << "BNE CID Parsed: instr=" << instr
-                      << " rd=" << rd << " rs1=" << rs1
-                      << " rs2=" << rs2 << " label=" << label << "ended" << std::endl;
-            std::cout << "bnenum:" << bnenum << std::endl;
+            //cout << "cidDummy:" << cidDummy << "    cidValue:" << cidValue << endl;
+           // std::cout << "BNE CID Parsed: instr=" << instr
+           //           << " rd=" << rd << " rs1=" << rs1
+            //          << " rs2=" << rs2 << " label=" << label << "ended" << std::endl;
+           // std::cout << "bnenum:" << bnenum << std::endl;
             return {instr, rd, rs1, rs2, imm, label};
         }
         if (line.find(',') != std::string::npos)
@@ -356,7 +356,7 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
 
     else
     {
-        std::cout << "None" << std::endl;
+        //std::cout << "None" << std::endl;
         return {instr, rd, rs1, rs2, imm, ""};
     }
 }
@@ -438,7 +438,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
 
                 if (!label.empty())
                 {
-                    std::cout << "Data Label found: " << label << " at address " << dataAddress << std::endl;
+                   // std::cout << "Data Label found: " << label << " at address " << dataAddress << std::endl;
                     dataLabels[label] = dataAddress;
                 }
 
@@ -542,7 +542,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
 
                 if (!label.empty())
                 {
-                    std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
+                  //  std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
                     labelMap[label] = instructionIndex;
                 }
                 // After the label, check if there's an instruction
@@ -669,8 +669,8 @@ public:
             program.push_back(tupleToInstruction(progTuples[i], i));
         }
 
-        std::cout << "\n=== Loaded Assembly Instructions ===\n";
-        for (const auto &instr : program)
+        //std::cout << "\n=== Loaded Assembly Instructions ===\n";
+        /*for (const auto &instr : program)
         {
             std::cout << instr.index << ": " << instr.opcode << " "
                       << "rd=" << instr.rd << " "
@@ -679,7 +679,7 @@ public:
                       << "imm=" << instr.imm << " "
                       << "label=" << instr.label
                       << std::endl;
-        }
+        }*/
 
         // Initialize cores and pipeline states
         for (int i = 0; i < 4; i++)
@@ -794,8 +794,8 @@ public:
         {
             fetchedInstr = program[globalPC];
             fetchedValid = true;
-            std::cout << "Global Fetch: Fetched instruction "
-                      << instrToString(fetchedInstr) << " at globalPC " << globalPC << std::endl;
+            /*std::cout << "Global Fetch: Fetched instruction "
+                      << instrToString(fetchedInstr) << " at globalPC " << globalPC << std::endl;*/
             globalPC++; // Increment global fetch pointer after fetching
         }
 
@@ -830,8 +830,8 @@ public:
                     // For branch, store, jump (J) and other control instructions,
                     // no register update is needed but we still count the instruction.
                     ps.completedInstr++;
-                    std::cout << "Core " << cid << " - WB: Committed instruction " 
-                              << instrToString(ps.WB.instr);
+                 //   std::cout << "Core " << cid << " - WB: Committed instruction " 
+                  //            << instrToString(ps.WB.instr);
                     if (ps.WB.instr.opcode == "sw" || ps.WB.instr.opcode == "SW" ||
                         ps.WB.instr.opcode == "bne" || ps.WB.instr.opcode == "BNE" ||
                         ps.WB.instr.opcode == "beq" || ps.WB.instr.opcode == "BEQ" ||
@@ -840,9 +840,9 @@ public:
                         ps.WB.instr.opcode == "bge" || ps.WB.instr.opcode == "BGE" ||
                         ps.WB.instr.opcode == "j"   || ps.WB.instr.opcode == "J")
                     {
-                        std::cout << " (No writeback needed)";
+                       // std::cout << " (No writeback needed)";
                     }
-                    std::cout << " with result " << ps.WB.computedResult << std::endl;
+                   // std::cout << " with result " << ps.WB.computedResult << std::endl;
                 }
                 ps.WB.valid = false;
             }
@@ -860,8 +860,8 @@ public:
                     uint32_t addr = ps.MEM.computedResult;
                     int memData = memory.loadWord(addr, cid, isActive);
                     ps.MEM.computedResult = memData;
-                    std::cout << "Core " << cid << " - LW: loaded " << memData
-                              << " from addr " << addr << std::endl;
+                   // std::cout << "Core " << cid << " - LW: loaded " << memData
+                    //          << " from addr " << addr << std::endl;
                    
                 }
                 else if (ps.MEM.instr.opcode == "sw" || ps.MEM.instr.opcode == "SW")
@@ -889,11 +889,11 @@ public:
             };
             int value = getVal(ps.MEM.instr.rs2);
             memory.storeWord(addr, value, cid, isActive);
-            std::cout << "Core " << cid << " - MEM: SW stored "
-                      << value << " to addr " << addr << std::endl;
+           // std::cout << "Core " << cid << " - MEM: SW stored "
+            //          << value << " to addr " << addr << std::endl;
         }
         
-                std::cout << "Core " << cid << instrToString(ps.MEM.instr) << " - MEM  proceed to WB" << std::endl;
+               // std::cout << "Core " << cid << instrToString(ps.MEM.instr) << " - MEM  proceed to WB" << std::endl;
 
                 ps.WB = ps.MEM;
                 ps.WB.stage = STAGE_WB;
@@ -905,11 +905,11 @@ public:
                 if (ps.EX.remainingLatency > 0)
                 {
                     const std::string &op = ps.EX.instr.opcode;
-                    std::cout << "Core " << cid << " - EX: " << op
-                              << " latency " << ps.EX.remainingLatency << std::endl;
+                    //std::cout << "Core " << cid << " - EX: " << op
+                      //        << " latency " << ps.EX.remainingLatency << std::endl;
                     ps.EX.remainingLatency--;
-                    std::cout << "Core " << cid << " - EX: " << op
-                              << " latency " << ps.EX.remainingLatency << std::endl;
+                    //std::cout << "Core " << cid << " - EX: " << op
+                    //          << " latency " << ps.EX.remainingLatency << std::endl;
                 }
                 else if (ps.EX.remainingLatency == 0)
                 {
@@ -933,12 +933,12 @@ public:
                         };
                         int rs1Val = getVal(ps.EX.instr.rs1);
                         int rs2Val = getVal(ps.EX.instr.rs2);
-                        std::cout<<"rs1Val: updated "<<rs1Val<<endl;
-                        std::cout<<"rs2Val:  updated "<<rs2Val<<endl;
+                        //std::cout<<"rs1Val: updated "<<rs1Val<<endl;
+                        //std::cout<<"rs2Val:  updated "<<rs2Val<<endl;
                         int result = core.ALUOperation(op, rs1Val, rs2Val, ps.EX.instr.imm);
                         ps.EX.computedResult = result;
-                        std::cout << "Core " << cid << " - EX: "
-                                  << instrToString(ps.EX.instr) << " result = " << result << std::endl;
+                        //std::cout << "Core " << cid << " - EX: "
+                          //        << instrToString(ps.EX.instr) << " result = " << result << std::endl;
                     }
                     else if (op == "lw" || op == "LW" || op == "sw" || op == "SW")
                     {
@@ -956,19 +956,19 @@ public:
                         //int base = core.readRegister(ps.EX.instr.rs1);
                         int addr = base + ps.EX.instr.imm;
                         ps.EX.computedResult = addr;
-                        std::cout << "Core " << cid << " - EX: computed address " << addr << std::endl;
+                        //std::cout << "Core " << cid << " - EX: computed address " << addr << std::endl;
                     }
                     else if (op == "la" || op == "LA")
                     {
                         if (ps.EX.instr.rd == 0)
                         {
-                            std::cout << "Core " << cid << " - La: X0 is hardwired to 0 and always 0" << std::endl;
+                            //std::cout << "Core " << cid << " - La: X0 is hardwired to 0 and always 0" << std::endl;
                         }
                         else
                         {
                             int computedValue =  ps.EX.instr.imm;
                             ps.EX.computedResult = computedValue;
-                           // bool isActive = true;
+                           //bool isActive = true;
                         //    int memValue = memory.loadWord(cid * 1024 + ps.EX.instr.imm, cid, isActive);
                          /*   std::cout << "Core " << cid << " - La: x" << ps.EX.instr.rd
                                       << " loaded with " << computedValue
@@ -980,8 +980,8 @@ public:
                         // For JAL, compute the link (address of the next instruction)
                         int link = ps.EX.instr.index + 1;
                         ps.EX.computedResult = link;
-                        std::cout << "Core " << cid << " - EX: JAL encountered, writing link "
-                                  << link << " and jumping to index " << ps.EX.instr.imm << std::endl;
+                        //std::cout << "Core " << cid << " - EX: JAL encountered, writing link "
+                          //        << link << " and jumping to index " << ps.EX.instr.imm << std::endl;
                         if (ps.ID.valid) { ps.stallCount++; }
                         ps.localPC = ps.EX.instr.imm;
                         ps.ID.valid = false;
@@ -990,8 +990,8 @@ public:
                     }
                     else if (op == "j" || op == "J")
                     {
-                        std::cout << "Core " << cid << " - EX: J encountered, jumping to index "
-                                  << ps.EX.instr.imm << std::endl;
+                        //std::cout << "Core " << cid << " - EX: J encountered, jumping to index "
+                          //        << ps.EX.instr.imm << std::endl;
                                   if (ps.ID.valid) { ps.stallCount++; }
 
                         ps.localPC = ps.EX.instr.imm;
@@ -1005,19 +1005,19 @@ public:
                         int rs1Val = core.readRegister(ps.EX.instr.rs1);
                         int rs2Val = ps.EX.instr.rs2;
                         int rdVal = ps.EX.instr.rd;
-                        std::cout << "Debug - Core ID: " << core.readRegister(32)
-                                  << ", rdVal: " << core.readRegister(ps.EX.instr.rd)
-                                  << ", bnenum: " << bnenum << std::endl;
+                        //std::cout << "Debug - Core ID: " << core.readRegister(32)
+                          //        << ", rdVal: " << core.readRegister(ps.EX.instr.rd)
+                              //    << ", bnenum: " << bnenum << std::endl;
 
                         bool taken = core.isBranchTaken(op, rs1Val, rs2Val, rdVal, bnenum);
 
                         if (taken)
                         {
-                            std::cout << "Core " << cid << " - EX: Branch "
-                                      << instrToString(ps.EX.instr)
-                                      << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
-                                      if (ps.ID.valid) { ps.stallCount++; 
-                                    std::cout<<"inc stall"<<endl;} // for IF down
+                            //std::cout << "Core " << cid << " - EX: Branch "
+                               //       << instrToString(ps.EX.instr)
+                               //       << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
+                                      if (ps.ID.valid) { ps.stallCount++; }
+                                  //  std::cout<<"inc stall"<<endl;} // for IF down
                             ps.localPC = ps.EX.instr.imm;
                             ps.ID.valid = false;
                             ps.IF.valid = false;  // Flush IF stage as well.
@@ -1055,9 +1055,9 @@ public:
                         int rs2Val = getVal(ps.EX.instr.rs2);
                         // if(bnenum) rs1Val=core.readRegister(32);//need to change
                         int rdVal = ps.EX.instr.rd;
-                        std::cout << "Debug - Core ID: " << core.readRegister(32)
-                                  << ", rdVal: " << core.readRegister(ps.EX.instr.rd)
-                                  <<rs1Val<<rs2Val << std::endl;
+                       // std::cout << "Debug - Core ID: " << core.readRegister(32)
+                         //         << ", rdVal: " << core.readRegister(ps.EX.instr.rd)
+                           //       <<rs1Val<<rs2Val << std::endl;
                         
 
                         bool taken = core.isBranchTaken(op, rs1Val, rs2Val, rdVal, bnenum);
@@ -1065,11 +1065,11 @@ public:
                         if (taken)
                         {
                             if (ps.ID.valid) { ps.stallCount++; 
-                                std::cout<<"inc stall"<<endl;
+                              //  std::cout<<"inc stall"<<endl;
                             }
-                            std::cout << "Core " << cid << " - EX: Branch "
-                                      << instrToString(ps.EX.instr)
-                                      << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
+                            //std::cout << "Core " << cid << " - EX: Branch "
+                             //         << instrToString(ps.EX.instr)
+                               //       << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
                                      
                            
                             ps.localPC = ps.EX.instr.imm;
@@ -1079,8 +1079,8 @@ public:
                         }
                         else
                         {
-                            std::cout << "Core " << cid << " - EX: Branch "
-                                      << instrToString(ps.EX.instr) << " not taken" << std::endl;
+                           // std::cout << "Core " << cid << " - EX: Branch "
+                            //          << instrToString(ps.EX.instr) << " not taken" << std::endl;
                                      
                         }
                     }
@@ -1107,9 +1107,9 @@ public:
                             consoleOutput[cid].emplace_back("", value);  // Store in the core's section
                         } 
                        
-                        std::cout << "[DEBUG] Cycle: " << clockCycles
-                                  << " | Core " << cid
-                                  << " | Executing ECALL"<<"  x10="<<x10 <<"  x17="<<x17<<std::endl;
+                        std::cout<< " | Core " << cid
+                                 << " | Executing ECALL"<<"  x10="<<x10 <<std::endl;
+                        
                     }
                     
 
@@ -1124,8 +1124,9 @@ public:
                 if (ps.EX.valid && ps.EX.remainingLatency > 0)
                 {
                     if (!stallCounted) { ps.stallCount++; stallCounted = true; 
-                        std::cout << "Core " << cid << " - ID: EX is busy, stalling "
-                        << instrToString(ps.ID.instr) << std::endl;}
+                       // cout << "\n=== Console Output Per Core ===\n";  std::cout << "Core " << cid << " - ID: EX is busy, stalling "
+                       // << instrToString(ps.ID.instr) << std::endl;
+                    }
                    
                     //ps.stallCount++;
                     // Stall: do not advance the instruction
@@ -1152,8 +1153,9 @@ public:
                 else if (hazardDetected(ps, ps.ID.instr) && ps.ID.instr.opcode !="bnecid"&&ps.ID.instr.opcode !="beqcid"&&ps.ID.instr.opcode !="BNECID"&&ps.ID.instr.opcode !="BEQCID"&& ps.ID.instr.opcode !="blecid"&&ps.ID.instr.opcode !="BLECID"&&ps.ID.instr.opcode !="bgecid"&&ps.ID.instr.opcode !="BLTCID"&&ps.ID.instr.opcode !="bltcid"&&ps.ID.instr.opcode !="BGECID")
                 {
                     if (!stallCounted) { ps.stallCount++; stallCounted = true; 
-                        std::cout << "Core " << cid << " - ID: Hazard detected, stalling "
-                        << instrToString(ps.ID.instr) << std::endl;}
+                        //std::cout << "Core " << cid << " - ID: Hazard detected, stalling "
+                        //<< instrToString(ps.ID.instr) << std::endl;
+                        }
                     
                     //ps.stallCount++;
                     // ps.EX.valid = true;
@@ -1163,8 +1165,9 @@ public:
                 else if (ps.EX.valid)
                 {
                     if (!stallCounted) { ps.stallCount++; stallCounted = true; 
-                        std::cout << "Core " << cid << " - ID: EX stage busy, stalling "
-                        << instrToString(ps.ID.instr) << std::endl;}
+                        //std::cout << "Core " << cid << " - ID: EX stage busy, stalling "
+                        //<< instrToString(ps.ID.instr) << std::endl;
+                        }
                  
                     //ps.stallCount++; // Stall because EX is busy
                 }
@@ -1173,8 +1176,8 @@ public:
                     ps.EX = ps.ID;
                     ps.EX.stage = STAGE_EX;
                     std::string op = ps.EX.instr.opcode;
-                    std::cout << "Core " << cid << " - ID: Decoding instruction "
-                              << instrToString(ps.ID.instr) << std::endl;
+                    //std::cout << "Core " << cid << " - ID: Decoding instruction "
+                             // << instrToString(ps.ID.instr) << std::endl;
                     if (latencyConfig.find(op) != latencyConfig.end())
                         ps.EX.remainingLatency = latencyConfig[op] - 1;
                     else
@@ -1186,8 +1189,8 @@ public:
             // --- Fetch Stage (IF) ---
            // IF Stage: Fetch instruction and load into IF register if conditions are met.
 if (fetchedValid) {
-    std::cout << "DEBUG: Core " << cid << " ps.localPC = " << ps.localPC 
-    << ", fetchedInstr.index = " << fetchedInstr.index << std::endl;
+   // std::cout << "DEBUG: Core " << cid << " ps.localPC = " << ps.localPC 
+    //<< ", fetchedInstr.index = " << fetchedInstr.index << std::endl;
     // Check if the fetched instruction matches the expected index.
     if (ps.localPC == fetchedInstr.index) {
         // Only load a new instruction into IF if IF is not already occupied.
@@ -1196,9 +1199,9 @@ if (fetchedValid) {
             ps.IF.instr = fetchedInstr;
             ps.IF.instr.index = fetchedInstr.index;
             ps.IF.stage = STAGE_IF;
-            std::cout << "Core " << cid << " - IF: Fetched instruction " 
-                      << fetchedInstr.opcode << " at index " 
-                      << fetchedInstr.index << std::endl;
+            //std::cout << "Core " << cid << " - IF: Fetched instruction " 
+             //         << fetchedInstr.opcode << " at index " 
+              //        << fetchedInstr.index << std::endl;
             ps.localPC++; // Advance localPC once the instruction is loaded into IF.
         } else {
             // IF register is already holding an instruction: count stall.
@@ -1212,9 +1215,9 @@ if (fetchedValid) {
         ps.IF.valid = false;
         //ps.stallCount++;
         if (!stallCounted && ps.localPC<program.size()) { ps.stallCount++; stallCounted = true; 
-            std::cout << "Core " << cid << " - IF: Fetched instruction index (" 
-            << fetchedInstr.index << ") does not match expected localPC (" 
-            << ps.localPC << "); stall counted" << std::endl;
+            //std::cout << "Core " << cid << " - IF: Fetched instruction index (" 
+           // << fetchedInstr.index << ") does not match expected localPC (" 
+            //<< ps.localPC << "); stall counted" << std::endl;
         }
        
     }
@@ -1224,21 +1227,22 @@ if (ps.IF.valid) {
     if (!ps.ID.valid) {
         ps.ID = ps.IF;
         ps.ID.stage = STAGE_ID;
-        std::cout << "Core " << cid << " - IF->ID: Moved instruction " 
-                  << ps.ID.instr.opcode << " to Decode stage" << std::endl;
+       // std::cout << "Core " << cid << " - IF->ID: Moved instruction " 
+         //         << ps.ID.instr.opcode << " to Decode stage" << std::endl;
         ps.IF.valid = false;
     } else {
         // ID stage is busy so the instruction stays in IF; count stall.
         //ps.stallCount++;
         if (!stallCounted) { ps.stallCount++; stallCounted = true;
-            std::cout << "Core " << cid << " - IF: ID stage busy; stall counted" << std::endl; }
+           // std::cout << "Core " << cid << " - IF: ID stage busy; stall counted" << std::endl; 
+           }
        
     }
 }
 
         }
         clockCycles++;
-        std::cout << "---- End of Cycle " << clockCycles << " ----" << std::endl;
+        //std::cout << "---- End of Cycle " << clockCycles << " ----" << std::endl;
     }
 
     // Check if all pipelines are empty and no new instructions will be fetched.
@@ -1261,20 +1265,16 @@ if (ps.IF.valid) {
         {
             cycle();
         }
-        cout << "\n=== Console Output Per Core ===\n";
-      for (int i = 0; i < 4; i++) {  // Loop through each core
+       // cout << "\n=== Console Output Per Core ===\n";
+      /*for (int i = 0; i < 4; i++) {  // Loop through each core
           cout << "Core " << i << " Output: ";
           for (const auto& entry : consoleOutput[i]) {
               string str = std::get<0>(entry);
               int num = std::get<1>(entry);
-  
-              if (!str.empty()) 
-                  cout << str;
-              else 
                   cout << num;
           }
           cout<<endl;
-        }
+        }*/
         // Now print per-core statistics.
     // Final Results Output
 std::cout << "\n================== FINAL SIMULATION RESULTS ==================\n" << std::endl;
@@ -1301,13 +1301,13 @@ for (int i = 0; i < 4; i++) {
     cores[i].printRegisters();
     std::cout << "-------------------------------------------------------------" << std::endl;
 }
-/*
+
 std::cout << "\n================== FINAL STATE OF MEMORY =====================\n" << std::endl;
 for (int i = 0; i < 4; i++) {
-    std::cout << "Memory for Core " << i << ":" << std::endl;
+    //std::cout << "Memory for Core " << i << ":" << std::endl;
+        std::cout << "-------------------------------------------------------------" << std::endl;
     memory.printMem(i);
-    std::cout << "-------------------------------------------------------------" << std::endl;
-}*/
+}
 
     }
         
