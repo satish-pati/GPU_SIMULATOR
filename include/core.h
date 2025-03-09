@@ -1,34 +1,39 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "memory.h"
-#include <cstdint>
-#include "../include/instruction.h"
-#include <unordered_map>
+#include <vector>
+#include <tuple>
+#include <string>
+#include <array>
+#include "Memory.h"  
 
 class Core {
-private:
-    Memory& memory;
-    int coreID;
-    uint32_t baseAddress;
-    bool isActive; // Flag to check if the core should continue execution
-    //uint32_t registers[33] = {0};
-   std::vector<std::tuple<std::string, int, int, int, int,std::string>> &program ;// Reference to loaded instructions
 public:
-    uint32_t pc; // Program Counter
-    Core(Memory& memRef,std::vector<std::tuple<std::string, int, int, int, int,std::string>>& program, int coreId); // Fix constructor declaration
-     uint32_t registers[33] = {0};
-     
-    uint32_t fetch(); // Fetch an instruction from memory
-    void run(int numInstructions); // Run the core for a number of instructions
-    void execute( const std::string &instruction, int rd, int rs1, int rs2, int imm, const std::string &label, std::unordered_map<std::string, int> &labelMap); // Execute an instruction
+    Core(Memory &memRef, 
+         const std::vector<std::tuple<std::string, int, int, int, int, std::string>> &prog, 
+         int coreId);
 
-void printRegisters()const;
+         void printRegisters()const;
+    // ALU operation based on the instruction and operands.
+    int ALUOperation(const std::string &instruction, int rs1Val, int rs2Val, int imm);
 
-    //---------------added lines ---//
-    // uint32_t getRegister(int reg) const;
-    // void setRegister(int reg, uint32_t value);
-    //----------------end here-----//
+    // Determines if a branch instruction should be taken.
+    bool isBranchTaken(const std::string &instruction, int rs1Val, int rs2Val,int rdVal,bool bnenum);
+
+    // Write back the result to a register, ensuring registers x0 and x32 are read-only.
+    void writeBack(int rd, int value);
+
+    // Read the value of a register.
+    int readRegister(int reg);
+
+    // Reset all registers (except x32 which holds the core ID).
+    void reset();
+
+private:
+    Memory &memory;   // Reference to the memory module.
+    const std::vector<std::tuple<std::string, int, int, int, int, std::string>> program;  // Program instructions.
+    int coreID;       // Core identifier.
+    std::array<int, 33> registers; // Register file: x0 to x32 (33 registers total).
 };
 
-#endif // CORE_H
+#endif 
