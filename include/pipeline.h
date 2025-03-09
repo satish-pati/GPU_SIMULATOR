@@ -4,7 +4,7 @@
 
 #include <string>
 
-// A structure to hold an instruction (converted from your tuple representation)
+// A structure to hold an instruction 
 struct Instruction {
     std::string opcode;
     int rd;
@@ -12,7 +12,9 @@ struct Instruction {
     int rs2;
     int imm;
     std::string label;
-    int index; // The program index (for PC matching)
+    int index; // (for PC matching)
+    bool useCID;  // true if the branch uses the "cid" variant
+
 };
 
 // Pipeline stages enumeration
@@ -26,7 +28,6 @@ enum Stage {
     STAGE_COMPLETE
 };
 
-// Pipeline register to hold an instruction and additional info per stage
 struct PipelineRegister {
     bool valid;             // Indicates if the register holds a valid instruction
     Instruction instr;      // The instruction
@@ -38,4 +39,3 @@ struct PipelineRegister {
 };
 
 #endif
-
