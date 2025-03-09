@@ -1301,11 +1301,10 @@ for (int i = 0; i < 4; i++) {
     cores[i].printRegisters();
     std::cout << "-------------------------------------------------------------" << std::endl;
 }
-
 std::cout << "\n================== FINAL STATE OF MEMORY =====================\n" << std::endl;
 for (int i = 0; i < 4; i++) {
-    //std::cout << "Memory for Core " << i << ":" << std::endl;
-        std::cout << "-------------------------------------------------------------" << std::endl;
+   // std::cout << "Memory for Core " << i << ":" << std::endl;
+   std::cout << "-------------------------------------------------------------" << std::endl;
     memory.printMem(i);
 }
 
