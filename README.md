@@ -282,6 +282,8 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Decisions**:
   -Finalize the README file for submission .
   - Ensure all instructions execute correctly without errors.
+  - Verify the Excecution of test cases with sample assembly codes for correct Results.
+  - Verification of Stalls,Clock cycles,IPC Caluculation manually.
   - Perform a final review of the documentation and code.
   - Validate instruction parsing and execution one last time.
 - **Tasks**:
@@ -292,8 +294,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ### **Meeting 6 (9-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
-  -Implementation of `MUL` intruction as it is needed .
-  -Implemenatation of `li` and `ecall` Instructions.
+  - Implementation of `MUL` intruction as it is needed.
+  - Modifying Hazards detection,data forwarding & without forwarding to work with latencies.
+  - Implemenatation of `li` and `ecall` Instructions.
+  - Modifying ReadmeFile with all information For phase2
+  - Implemenation of Caluculation of final results .
 - **Tasks**:
   - Satish:
        
@@ -304,7 +309,10 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Members**: Satish,Niharika
 - **Decisions**:
   -Branch Instruction Implementation with CID specification.
-  -Assembly code Implementation for for loop execution as specified
+  -Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
+  -Implementation of shared data & Instruction memory as per Phase 2 requirements.
+  -Implemented user-configurable instruction latencies for arithmetic Instructions.
+  -Assembly code Implementation for for loop execution as specified.
 - **Tasks**:
   - Satish:
        
@@ -314,9 +322,10 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ### **Meeting 4 (6-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
-  -Designed stall detection for cycles affected by hazards.
+  - Implementaion of Data forwarding.
+  - Modifying the stages accoridngly whether to use forwarding or not.
+  - caluculation of stalls for cycles affected by hazards.
   - Checking if all present instructions are working with and without forwarding.
-  - Implemented user-configurable instruction latencies.
 - **Tasks**:
   - Satish:
        
@@ -326,8 +335,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Implemenatation of hazard detection.
-  - Checking if hazards are correctly detected.
-  - Data Forwarding Implementation with enable and disable options.
+  - Checking if hazards are correctly detected manually.
+  - Modify pipeline Stages to check for Hazards and insert Stalls.
+  - Implemenation of Single fetch Unit and pipeline Stages accordingly.
+  - Implementation of all Instructions as per pipeline.
+
+
 - **Tasks**:
    - Satish:
        
@@ -337,8 +350,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ### **Meeting 2 (2-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
+  - Implemenation of Basic Structure of  State of pipeline Using PipelineRegsiters.
   - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
-  - Implementation of all Instructions as per pipeline.
+  - Modify core class so that it suits with pipelining .
+  - Understand and study about how pipelining ,Hazards,latencies works.
+
 - **Tasks**:
    - Satish:
       
@@ -350,6 +366,9 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Decisions**:
   - Decided to just focus on implementation using `cpp`.
   - analyzed the complete phase 2 project details and decided on how to proceed.
+  - Transforming phase 1 files to be prepared for extension and enhancement in phase 2.
+  - Implementation of basic Structure of PipelineRegisters.
+  - Modifying instruction parsing using proper Stucture required for Pipelining Stages.
   - Assigned  tasks and deadlines for development.
 - **Tasks**:
   - Satish:
