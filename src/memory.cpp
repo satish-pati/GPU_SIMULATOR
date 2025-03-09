@@ -42,7 +42,7 @@ void Memory::storeWord(uint32_t address, uint32_t value, int coreID,bool &isActi
 void Memory::printMem(int coreID) const {
     uint32_t base = coreID * CORE_BLOCK_SIZE;
     uint32_t end = base + CORE_BLOCK_SIZE;
-    std::cout << "\nMemory for Core " << coreID << ":" << std::endl;
+    //std::cout << "\nMemory for Core " << coreID << ":" << std::endl;
     for (uint32_t i = base; i < end; i += 16) { // Print 4 words per line
         std::cout << "Addr(Bytes) " << i<<'-'<<(i+16) << ": ";
         for (int j = 0; j < 16 && (i + j) < end; j += 4) {
