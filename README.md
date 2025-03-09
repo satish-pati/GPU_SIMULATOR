@@ -56,7 +56,11 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
 2. Compile and run:
    ```sh
    g++ -o simulator core.cpp memory.cpp sim.cpp Instruction.cpp
+
+   or
    
+   g++ -static -o simulator.exe core.cpp memory.cpp sim.cpp Instruction.cpp
+    
    ./simulator
    ```
 3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
