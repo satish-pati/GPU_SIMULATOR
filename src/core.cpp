@@ -34,60 +34,60 @@ int Core::ALUOperation(const std::string &instruction, int rs1Val, int rs2Val, i
 }
 
 bool Core::isBranchTaken(const std::string &instruction, int rs1Val, int rs2Val,int rdVal,bool bnenum) {
-    std::cout<<"RDVALUE RDVALUE RDVALUE RDVALUE"<<rdVal<<std::endl;
+   // std::cout<<"RDVALUE RDVALUE RDVALUE RDVALUE"<<rdVal<<std::endl;
     if (instruction == "beqcid" || instruction == "BEQCID" ) {
        
             if(coreID == rs2Val)
             {
-                std::cout<<"rdVal :"<<rdVal<<std::endl;
-                std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+               // std::cout<<"rdVal :"<<rdVal<<std::endl;
+               // std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
                 return true;
             }
-            std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
+            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "bnecid" || instruction == "BNECID" ) {
        
             if(coreID != rs2Val)
             {
-                std::cout<<"rdVal :"<<rdVal<<std::endl;
-                std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+                //std::cout<<"rdVal :"<<rdVal<<std::endl;
+                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
                 return true;
             }
-            std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
+            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "blecid" || instruction == "BLECID" ) {
        
             if(coreID <= rs2Val)
             {
-                std::cout<<"rdVal :"<<rdVal<<std::endl;
-                std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+                //std::cout<<"rdVal :"<<rdVal<<std::endl;
+                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
                 return true;
             }
-            std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
+            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "bgecid" || instruction == "BGECID" ) {
        
             if(coreID >= rs2Val)
             {
-                std::cout<<"rdVal :"<<rdVal<<std::endl;
-                std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+               // std::cout<<"rdVal :"<<rdVal<<std::endl;
+                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
                 return true;
             }
-            std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
+            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "bltcid" || instruction == "BLTCID" ) {
        
             if(coreID < rs2Val)
             {
-                std::cout<<"rdVal :"<<rdVal<<std::endl;
-                std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+                //std::cout<<"rdVal :"<<rdVal<<std::endl;
+                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
                 return true;
             }
-            std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
+            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
 
@@ -97,8 +97,8 @@ bool Core::isBranchTaken(const std::string &instruction, int rs1Val, int rs2Val,
         
             if(rs1Val!=rs2Val)
             {
-                std::cout<<"rdVal :"<<rdVal<<std::endl;
-                std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+                //std::cout<<"rdVal :"<<rdVal<<std::endl;
+                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
                 return true;
             }
             return false;
@@ -156,7 +156,7 @@ void Core::writeBack(int rd, int value) {
         return;
     }
     registers[rd] = value;
-    std::cout << "Core " << coreID << " - WriteBack: x" << rd << " = " << value << std::endl;
+    //std::cout << "Core " << coreID << " - WriteBack: x" << rd << " = " << value << std::endl;
 }
 
 int Core::readRegister(int reg) {
