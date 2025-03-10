@@ -234,7 +234,8 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ---
 # PHASE-2
 ---
-**Note** : we decided to continue development only in c++    language. `.cpp`
+**Note** : we decided to continue development only in c++    language. `.cpp`  & assumed branches outcomes are known in executioon Stage only
+
 
 ### Features
 ---
