@@ -311,7 +311,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Modifying ReadmeFile with all information For phase2
   - Implemenation of Caluculation of final results .
 - **Tasks**:
-    ### Satish:
+      ### Satish:
     -  Modifying Hazards detection,data forwarding & without forwarding to work with latencies.
     -  Implemenation of Caluculation of final results.
     -  Implementation of `MUL` intruction as it is needed.
