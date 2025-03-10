@@ -312,9 +312,9 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implemenation of Caluculation of final results .
 - **Tasks**:
     ### Satish:
-    - Modifying Hazards detection,data forwarding & without forwarding to work with latencies.
-    - Implemenation of Caluculation of final results.
-    - Implementation of `MUL` intruction as it is needed.
+    -  Modifying Hazards detection,data forwarding & without forwarding to work with latencies.
+    -  Implemenation of Caluculation of final results.
+    -  Implementation of `MUL` intruction as it is needed.
       ### Niharika:
       - Implemenatation of `li` and `ecall` Instructions.
       - Assembly code Implementation for  - for loop execution as specified. .
@@ -322,18 +322,18 @@ The simulator is capable of running a **bubble sort program** across all cores.
 ### **Meeting 5 (8-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
-  -Branch Instruction Implementation with CID specification.
-  -Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
-  -Implementation of shared data & Instruction memory as per Phase 2 requirements.
-  -Implemented user-configurable instruction latencies for arithmetic Instructions.
-  -Assembly code Implementation for for loop execution as specified.
+  - Branch Instruction Implementation with CID specification.
+  - Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
+  - Implementation of shared data & Instruction memory as per Phase 2 requirements.
+  - Implemented user-configurable instruction latencies for arithmetic Instructions.
+  - Assembly code Implementation for for loop execution as specified.
 - **Tasks**:
      ###  Satish:
   - Implementation of Hazards detection with data forwarding.
   - Implemented user-configurable instruction latencies for arithmetic Instructions.
   - Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
       ### Niharika:
-  - Branch Instruction Implementation with CID specification
+  - Implement Branch Instruction Implementation with CID specification
   - Implementation of shared data & Instruction memory as per Phase 2 requirements.
   - Debugging and fixing of errors.
 
@@ -354,7 +354,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Modifying the pipeline stages transitions based on whether to use forwarding or not.
      ###  Niharika:
   - Implementation  of caluculation stalls for cycles affected by hazards.
-  - Ensure proper instruction fetching for each core.
+  - Implement proper instruction fetching for each core.
   - Checking if all present instructions are working with and without forwarding.
        
 ### **Meeting 3 (4-March-2025)**
@@ -383,10 +383,9 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - **Members**: Satish,Niharika
 - **Decisions**:
   - Implemenation of Basic Structure of  State of pipeline Using PipelineRegsiters.
-  - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
+  - Implementation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
   - Modify core class so that it suits with pipelining .
-  - Understand and study about how pipelining ,Hazards,latencies works.
-
+  - Debug and testing of pipeline.
 - **Tasks**:
    ### Satish:
    - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
@@ -395,7 +394,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
       
    ###  Niharika:
   - Design and implement the fetch unit into the pipeline.
-  - Modify the instruction parsing as per pipeline.
+  - Modify and implement instruction parsing as per pipeline.
   - Debug and test pipeline implementation.
   
        
@@ -408,7 +407,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Transforming phase 1 files to be prepared for extension and enhancement in phase 2.
   - Implementation of basic Structure of PipelineRegisters.
   - Modifying instruction parsing using proper Stucture required for Pipelining Stages.
-  - Assigned  tasks and deadlines for development.
+  - Understand and study about how pipelining ,Hazards,latencies works.
 - **Tasks**:
    ### Satish:
   - Design and Implementation of basic pipeline architecture.
@@ -418,7 +417,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   
    - Transform the phase 1 files to be prepared for extension and enhancement in phase 2.
    - Analyse phase 2 project details and plan how to proceed.
-   - Study about pipelining, hazards and latencies works.
+   - Study about  how pipelining, hazards and latencies works.
      
       
 
