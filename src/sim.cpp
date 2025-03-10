@@ -1030,8 +1030,8 @@ public:
                         }
                         else
                         {
-                            std::cout << "Core " << cid << " - EX: Branch "
-                                      << instrToString(ps.EX.instr) << " not taken" << std::endl;
+                            //std::cout << "Core " << cid << " - EX: Branch "
+                             //         << instrToString(ps.EX.instr) << " not taken" << std::endl;
                         }
                     }
                     else if (op == "bne" || op == "BNE" ||
