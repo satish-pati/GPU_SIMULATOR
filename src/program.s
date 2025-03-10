@@ -11,9 +11,13 @@ main:
     mv    x7, x5         # x7 now holds the base byte offset for this compute unit
     addi  x8,x0,0         # x8 = i = 0
     addi  x9,x0,0         # x9 = local sum = 0
-loop:
+    beq cid,0,loop0
+    beq cid,1,loop1
+    beq cid,2,loop2
+    beq cid,3,loop3
+loop0:
     addi  x11,x0,25       # x11 = 25 (number of elements to sum)
-    beq   x8, x11, loopend  # if i == 25, exit loop
+    beq   x8, x11, loopend0  # if i == 25, exit loop
     mul  x12, x8,x31    # x12 = i * 4 (byte offset for current element)
     add   x13, x7, x12  # x13 = base offset + (i * 4)
     la    x14, array    # x14 = base address of array
@@ -21,14 +25,68 @@ loop:
     lw    x16, 0(x15)   # x16 = array element
     add   x9, x9, x16   # local sum += element
     addi  x8, x8, 1     # i++
-    j     loop
-loopend:
+    j     loop0
+loop1:
+    addi  x11,x0,25       # x11 = 25 (number of elements to sum)
+    beq   x8, x11, loopend1  # if i == 25, exit loop
+    mul  x12, x8,x31    # x12 = i * 4 (byte offset for current element)
+    add   x13, x7, x12  # x13 = base offset + (i * 4)
+    la    x14, array    # x14 = base address of array
+    add   x15, x14, x13 # x15 = address of the current element in array
+    lw    x16, 0(x15)   # x16 = array element
+    add   x9, x9, x16   # local sum += element
+    addi  x8, x8, 1     # i++
+    j     loop1
+loop2:
+    addi  x11,x0,25       # x11 = 25 (number of elements to sum)
+    beq   x8, x11, loopend2  # if i == 25, exit loop
+    mul  x12, x8,x31    # x12 = i * 4 (byte offset for current element)
+    add   x13, x7, x12  # x13 = base offset + (i * 4)
+    la    x14, array    # x14 = base address of array
+    add   x15, x14, x13 # x15 = address of the current element in array
+    lw    x16, 0(x15)   # x16 = array element
+    add   x9, x9, x16   # local sum += element
+    addi  x8, x8, 1     # i++
+    j     loop2
+loop3:
+    addi  x11,x0,25       # x11 = 25 (number of elements to sum)
+    beq   x8, x11, loopend3  # if i == 25, exit loop
+    mul  x12, x8,x31    # x12 = i * 4 (byte offset for current element)
+    add   x13, x7, x12  # x13 = base offset + (i * 4)
+    la    x14, array    # x14 = base address of array
+    add   x15, x14, x13 # x15 = address of the current element in array
+    lw    x16, 0(x15)   # x16 = array element
+    add   x9, x9, x16   # local sum += element
+    addi  x8, x8, 1     # i++
+    j     loop3
+loopend1:
     la    x5, partialsums   # x5 = base address of partialsums
     addi    x7,x0,4           # x7 = 4 (byte size per word)
     mul   x6, x32, x7       # x6 = cid * 4 (compute byte offset for this core)
     add   x5, x5, x6        # x5 now points to partialsums[cid]
     sw    x9, 0(x5)         # store the local sum (x9) into the appropriate slot
     bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction          
+loopend2:
+    la    x5, partialsums   # x5 = base address of partialsums
+    addi    x7,x0,4           # x7 = 4 (byte size per word)
+    mul   x6, x32, x7       # x6 = cid * 4 (compute byte offset for this core)
+    add   x5, x5, x6        # x5 now points to partialsums[cid]
+    sw    x9, 0(x5)         # store the local sum (x9) into the appropriate slot
+    bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction          
+loopend3:
+    la    x5, partialsums   # x5 = base address of partialsums
+    addi    x7,x0,4           # x7 = 4 (byte size per word)
+    mul   x6, x32, x7       # x6 = cid * 4 (compute byte offset for this core)
+    add   x5, x5, x6        # x5 now points to partialsums[cid]
+    sw    x9, 0(x5)         # store the local sum (x9) into the appropriate slot
+    bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction             
+loopend0:
+    la    x5, partialsums   # x5 = base address of partialsums
+    addi    x7,x0,4           # x7 = 4 (byte size per word)
+    mul   x6, x32, x7       # x6 = cid * 4 (compute byte offset for this core)
+    add   x5, x5, x6        # x5 now points to partialsums[cid]
+    sw    x9, 0(x5)         # store the local sum (x9) into the appropriate slot
+    bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction       
 finish:
     la x5,partialsums
     lw  x21,0(x5) #partialsums[0]
