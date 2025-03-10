@@ -291,12 +291,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Perform a final review of the documentation and code.
   - Validate instruction parsing and execution one last time.
 - **Tasks**:
-  - Satish:
+    ###  Satish:
   - Verification of Stalls,Clock cycles,IPC Caluculation manually.
   - Finalize the README file for submission.
   - Modification of Assembly code test case for submission.
   - Verify the Excecution of test cases with sample assembly codes for correct Results.
-  - Niharika:
+    ###  Niharika:
   - Ensure all instructions execute correctly without errors.
   - Perform a final review of the documentation and code.
   - Validate instruction parsing and execution one last time.
@@ -311,11 +311,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Modifying ReadmeFile with all information For phase2
   - Implemenation of Caluculation of final results .
 - **Tasks**:
-  - Satish:
+    ### Satish:
     - Modifying Hazards detection,data forwarding & without forwarding to work with latencies.
     - Implemenation of Caluculation of final results.
     - Implementation of `MUL` intruction as it is needed.
-  - Niharika:
+      ### Niharika:
       - Implemenatation of `li` and `ecall` Instructions.
       - Assembly code Implementation for  - for loop execution as specified. .
       - Modifying ReadmeFile with new information For phase2.
@@ -328,11 +328,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   -Implemented user-configurable instruction latencies for arithmetic Instructions.
   -Assembly code Implementation for for loop execution as specified.
 - **Tasks**:
-  - Satish:
+     ###  Satish:
   - Implementation of Hazards detection with data forwarding.
   - Implemented user-configurable instruction latencies for arithmetic Instructions.
   - Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
-  - Niharika:
+      ### Niharika:
   - Branch Instruction Implementation with CID specification
   - Implementation of shared data & Instruction memory as per Phase 2 requirements.
   - Debugging and fixing of errors.
@@ -348,11 +348,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - caluculation of stalls for cycles affected by hazards.
   - Checking if all present instructions are working with and without forwarding.
 - **Tasks**:
-  - Satish:
+    ### Satish:
   - Modification of pipeline with and without Data forwarding.
   - Implementation of all Instructions as per pipeline.
   - Modifying the pipeline stages transitions based on whether to use forwarding or not.
-  - Niharika:
+     ###  Niharika:
   - Implementation  of caluculation stalls for cycles affected by hazards.
   - Ensure proper instruction fetching for each core.
   - Checking if all present instructions are working with and without forwarding.
@@ -368,12 +368,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 
 - **Tasks**:
-   - Satish:
+     ### Satish:
   - Implement hazard detection logic for different types of hazards.
   - Modify pipeline execution flow to insert stalls when needed.
   - Implementation the instructions as per pipeline new structure.
        
-  - Niharika:
+    ### Niharika:
   - Implement memory access handling logic.
   - Implementation of Branch and jump instructions as per new design. 
   - Checking if hazards are correctly detected manually.
@@ -388,12 +388,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Understand and study about how pipelining ,Hazards,latencies works.
 
 - **Tasks**:
-   - Satish:
+   ### Satish:
    - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
    - Implement pipeline control logic for stage transitions.
    - Modify Core class and execution of cores to work with Pipelining.
       
-  - Niharika:
+   ###  Niharika:
   - Design and implement the fetch unit into the pipeline.
   - Modify the instruction parsing as per pipeline.
   - Debug and test pipeline implementation.
