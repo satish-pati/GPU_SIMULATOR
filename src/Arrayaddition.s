@@ -59,13 +59,6 @@ loop3:
     add   x9, x9, x16   # local sum += element
     addi  x8, x8, 1     # i++
     j     loop3
-loopend0:
-    la    x5, partialsums   # x5 = base address of partialsums
-    addi    x7,x0,4           # x7 = 4 (byte size per word)
-    mul   x6, x32, x7       # x6 = cid * 4 (compute byte offset for this core)
-    add   x5, x5, x6        # x5 now points to partialsums[cid]
-    sw    x9, 0(x5)         # store the local sum (x9) into the appropriate slot
-    bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction      
 loopend1:
     la    x5, partialsums   # x5 = base address of partialsums
     addi    x7,x0,4           # x7 = 4 (byte size per word)
@@ -86,7 +79,14 @@ loopend3:
     mul   x6, x32, x7       # x6 = cid * 4 (compute byte offset for this core)
     add   x5, x5, x6        # x5 now points to partialsums[cid]
     sw    x9, 0(x5)         # store the local sum (x9) into the appropriate slot
-    bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction              
+    bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction             
+loopend0:
+    la    x5, partialsums   # x5 = base address of partialsums
+    addi    x7,x0,4           # x7 = 4 (byte size per word)
+    mul   x6, x32, x7       # x6 = cid * 4 (compute byte offset for this core)
+    add   x5, x5, x6        # x5 now points to partialsums[cid]
+    sw    x9, 0(x5)         # store the local sum (x9) into the appropriate slot
+    bne   cid, 0, end   # if core ID (x32) is not 0, skip final reduction       
 finish:
     la x5,partialsums
     lw  x21,0(x5) #partialsums[0]
@@ -100,3 +100,4 @@ finish:
     addi x17,x0,1 #x17 =1 integer
     ecall
 end:
+#complete
