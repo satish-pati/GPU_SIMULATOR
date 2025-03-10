@@ -331,6 +331,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
        
   - Niharika:
+  - Branch Instruction Implementation with CID specification
   - Implementation of shared data & Instruction memory as per Phase 2 requirements.
   - Assembly code Implementation for for loop execution as specified.
     
@@ -349,7 +350,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implementation of all Instructions as per pipeline.
        
   - Niharika:
-  - Implementation of caluculation of stalls for cycles affected by hazards.
+  - Implementation  of stalls for cycles affected by hazards.
   - Checking if all present instructions are working with and without forwarding.
        
 ### **Meeting 3 (4-March-2025)**
