@@ -300,7 +300,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Ensure all instructions execute correctly without errors.
   - Perform a final review of the documentation and code.
   - Validate instruction parsing and execution one last time.
-  - Debugging and fixing of errors.
+  - Testing of bubble sort && Debugging and fixing of errors.
        
 ### **Meeting 6 (9-March-2025)**
 - **Members**: Satish,Niharika
@@ -335,7 +335,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
       ### Niharika:
   - Implement Branch Instruction Implementation with CID specification
   - Implementation of shared data & Instruction memory as per Phase 2 requirements.
-  - Debugging and fixing of errors.
+  -  Improvement of pipelinehazard detection & Debugging and fixing of errors.
 
     
        
@@ -355,7 +355,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
      ###  Niharika:
   - Implementation  of caluculation stalls for cycles affected by hazards.
   - Implement proper instruction fetching for each core.
-  - Checking if all present instructions are working with and without forwarding.
+  - Improvement of Checking if all present instructions are working with and without forwarding.
        
 ### **Meeting 3 (4-March-2025)**
 - **Members**: Satish,Niharika
