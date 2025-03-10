@@ -415,8 +415,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implementation of Pipeline Registers.
   - Understanding and study about how pipelining, hazards and latencies works.
    ### Niharika:
+  
    - Transform the phase 1 files to be prepared for extension and enhancement in phase 2.
+   - Analyse phase 2 project details and plan how to proceed.
    - Study about pipelining, hazards and latencies works.
+     
       
 
 
