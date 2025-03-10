@@ -311,14 +311,14 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Modifying ReadmeFile with all information For phase2
   - Implemenation of Caluculation of final results .
 - **Tasks**:
-      ### Satish:
+     - ### Satish:
     -  Modifying Hazards detection,data forwarding & without forwarding to work with latencies.
     -  Implemenation of Caluculation of final results.
     -  Implementation of `MUL` intruction as it is needed.
-      ### Niharika:
-      - Implemenatation of `li` and `ecall` Instructions.
-      - Assembly code Implementation for  - for loop execution as specified. .
-      - Modifying ReadmeFile with new information For phase2.
+       - ### Niharika:
+       - Implemenatation of `li` and `ecall` Instructions.
+       - Assembly code Implementation for  - for loop execution as specified. .
+       - Modifying ReadmeFile with new information For phase2.
 ### **Meeting 5 (8-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
