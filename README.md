@@ -292,8 +292,13 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Validate instruction parsing and execution one last time.
 - **Tasks**:
   - Satish:
-       
+  - Verification of Stalls,Clock cycles,IPC Caluculation manually.
+  - Finalize the README file for submission.
+  - Verify the Excecution of test cases with sample assembly codes for correct Results.
   - Niharika:
+  -  Ensure all instructions execute correctly without errors.
+  - Perform a final review of the documentation and code.
+  - Validate instruction parsing and execution one last time.
        
 ### **Meeting 6 (9-March-2025)**
 - **Members**: Satish,Niharika
@@ -305,10 +310,13 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implemenation of Caluculation of final results .
 - **Tasks**:
   - Satish:
-       
+    - Modifying Hazards detection,data forwarding & without forwarding to work with latencies.
+    - Implemenation of Caluculation of final results.
+    - Implementation of `MUL` intruction as it is needed.
   - Niharika:
-       
-  
+    Implemenatation of `li` and `ecall` Instructions.
+  - Modifying ReadmeFile with all information For phase2.
+
 ### **Meeting 5 (8-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
@@ -319,8 +327,13 @@ The simulator is capable of running a **bubble sort program** across all cores.
   -Assembly code Implementation for for loop execution as specified.
 - **Tasks**:
   - Satish:
+  - Implementation of all Instructions as per pipeline.
+  - Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
        
   - Niharika:
+  - Implementation of shared data & Instruction memory as per Phase 2 requirements.
+  - Assembly code Implementation for for loop execution as specified.
+    
        
 
 ### **Meeting 4 (6-March-2025)**
@@ -332,8 +345,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Checking if all present instructions are working with and without forwarding.
 - **Tasks**:
   - Satish:
+  - Modification of pipeline with and without Data forwarding.
+  - Implementation of all Instructions as per pipeline.
        
   - Niharika:
+  - Implementation of caluculation of stalls for cycles affected by hazards.
+  - Checking if all present instructions are working with and without forwarding.
        
 ### **Meeting 3 (4-March-2025)**
 - **Members**: Satish,Niharika
@@ -347,8 +364,12 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 - **Tasks**:
    - Satish:
+  - Implement hazard detection logic for different types of hazards.
+  - Modify pipeline execution flow to insert stalls when needed.
        
   - Niharika:
+  - Implement memory access handling logic.
+  - Checking if hazards are correctly detected manually.
     
 
 ### **Meeting 2 (2-March-2025)**
@@ -361,8 +382,14 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 - **Tasks**:
    - Satish:
+   - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
+   - Implement pipeline control logic for stage transitions.
+   - Modify Core class and execution of cores to work with Pipelining.
       
   - Niharika:
+
+  - Design and integrate the fetch unit into the pipeline.
+  - Debug and test pipeline implementation.
        
   
 ### **Meeting 1 (28-Feb-2025)**
@@ -376,8 +403,13 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Assigned  tasks and deadlines for development.
 - **Tasks**:
   - Satish:
+  - Design and Implementation of baisc pipeline architecture.
+  - Implementation of Pipeline Registers.
+  
   
    - Niharika:
+   - Transform the phase 1 files to be prepared for extension and enhancement in phase 2.
+   - Study about pipelining, hazards and latencies works.
       
 
 
