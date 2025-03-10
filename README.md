@@ -294,11 +294,13 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
   - Verification of Stalls,Clock cycles,IPC Caluculation manually.
   - Finalize the README file for submission.
+  - Modification of Assembly code test case for submission.
   - Verify the Excecution of test cases with sample assembly codes for correct Results.
   - Niharika:
-  -  Ensure all instructions execute correctly without errors.
+  - Ensure all instructions execute correctly without errors.
   - Perform a final review of the documentation and code.
   - Validate instruction parsing and execution one last time.
+  - Debugging and fixing of errors.
        
 ### **Meeting 6 (9-March-2025)**
 - **Members**: Satish,Niharika
@@ -314,9 +316,9 @@ The simulator is capable of running a **bubble sort program** across all cores.
     - Implemenation of Caluculation of final results.
     - Implementation of `MUL` intruction as it is needed.
   - Niharika:
-    Implemenatation of `li` and `ecall` Instructions.
-  - Modifying ReadmeFile with all information For phase2.
-
+      - Implemenatation of `li` and `ecall` Instructions.
+      - Assembly code Implementation for  - for loop execution as specified. .
+      - Modifying ReadmeFile with new information For phase2.
 ### **Meeting 5 (8-March-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
@@ -327,13 +329,14 @@ The simulator is capable of running a **bubble sort program** across all cores.
   -Assembly code Implementation for for loop execution as specified.
 - **Tasks**:
   - Satish:
-  - Implementation of all Instructions as per pipeline.
+  - Implementation of Hazards detection with data forwarding.
+  - Implemented user-configurable instruction latencies for arithmetic Instructions.
   - Implementation fo Global PC and  local PC for cores and handle takeup correct Instructions across all Cores.
-       
   - Niharika:
   - Branch Instruction Implementation with CID specification
   - Implementation of shared data & Instruction memory as per Phase 2 requirements.
-  - Assembly code Implementation for for loop execution as specified.
+  - Debugging and fixing of errors.
+
     
        
 
@@ -348,9 +351,10 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Satish:
   - Modification of pipeline with and without Data forwarding.
   - Implementation of all Instructions as per pipeline.
-       
+  - Modifying the pipeline stages transitions based on whether to use forwarding or not.
   - Niharika:
-  - Implementation  of stalls for cycles affected by hazards.
+  - Implementation  of caluculation stalls for cycles affected by hazards.
+  - Ensure proper instruction fetching for each core.
   - Checking if all present instructions are working with and without forwarding.
        
 ### **Meeting 3 (4-March-2025)**
@@ -367,9 +371,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
    - Satish:
   - Implement hazard detection logic for different types of hazards.
   - Modify pipeline execution flow to insert stalls when needed.
+  - Implementation the instructions as per pipeline new structure.
        
   - Niharika:
   - Implement memory access handling logic.
+  - Implementation of Branch and jump instructions as per new design. 
   - Checking if hazards are correctly detected manually.
     
 
@@ -388,9 +394,10 @@ The simulator is capable of running a **bubble sort program** across all cores.
    - Modify Core class and execution of cores to work with Pipelining.
       
   - Niharika:
-
-  - Design and integrate the fetch unit into the pipeline.
+  - Design and implement the fetch unit into the pipeline.
+  - Modify the instruction parsing as per pipeline.
   - Debug and test pipeline implementation.
+  
        
   
 ### **Meeting 1 (28-Feb-2025)**
@@ -403,12 +410,11 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Modifying instruction parsing using proper Stucture required for Pipelining Stages.
   - Assigned  tasks and deadlines for development.
 - **Tasks**:
-  - Satish:
-  - Design and Implementation of baisc pipeline architecture.
+   ### Satish:
+  - Design and Implementation of basic pipeline architecture.
   - Implementation of Pipeline Registers.
-  
-  
-   - Niharika:
+  - Understanding and study about how pipelining, hazards and latencies works.
+   ### Niharika:
    - Transform the phase 1 files to be prepared for extension and enhancement in phase 2.
    - Study about pipelining, hazards and latencies works.
       
