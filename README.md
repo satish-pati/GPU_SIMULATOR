@@ -376,7 +376,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
     ### Niharika:
   - Implement memory access handling logic.
   - Implementation of Branch and jump instructions as per new design. 
-  - Checking if hazards are correctly detected manually.
+  - Implementation of `la` ,`lw` insturctions & Checking if hazards are correctly detected manually.
     
 
 ### **Meeting 2 (2-March-2025)**
@@ -390,12 +390,13 @@ The simulator is capable of running a **bubble sort program** across all cores.
    ### Satish:
    - Implemenatation of pipeline with stages  `IF`,`ID`,`EX`,`MEM`,`WB`.
    - Implement pipeline control logic for stage transitions.
-   - Modify Core class and execution of cores to work with Pipelining.
+   - Debug and testing of pipeline implementation.
       
    ###  Niharika:
+  - Modify Core class and execution of cores to work with Pipelining.
   - Design and implement the fetch unit into the pipeline.
   - Modify and implement instruction parsing as per pipeline.
-  - Debug and test pipeline implementation.
+  
   
        
   
