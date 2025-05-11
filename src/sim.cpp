@@ -15,7 +15,8 @@ using namespace std;
 
 std::unordered_map<std::string, int> labelMap;
 std::map<std::string, int> dataLabels;
-bool bnenum = false;
+bool sp= false;
+bool bnenum= false;
 
 // Converts a line (already parsed as a tuple) into an Instruction object.
 Instruction tupleToInstruction(const std::tuple<std::string, int, int, int, int, std::string> &t, int index)
@@ -30,7 +31,7 @@ Instruction tupleToInstruction(const std::tuple<std::string, int, int, int, int,
     instr.index = index;
     return instr;
 }
-
+// function for assembly instruction 
 std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(const std::string &line)
 {
 
@@ -40,6 +41,10 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
     std::string label;
     char comma;
     iss >> instr;
+    if (instr == "sync" || instr == "SYNC")
+    {
+        return {instr, 0, 0, 0, 0, ""};
+    }
 
     if (instr == "add" || instr == "sub" || instr == "ADD" || instr == "SUB" || instr == "mul" || instr == "MUL")
     {
@@ -59,15 +64,16 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
         trim(rdStr);
         trim(rs1Str);
         trim(rs2Str);
-        //std::cout << "Decoded registers: " << rdStr << ", " << rs1Str << ", " << rs2Str << std::endl;
-        // Convert register strings to integer IDs
-        //std::cout << rdStr << " " << rs1Str << " " << rs2Str << std::endl;
+        // std::cout << "Decoded registers: " << rdStr << ", " << rs1Str << ", " << rs2Str << std::endl;
+        //  Convert register strings to integer IDs
+        // std::cout << rdStr << " " << rs1Str << " " << rs2Str << std::endl;
         rd = std::stoi(rdStr.substr(1)); // Remove 'x' and convert
         rs1 = std::stoi(rs1Str.substr(1));
         rs2 = std::stoi(rs2Str.substr(1));
 
         return {instr, rd, rs1, rs2, imm, ""};
     }
+// ... inside assembleInstruction() ...
 
     if (instr == "addi" || instr == "ADDI")
     {
@@ -201,20 +207,49 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
 
         return {instr, rd, rs1, rs2, imm, ""};
     }
-    else if (instr == "li" || instr == "LI") {
+    else if (instr == "lw_spm" || instr == "LW_SPM") {
+        std::string rdStr, rs1Str, immStr;
+        // Format: lw_spm rd, offset(rs1)
+        getline(iss >> std::ws, rdStr, ',');
+        getline(iss >> std::ws, immStr, '(');
+        getline(iss >> std::ws, rs1Str, ')');
+        rd = std::stoi(rdStr.substr(1));   // Remove 'x' and convert
+        rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert
+        imm = std::stoi(immStr);           // Convert offset
+        sp=true;
+        return {instr, rd, rs1, rs2, imm, ""};
+    }
+    else if (instr == "sw_spm" || instr == "SW_SPM") {
+        std::string rs2Str, rs1Str, immStr;
+        // Format: sw_spm rs2, offset(rs1)
+        getline(iss >> std::ws, rs2Str, ',');
+        getline(iss >> std::ws, immStr, '(');
+        getline(iss >> std::ws, rs1Str, ')');
+        rs2 = std::stoi(rs2Str.substr(1)); // Remove 'x' and convert
+        rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert
+        imm = std::stoi(immStr);           // Convert offset
+        sp=true;
+        return {instr, rd, rs1, rs2, imm, ""};
+    }
+    
+    else if (instr == "li" || instr == "LI")
+    {
         std::string rdStr;
         int imm;
-    
+
         // Handle both comma and space-separated formats
-        if (line.find(',') != std::string::npos) {
+        if (line.find(',') != std::string::npos)
+        {
             getline(iss >> std::ws, rdStr, ',');
             iss >> imm;
-        } else {
+        }
+        else
+        {
             iss >> rdStr >> imm;
         }
-    
+
         rd = std::stoi(rdStr.substr(1)); // Extract register number
-    
+
         // Translate `li` into `addi rd, x0, imm`
         return {"addi", rd, 0, 0, imm, ""};
     }
@@ -265,12 +300,12 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
                 {
                     rd = 0;
                     cout << "wrong immediate given in bne instruction and immediate should be between 0 and 3 only" << endl;
-                    bnenum = false;
+                    //bnenum = false;
                 }
                 else
                 {
                     rd = 0;
-                    bnenum = true;
+                   // bnenum = true;
                 }
                 rs1 = 0;        // will change to coreID in sim classs---for now 0,no need of rd
                 rs2 = cidValue; // given in code ...just compare cid,core id---> rs1,rs2
@@ -286,11 +321,11 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
             if (instr == "BLT" || instr == "blt")
                 instr = "bltcid";
 
-            //cout << "cidDummy:" << cidDummy << "    cidValue:" << cidValue << endl;
-           // std::cout << "BNE CID Parsed: instr=" << instr
-           //           << " rd=" << rd << " rs1=" << rs1
+            // cout << "cidDummy:" << cidDummy << "    cidValue:" << cidValue << endl;
+            // std::cout << "BNE CID Parsed: instr=" << instr
+            //           << " rd=" << rd << " rs1=" << rs1
             //          << " rs2=" << rs2 << " label=" << label << "ended" << std::endl;
-           // std::cout << "bnenum:" << bnenum << std::endl;
+            // std::cout << "bnenum:" << bnenum << std::endl;
             return {instr, rd, rs1, rs2, imm, label};
         }
         if (line.find(',') != std::string::npos)
@@ -356,11 +391,12 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
 
     else
     {
-        //std::cout << "None" << std::endl;
+        // std::cout << "None" << std::endl;
         return {instr, rd, rs1, rs2, imm, ""};
     }
 }
 
+// function to load program from file
 std::vector<std::tuple<std::string, int, int, int, int, std::string>>
 loadProgramFromFile(const std::string &filename, Memory &memory)
 {
@@ -381,7 +417,8 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
     std::string line;
     bool inTextSection = false;
     bool inDataSection = false;
-    int dataAddress = 0x0; // Start of the data section
+    int dataAddress = DATA_BASE_ADDRESS;
+    ; // Start of the data section
     // int memoryAddress = 0x10010000; // Starting address for .data section
     int instructionIndex = 0;
 
@@ -445,7 +482,29 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                 // Read the remaining values in the line (e.g., `.word 10, 20, 30`)
                 while (iss >> token)
                 {
-                    // Token might be something like "10, 20, 30" so split it by commas
+                    size_t rangePos = token.find(':');
+                    if (rangePos != std::string::npos && rangePos > 0 && rangePos < token.length() - 1) {
+                        // Handle range format
+                        try {
+                            int start = std::stoi(token.substr(0, rangePos));
+                            int end = std::stoi(token.substr(rangePos + 1));
+                            
+                            if (start <= end) {
+                                for (int i = start; i <= end; i++) {
+                                    memory.sstoreWord(dataAddress, i, 0, is);
+                                    dataAddress += 4;
+                                }
+                            } else {
+                                for (int i = start; i >= end; i--) {
+                                    memory.sstoreWord(dataAddress, i, 0, is);
+                                    dataAddress += 4;
+                                }
+                            }
+                            continue; // Skip the normal comma processing for this token
+                        } catch (...) {
+                            // If conversion fails, treat it as normal token
+                        }
+                    }
                     size_t commaPos;
                     while ((commaPos = token.find(',')) != std::string::npos)
                     {
@@ -458,7 +517,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                             int value = std::stoi(valueStr);
                             // Store the value in all cores' memory
                            
-                                memory.storeWord( dataAddress, value, 0, is);
+                                memory.sstoreWord( dataAddress, value, 0, is);
                             
                             dataAddress += 4;
                         }
@@ -478,7 +537,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                         {
                             memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
                         }*/
-                        memory.storeWord( dataAddress, value, 0, is);
+                        memory.sstoreWord( dataAddress, value, 0, is);
                         dataAddress += 4;
                     }
                 }
@@ -505,7 +564,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                                 memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
                             }*/
                            // Store the value in shared memory only once.
-                           memory.storeWord(dataAddress, value, 0, is);
+                           memory.sstoreWord(dataAddress, value, 0, is);
                             dataAddress += 4;
                         }
                         token = token.substr(commaPos + 1); // Update the token to the part after the comma
@@ -523,12 +582,15 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                         {
                             memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
                         }*/
-                        memory.storeWord(dataAddress, value, 0, is);
+                        memory.sstoreWord(dataAddress, value, 0, is);
                         dataAddress += 4;
                     }
                 }
             }
         }
+
+          
+            
 
         if (inTextSection)
         {
@@ -542,7 +604,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
 
                 if (!label.empty())
                 {
-                  //  std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
+                    //  std::cout << "Label found: " << label << " at index " << instructionIndex << std::endl;
                     labelMap[label] = instructionIndex;
                 }
                 // After the label, check if there's an instruction
@@ -607,6 +669,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
 
     return program;
 }
+// convert instruction to string
 std::string instrToString(const Instruction &instr)
 {
     return "Index=" + std::to_string(instr.index) +
@@ -617,6 +680,7 @@ std::string instrToString(const Instruction &instr)
            " imm=" + std::to_string(instr.imm) +
            " label=" + instr.label;
 }
+// --- Utility Functions ---
 Instruction createNopInstruction()
 {
     Instruction nop;
@@ -637,12 +701,13 @@ struct PipelineState
     PipelineRegister EX;
     PipelineRegister MEM;
     PipelineRegister WB;
-    int localPC;        // Next expected instruction index for this core
-    int stallCount;     // Count of stall cycles
-    int completedInstr; // Number of instructions that reached WB (committed)
-    bool previf;        // Flag to ignore fetched instruction (after branch taken)
+    int localPC;         // Next expected instruction index for this core
+    int stallCount;      // Count of stall cycles
+    int completedInstr;  // Number of instructions that reached WB (committed)
+    bool previf;         // Flag to ignore fetched instruction (after branch taken)
+    bool waitingForSync; // Flag to indicate SYNC instruction is waiting
 
-    PipelineState() : localPC(0), stallCount(0), completedInstr(0), previf(false) {}
+    PipelineState() : localPC(0), stallCount(0), completedInstr(0), previf(false), waitingForSync(false) {}
 };
 
 // --- Simulator Class with Pipeline Implementation ---
@@ -655,33 +720,42 @@ public:
     int globalPC;                     // Single fetch unit pointer
     int clockCycles;
     bool forwardingEnabled;
-    std::unordered_map<std::string, int> latencyConfig; // e.g., {"ADD":1, "SUB":1, "ADDI":1, "MUL":3}
+    std::unordered_map<std::string, int> latencyConfig; //  {"ADD":1, "SUB":1, "ADDI":1, "MUL":3}
     std::vector<PipelineState> pipelineStates;          // One per core
-
+    int syncCounter;                                    //  counter for SYNC barrier.
 public:
-    Simulator(const std::string &filename) : clockCycles(0), globalPC(0)
+    Simulator(const std::string &filename) : clockCycles(0), globalPC(0),syncCounter(0)
     {
+        int l1Size,l1Isize, l2Size, blockSize, associativity, l1Latency, l2Latency, memLatency;
+        std::cout << "Enter L1D Cache Size in bytes: ";
+        std::cin >> l1Size;
+        std::cout << "Enter L1I Cache Size in bytes: ";
+        std::cin >> l1Isize;
+        std::cout << "Enter L2 Cache Size in bytes: ";
+        std::cin >> l2Size;
+        std::cout << "Enter Cache Block Size in bytes: ";
+        std::cin >> blockSize;
+        std::cout << "Enter Cache Associativity: ";
+        std::cin >> associativity;
+        std::cout << "Enter L1 Cache Access Latency (cycles): ";
+        std::cin >> l1Latency;
+        std::cout << "Enter L2 Cache Access Latency (cycles): ";
+        std::cin >> l2Latency;
+        std::cout << "Enter Main Memory Access Time (cycles): ";
+        std::cin >> memLatency;
+        memory.configureCaches(l1Isize,l1Size, l2Size, blockSize, associativity, l1Latency, l2Latency, memLatency);
+        std::cout<<"Instruction "<<std::endl;
         auto progTuples = loadProgramFromFile(filename, memory);
-
+                    std::cout<<"Instruction "<<std::endl;
         // Convert tuples into Instruction objects
         for (size_t i = 0; i < progTuples.size(); i++)
         {
+           // std::cout<<"Instruction "<<i<<std::endl;
+            auto isactive=true;
+            memory.sstoreWord(i*4,i,0,isactive);
             program.push_back(tupleToInstruction(progTuples[i], i));
         }
 
-        //std::cout << "\n=== Loaded Assembly Instructions ===\n";
-        /*for (const auto &instr : program)
-        {
-            std::cout << instr.index << ": " << instr.opcode << " "
-                      << "rd=" << instr.rd << " "
-                      << "rs1=" << instr.rs1 << " "
-                      << "rs2=" << instr.rs2 << " "
-                      << "imm=" << instr.imm << " "
-                      << "label=" << instr.label
-                      << std::endl;
-        }*/
-
-        // Initialize cores and pipeline states
         for (int i = 0; i < 4; i++)
         {
             cores.emplace_back(memory, progTuples, i);
@@ -694,47 +768,70 @@ public:
         forwardingEnabled = (fwdChoice == 'y' || fwdChoice == 'Y');
         std::cout << "Enter latency for ADD (cycles): ";
         int lat;
-       // std::cin >> lat;
-       do {
-        std::cin >> lat;
-        if (lat < 1) {
-            std::cout << "Error: Latency must be at least 1. Please try again." << std::endl;
-        }
-    } while (lat < 1);
+        // std::cin >> lat;
+        
+        /*for(int i=1;i<=20000;i++)   {
+            uint32_t word=(1008+((i-1)*4));
+            bool k=true;
+            for(int j=0;j<4;j++){
+                memory.storeWord(word,i ,j,k);
+            }
+        }*/
+        do
+        {
+            std::cin >> lat;
+            if (lat < 1)
+            {
+                std::cout << "Error: Latency must be at least 1. Please try again." << std::endl;
+            }
+        } while (lat < 1);
         latencyConfig["add"] = lat;
         latencyConfig["ADD"] = lat;
         std::cout << "Enter latency for SUB (cycles): ";
-        //std::cin >> lat;
-        do {
+        // std::cin >> lat;
+        do
+        {
             std::cin >> lat;
-            if (lat < 1) {
+            if (lat < 1)
+            {
                 std::cout << "Error: Latency must be at least 1. Please try again." << std::endl;
             }
         } while (lat < 1);
         latencyConfig["sub"] = lat;
         latencyConfig["SUB"] = lat;
-        //std::cin >> lat;
+        // std::cin >> lat;
         std::cout << "Enter latency for ADDI (cycles): ";
 
-        do {
-            
+        do
+        {
+
             std::cin >> lat;
-            if (lat < 1) {
+            if (lat < 1)
+            {
                 std::cout << "Error: Latency must be at least 1. Please try again." << std::endl;
             }
         } while (lat < 1);
         latencyConfig["addi"] = lat;
         latencyConfig["ADDI"] = lat;
         std::cout << "Enter latency for MUL (cycles): ";
-       // std::cin >> lat;
-       do {
-        std::cin >> lat;
-        if (lat < 1) {
-            std::cout << "Error: Latency must be at least 1. Please try again." << std::endl;
-        }
-     } while (lat < 1);
+        // std::cin >> lat;
+        do
+        {
+            std::cin >> lat;
+            if (lat < 1)
+            {
+                std::cout << "Error: Latency must be at least 1. Please try again." << std::endl;
+            }
+        } while (lat < 1);
         latencyConfig["mul"] = lat;
         latencyConfig["MUL"] = lat;
+        // --- Prompt for cache configuration ---
+        
+        if(l1Latency==1&&!sp) clockCycles=-10000;
+        for (int cid = 0; cid < 4; cid++) {
+            pipelineStates[cid].stallCount = 0;
+            pipelineStates[cid].waitingForSync = false;
+        }
     }
 
     // Hazard detection in the ID stage for a given core.
@@ -753,7 +850,7 @@ public:
             if (forwardingEnabled)
             {
                 // Even with forwarding, if a load is in EX, its data isn't ready until MEM.
-                if ((pr.instr.opcode == "lw" || pr.instr.opcode == "LW") && pr.stage == STAGE_MEM && dest == reg)
+                if ((pr.instr.opcode == "lw" || pr.instr.opcode == "LW" || pr.instr.opcode == "la" || pr.instr.opcode == "LA") && pr.stage == STAGE_MEM && dest == reg)
                     return true;
                 // For other instructions, stall only if in EX and still busy.
                 if (pr.stage == STAGE_EX && pr.remainingLatency > 0 && dest == reg)
@@ -772,22 +869,22 @@ public:
         return false;
     }
 
+    
     // Simulate one clock cycle.
-    void cycle()
+   void cycle()
     {
-        // --- Adjust globalPC if any core's localPC is behind (e.g. branch taken backward) ---
+        
+        //  Adjust globalPC if any core's localPC is behind (branch taken backward)
         int minLocalPC = INT_MAX;
         for (int cid = 0; cid < 4; cid++)
         {
             if (pipelineStates[cid].localPC < minLocalPC)
                 minLocalPC = pipelineStates[cid].localPC;
         }
-        if (minLocalPC < globalPC)
-        {
-            globalPC = minLocalPC;
-        }
 
-        // --- Fetch Stage: Broadcast one instruction from global instruction memory ---
+        globalPC = minLocalPC;
+
+        // Fetch Stage: Broadcast one instruction from global instruction memory 
         Instruction fetchedInstr;
         bool fetchedValid = false;
         if (globalPC < (int)program.size())
@@ -798,18 +895,16 @@ public:
                       << instrToString(fetchedInstr) << " at globalPC " << globalPC << std::endl;*/
             globalPC++; // Increment global fetch pointer after fetching
         }
-
         // Process pipeline stages for each core in order: WB -> MEM -> EX -> ID -> IF
         for (int cid = 0; cid < 4; cid++)
         {
-            //bool stallThisCycle = false;
+            // bool stallThisCycle = false;
             bool stallCounted = false;
             PipelineState &ps = pipelineStates[cid];
             Core &core = cores[cid];
             bool idbusy = ps.ID.valid; // Flag to indicate that an instruction has just finished EX this cycle
             bool exBusy = ps.EX.valid;
-
-            // --- WriteBack Stage ---
+            //  WriteBack Stage
             if (ps.WB.valid)
             {
                 if (ps.WB.instr.opcode != "nop")
@@ -820,302 +915,414 @@ public:
                         ps.WB.instr.opcode == "sub" || ps.WB.instr.opcode == "SUB" ||
                         ps.WB.instr.opcode == "addi" || ps.WB.instr.opcode == "ADDI" ||
                         ps.WB.instr.opcode == "mul" || ps.WB.instr.opcode == "MUL" ||
-                        ps.WB.instr.opcode == "mv"  || ps.WB.instr.opcode == "MV"  ||
-                        ps.WB.instr.opcode == "lw"  || ps.WB.instr.opcode == "LW"  ||
-                        ps.WB.instr.opcode == "la"  || ps.WB.instr.opcode == "LA"  ||
-                        ps.WB.instr.opcode == "jal" || ps.WB.instr.opcode == "JAL")
+                        ps.WB.instr.opcode == "mv" || ps.WB.instr.opcode == "MV" ||
+                        ps.WB.instr.opcode == "lw" || ps.WB.instr.opcode == "LW" ||
+                        ps.WB.instr.opcode == "la" || ps.WB.instr.opcode == "LA" ||
+                        ps.WB.instr.opcode == "jal" || ps.WB.instr.opcode == "JAL"
+                    ||ps.WB.instr.opcode == "lw_spm" || ps.WB.instr.opcode == "LW_SPM" 
+                )
                     {
                         core.writeBack(ps.WB.instr.rd, ps.WB.computedResult);
                     }
                     // For branch, store, jump (J) and other control instructions,
                     // no register update is needed but we still count the instruction.
                     ps.completedInstr++;
-                 //   std::cout << "Core " << cid << " - WB: Committed instruction " 
-                  //            << instrToString(ps.WB.instr);
+                    
                     if (ps.WB.instr.opcode == "sw" || ps.WB.instr.opcode == "SW" ||
                         ps.WB.instr.opcode == "bne" || ps.WB.instr.opcode == "BNE" ||
                         ps.WB.instr.opcode == "beq" || ps.WB.instr.opcode == "BEQ" ||
                         ps.WB.instr.opcode == "ble" || ps.WB.instr.opcode == "BLE" ||
                         ps.WB.instr.opcode == "blt" || ps.WB.instr.opcode == "BLT" ||
                         ps.WB.instr.opcode == "bge" || ps.WB.instr.opcode == "BGE" ||
-                        ps.WB.instr.opcode == "j"   || ps.WB.instr.opcode == "J")
+                        ps.WB.instr.opcode == "j" || ps.WB.instr.opcode == "J")
                     {
-                       // std::cout << " (No writeback needed)";
+                        // std::cout << "(No writeback needed)";
                     }
-                   // std::cout << " with result " << ps.WB.computedResult << std::endl;
                 }
                 ps.WB.valid = false;
             }
             // --- Memory Stage ---
             if (ps.MEM.valid)
             {
-                if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
+                // If lw or sw and still waiting on latency, decrement remainingLatency.
+                if ((ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW" ||
+                     ps.MEM.instr.opcode == "sw" || ps.MEM.instr.opcode == "SW"||ps.MEM.instr.opcode == "sw_spm" || ps.MEM.instr.opcode == "SW_SPM"||ps.MEM.instr.opcode == "lw_spm" || ps.MEM.instr.opcode == "LW_SPM") &&
+                    (ps.MEM.remainingLatency > 0))
                 {
-                    //bool isActive = true;
-                   // uint32_t addr = core.readRegister(ps.MEM.instr.rs1) + ps.MEM.instr.imm;
-                   // int memData = memory.loadWord(addr, cid, isActive);
-                    //ps.MEM.computedResult = memData;
+                    ps.MEM.remainingLatency--;
+                }
+                else if (ps.MEM.instr.opcode == "lw_spm" || ps.MEM.instr.opcode == "LW_SPM")
+        {
+         uint32_t addr = ps.MEM.computedResult;
+         int value = memory.loadWordSPM(addr);
+        // std::cout << "Load from SPM: " << addr <<"value: " <<value<<std::endl;
+
+         ps.MEM.computedResult = value;
+         ps.WB = ps.MEM;
+         ps.WB.stage = STAGE_WB;
+         ps.MEM.valid = false;
+    }
+    // New branch for SPM store
+    else if (ps.MEM.instr.opcode == "sw_spm" || ps.MEM.instr.opcode == "SW_SPM")
+    {
+         auto getVal = [&](int reg) -> int {
+             if (forwardingEnabled) {
+                 if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                     return ps.WB.computedResult;
+                 if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                     return ps.MEM.computedResult;
+             }
+             return core.readRegister(reg);
+         };
+         uint32_t addr = ps.MEM.computedResult;
+         int value = getVal(ps.MEM.instr.rs2);
+         memory.storeWordSPM(addr, value);
+         ps.WB = ps.MEM;
+         ps.WB.stage = STAGE_WB;
+         ps.MEM.valid = false;
+    }
+                // Once latency count reaches zero,perform memory access.
+else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
+{
                     bool isActive = true;
-                    // Use the effective address computed in the EX stage.
                     uint32_t addr = ps.MEM.computedResult;
-                    int memData = memory.loadWord(addr, cid, isActive);
+                    auto memdatapair = memory.loadWord(addr, cid, isActive);
+                    int memData = memdatapair.first;
                     ps.MEM.computedResult = memData;
-                   // std::cout << "Core " << cid << " - LW: loaded " << memData
-                    //          << " from addr " << addr << std::endl;
-                   
+                    ps.WB = ps.MEM;
+                    ps.WB.stage = STAGE_WB;
+                    ps.MEM.valid = false;
                 }
                 else if (ps.MEM.instr.opcode == "sw" || ps.MEM.instr.opcode == "SW")
                 {
-                   /* bool isActive = true;
-                    uint32_t addr = core.readRegister(ps.MEM.instr.rs1) + ps.MEM.instr.imm;
-                    int value = core.readRegister(ps.MEM.instr.rs2);
+                    bool isActive = true;
+                    uint32_t addr = ps.MEM.computedResult;
+                    auto getVal = [&](int reg) -> int
+                    {
+                        if (forwardingEnabled)
+                        {
+                            if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                return ps.WB.computedResult;
+                            if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                return ps.MEM.computedResult;
+                        }
+                        return core.readRegister(reg);
+                    };
+                    int value = getVal(ps.MEM.instr.rs2);
                     memory.storeWord(addr, value, cid, isActive);
-                    std::cout << "Core " << cid << " - MEM: SW stored "
-                              << value << " to addr " << addr << std::endl;*/
-
-                              bool isActive = true;
-            // Use the effective address computed in the EX stage.
-            uint32_t addr = ps.MEM.computedResult;
-            // For store value, use forwarding if enabled.
-            auto getVal = [&](int reg) -> int {
-                if (forwardingEnabled)
-                {
-                    if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
-                        return ps.WB.computedResult;
-                    if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
-                        return ps.MEM.computedResult;
+                    ps.WB = ps.MEM;
+                    ps.WB.stage = STAGE_WB;
+                    ps.MEM.valid = false;
                 }
-                return core.readRegister(reg);
-            };
-            int value = getVal(ps.MEM.instr.rs2);
-            memory.storeWord(addr, value, cid, isActive);
-           // std::cout << "Core " << cid << " - MEM: SW stored "
-            //          << value << " to addr " << addr << std::endl;
-        }
-        
-               // std::cout << "Core " << cid << instrToString(ps.MEM.instr) << " - MEM  proceed to WB" << std::endl;
-
-                ps.WB = ps.MEM;
-                ps.WB.stage = STAGE_WB;
-                ps.MEM.valid = false;
+                else
+                {
+                    ps.WB = ps.MEM;
+                    ps.WB.stage = STAGE_WB;
+                    ps.MEM.valid = false;
+                }
             }
+
             // --- Execute Stage ---
             if (ps.EX.valid)
             {
-                if (ps.EX.remainingLatency > 0)
+
+                
+                 if (ps.EX.remainingLatency > 0)
                 {
                     const std::string &op = ps.EX.instr.opcode;
-                    //std::cout << "Core " << cid << " - EX: " << op
-                      //        << " latency " << ps.EX.remainingLatency << std::endl;
+                   
                     ps.EX.remainingLatency--;
-                    //std::cout << "Core " << cid << " - EX: " << op
-                    //          << " latency " << ps.EX.remainingLatency << std::endl;
                 }
                 else if (ps.EX.remainingLatency == 0)
                 {
-                    const std::string &op = ps.EX.instr.opcode;
-                    if (op == "add" || op == "ADD" ||
-                        op == "sub" || op == "SUB" ||
-                        op == "addi" || op == "ADDI" || op == "mul" || op == "MUL" ||
-                        op == "mv" || op == "MV")
-                    {
-                        // If forwarding is enabled, check WB and MEM for a more recent value.
-                        auto getVal = [&](int reg) -> int
-                        {
-                            if (forwardingEnabled)
-                            {
-                                if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.WB.computedResult;
-                                if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.MEM.computedResult;
-                            }
-                            return core.readRegister(reg);
-                        };
-                        int rs1Val = getVal(ps.EX.instr.rs1);
-                        int rs2Val = getVal(ps.EX.instr.rs2);
-                        //std::cout<<"rs1Val: updated "<<rs1Val<<endl;
-                        //std::cout<<"rs2Val:  updated "<<rs2Val<<endl;
-                        int result = core.ALUOperation(op, rs1Val, rs2Val, ps.EX.instr.imm);
-                        ps.EX.computedResult = result;
-                        //std::cout << "Core " << cid << " - EX: "
-                          //        << instrToString(ps.EX.instr) << " result = " << result << std::endl;
-                    }
-                    else if (op == "lw" || op == "LW" || op == "sw" || op == "SW")
-                    {
-                        auto getVal = [&](int reg) -> int {
-                            if (forwardingEnabled)
-                            {
-                                if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.WB.computedResult;
-                                if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.MEM.computedResult;
-                            }
-                            return core.readRegister(reg);
-                        };
-                        int base = getVal(ps.EX.instr.rs1);
-                        //int base = core.readRegister(ps.EX.instr.rs1);
-                        int addr = base + ps.EX.instr.imm;
-                        ps.EX.computedResult = addr;
-                        //std::cout << "Core " << cid << " - EX: computed address " << addr << std::endl;
-                    }
-                    else if (op == "la" || op == "LA")
-                    {
-                        if (ps.EX.instr.rd == 0)
-                        {
-                            //std::cout << "Core " << cid << " - La: X0 is hardwired to 0 and always 0" << std::endl;
-                        }
-                        else
-                        {
-                            int computedValue =  ps.EX.instr.imm;
-                            ps.EX.computedResult = computedValue;
-                           //bool isActive = true;
-                        //    int memValue = memory.loadWord(cid * 1024 + ps.EX.instr.imm, cid, isActive);
-                         /*   std::cout << "Core " << cid << " - La: x" << ps.EX.instr.rd
-                                      << " loaded with " << computedValue
-                                      << " from address containing val " << memValue << std::endl;*/
-                        }
-                    }
-                    else if (op == "jal" || op == "JAL")
-                    {
-                        // For JAL, compute the link (address of the next instruction)
-                        int link = ps.EX.instr.index + 1;
-                        ps.EX.computedResult = link;
-                        //std::cout << "Core " << cid << " - EX: JAL encountered, writing link "
-                          //        << link << " and jumping to index " << ps.EX.instr.imm << std::endl;
-                        if (ps.ID.valid) { ps.stallCount++; }
-                        ps.localPC = ps.EX.instr.imm;
-                        ps.ID.valid = false;
-                        ps.IF.valid = false;  // Flush IF stage as well.
-
-                    }
-                    else if (op == "j" || op == "J")
-                    {
-                        //std::cout << "Core " << cid << " - EX: J encountered, jumping to index "
-                          //        << ps.EX.instr.imm << std::endl;
-                                  if (ps.ID.valid) { ps.stallCount++; }
-
-                        ps.localPC = ps.EX.instr.imm;
-                        ps.ID.valid = false;
-                        ps.IF.valid = false;  // Flush IF stage as well.
-
-                    }
-
-                    else if (op == "bnecid" || op == "BNECID" || op == "beqcid" || op == "BEQCID"||op == "blecid" || op == "BLECID"||op == "bgecid" || op == "BGECID"||op == "bltcid" || op == "BLTCID")
-                    {
-                        int rs1Val = core.readRegister(ps.EX.instr.rs1);
-                        int rs2Val = ps.EX.instr.rs2;
-                        int rdVal = ps.EX.instr.rd;
-                        //std::cout << "Debug - Core ID: " << core.readRegister(32)
-                          //        << ", rdVal: " << core.readRegister(ps.EX.instr.rd)
-                              //    << ", bnenum: " << bnenum << std::endl;
-
-                        bool taken = core.isBranchTaken(op, rs1Val, rs2Val, rdVal, bnenum);
-
-                        if (taken)
-                        {
-                            //std::cout << "Core " << cid << " - EX: Branch "
-                               //       << instrToString(ps.EX.instr)
-                               //       << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
-                                      if (ps.ID.valid) { ps.stallCount++; }
-                                  //  std::cout<<"inc stall"<<endl;} // for IF down
-                            ps.localPC = ps.EX.instr.imm;
-                            ps.ID.valid = false;
-                            ps.IF.valid = false;  // Flush IF stage as well.
-
-                            // ps.EX.valid = false;
-                            // ps.MEM.valid = false;
-                            // ps.WB.valid = false;
-                            // ps.skipFetch = true;
-                            // bnenum = false;
-                        }
-                        else
-                        {
-                            //std::cout << "Core " << cid << " - EX: Branch "
-                             //         << instrToString(ps.EX.instr) << " not taken" << std::endl;
-                        }
-                    }
-                    else if (op == "bne" || op == "BNE" ||
-                             op == "beq" || op == "BEQ" ||
-                             op == "ble" || op == "BLE" ||
-                             op == "blt" || op == "BLT" ||
-                             op == "bge" || op == "BGE")
-                    {
-                        auto getVal = [&](int reg) -> int
-                        {
-                            if (forwardingEnabled)
-                            {
-                                if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.WB.computedResult;
-                                if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.MEM.computedResult;
-                            }
-                            return core.readRegister(reg);
-                        };
-                        int rs1Val = getVal(ps.EX.instr.rs1);
-                        int rs2Val = getVal(ps.EX.instr.rs2);
-                        // if(bnenum) rs1Val=core.readRegister(32);//need to change
-                        int rdVal = ps.EX.instr.rd;
-                       // std::cout << "Debug - Core ID: " << core.readRegister(32)
-                         //         << ", rdVal: " << core.readRegister(ps.EX.instr.rd)
-                           //       <<rs1Val<<rs2Val << std::endl;
-                        
-
-                        bool taken = core.isBranchTaken(op, rs1Val, rs2Val, rdVal, bnenum);
-
-                        if (taken)
-                        {
-                            if (ps.ID.valid) { ps.stallCount++; 
-                              //  std::cout<<"inc stall"<<endl;
-                            }
-                            //std::cout << "Core " << cid << " - EX: Branch "
-                             //         << instrToString(ps.EX.instr)
-                               //       << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
-                                     
-                           
-                            ps.localPC = ps.EX.instr.imm;
-                            ps.ID.valid = false;
-                            ps.IF.valid = false;  // Flush IF stage as well.
-
-                        }
-                        else
-                        {
-                           // std::cout << "Core " << cid << " - EX: Branch "
-                            //          << instrToString(ps.EX.instr) << " not taken" << std::endl;
-                                     
-                        }
-                    }
-                    else if (ps.EX.instr.opcode == "ecall") {
-                        
-                        
-                        bool isActive = true;
-                        // int x10 = core.readRegister(ps.EX.instr.rs1);
-                        // int x17 = core.readRegister(ps.EX.instr.rs2);
-                        auto getVal = [&](int reg) -> int {
-                            if (forwardingEnabled) {
-                                if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.WB.computedResult;
-                                if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
-                                    return ps.MEM.computedResult;
-                            }
-                            return core.readRegister(reg);
-                        };
-                        int x10 = getVal(10);
-                        int x17 = getVal(17);
                     
-                        if (x17 == 1) { // Print integer
-                            int value = x10;
-                            consoleOutput[cid].emplace_back("", value);  // Store in the core's section
-                        } 
+                 if (ps.EX.instr.opcode == "sync" || ps.EX.instr.opcode == "SYNC")
+                {
+                    // If this core hasn't yet flagged itself as waiting, do so and update syncCounter.
+                    if (!ps.waitingForSync)
+                    {
+                        ps.waitingForSync = true;
+                        syncCounter++;
                        
-                        std::cout<< " | Core " << cid
-                                 << " | Executing ECALL"<<"  x10="<<x10 <<std::endl;
-                        
                     }
-                    
+                    // If not all cores have reached SYNC, stall this core.
+                    if (syncCounter < 4)
+                    {                   
+                        ps.stallCount++;
+                        continue; // Remain in EX until barrier condition is met.
+                    }
+                    else
+                    {                 
+                        // For all cores, flush the SYNC instruction and advance localPC.
+                        for (int j = 0; j < 4; j++)
+                        {
+                            pipelineStates[j].EX.valid = false;
+                            pipelineStates[j].waitingForSync = false;
+                            // Advance the localPC to move past the SYNC instruction.
+                          
+                        }
+                        syncCounter = 0; 
+                        continue;
+                    }
+                }
+                else if  (ps.MEM.valid )
+                {
+                    // MEM stage is busy; stall the current instruction in EX.
+                    ps.stallCount++;
+                    // Do not clear or modify EX, let the instruction remain until MEM becomes free.
+                }
+                    else
+                    {
+                        const std::string &op = ps.EX.instr.opcode;
+                        if (op == "lw" || op == "LW" || op == "sw" || op == "SW")
+                        {
+                            // Compute effective memory address.
+                            auto getVal = [&](int reg) -> int
+                            {
+                                if (forwardingEnabled)
+                                {
+                                    if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                        return ps.WB.computedResult;
+                                    if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                        return ps.MEM.computedResult;
+                                }
+                                return core.readRegister(reg);
+                            };
+                            int base = getVal(ps.EX.instr.rs1);
+                            int addr = base + ps.EX.instr.imm;
+                            ps.EX.computedResult = addr;
+                            // Transfer to MEM stage and set memory latency.
+                           
+                            ps.MEM = ps.EX;
+                            ps.MEM.stage = STAGE_MEM;
+                            int memLat;
+                            bool isActive = true;
+                            if (op == "lw" || op == "LW" ){
+                                 auto memdatapair = memory.loadWord(addr, cid, isActive);
+                                 memLat = memdatapair.second;
+                            }
+                            else {
+                                    int value = getVal(ps.MEM.instr.rs2);
+                                auto memLat = memory.storeWord(addr,value,cid,isActive);
+                            }
+                            ps.MEM.remainingLatency = (memLat > 0 ? memLat - 1 : 0);
+                            
 
-                    ps.MEM = ps.EX;
-                    ps.MEM.stage = STAGE_MEM;
-                    ps.EX.valid = false;
+                            ps.EX.valid = false;
+                        }
+                        else if (op == "lw_spm" || op == "LW_SPM") {
+                            // Compute effective address: base register + immediate
+                            auto getVal = [&](int reg) -> int {
+                                if (forwardingEnabled) {
+                                    if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                        return ps.WB.computedResult;
+                                    if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                        return ps.MEM.computedResult;
+                                }
+                                return core.readRegister(reg);
+                            };
+                            int base = getVal(ps.EX.instr.rs1);
+                            int addr = base + ps.EX.instr.imm;
+                            ps.EX.computedResult = addr;
+                            // Transfer to MEM stage with SPM latency (assumed equal to L1D access latency)
+                            ps.MEM = ps.EX;
+                            ps.MEM.stage = STAGE_MEM;
+                            int spmLatency = memory.getL1DLatency();
+                             
+                            ps.MEM.remainingLatency = (spmLatency > 0 ? spmLatency - 1 : 0);
+
+                            ps.EX.valid = false;
+                        }
+                        // New branch for SPM store
+                        else if (op == "sw_spm" || op == "SW_SPM") {
+                            auto getVal = [&](int reg) -> int {
+                                if (forwardingEnabled) {
+                                    if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                        return ps.WB.computedResult;
+                                    if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                        return ps.MEM.computedResult;
+                                }
+                                return core.readRegister(reg);
+                            };
+                            int base = getVal(ps.EX.instr.rs1);
+                            int addr = base + ps.EX.instr.imm;
+                            ps.EX.computedResult = addr;
+                            // Transfer to MEM stage with SPM latency
+                            ps.MEM = ps.EX;
+                            ps.MEM.stage = STAGE_MEM;
+                            int spmLatency = memory.getL1DLatency();
+                            ps.MEM.remainingLatency = (spmLatency > 0 ? spmLatency - 1 : 0);
+                            //ps.MEM.remainingLatency=0;
+                            ps.EX.valid = false;
+                        }
+                        else
+                        {
+                            if (op == "add" || op == "ADD" ||
+                                op == "sub" || op == "SUB" ||
+                                op == "addi" || op == "ADDI" || op == "mul" || op == "MUL" ||
+                                op == "mv" || op == "MV")
+                            {
+                                // If forwarding is enabled, check WB and MEM for a more recent value.
+                                auto getVal = [&](int reg) -> int
+                                {
+                                    if (forwardingEnabled)
+                                    {
+                                        if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                            return ps.WB.computedResult;
+                                        if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                            return ps.MEM.computedResult;
+                                    }
+                                    return core.readRegister(reg);
+                                };
+                                int rs1Val = getVal(ps.EX.instr.rs1);
+                                int rs2Val = getVal(ps.EX.instr.rs2);
+                                // std::cout<<"rs1Val: updated "<<rs1Val<<endl;
+                                // std::cout<<"rs2Val:  updated "<<rs2Val<<endl;
+                                int result = core.ALUOperation(op, rs1Val, rs2Val, ps.EX.instr.imm);
+                                ps.EX.computedResult = result;
+                                // std::cout << "Core " << cid << " - EX: "
+                                //         << instrToString(ps.EX.instr) << " result = " << result << std::endl;
+                            }
+
+                            else if (op == "la" || op == "LA")
+                            {
+                                if (ps.EX.instr.rd == 0)
+                                {
+                                    // std::cout << "Core " << cid << " - La: X0 is hardwired to 0 and always 0" << std::endl;
+                                }
+                                else
+                                {
+                                    int computedValue = ps.EX.instr.imm;
+                                    ps.EX.computedResult = computedValue;
+                                }
+                            }
+                            else if (op == "jal" || op == "JAL")
+                            {
+                                // For JAL, compute the link (address of the next instruction)
+                                int link = ps.EX.instr.index + 1;
+                                ps.EX.computedResult = link;
+                                // std::cout << "Core " << cid << " - EX: JAL encountered, writing link "
+                                //         << link << " and jumping to index " << ps.EX.instr.imm << std::endl;
+                                if (ps.ID.valid)
+                                {
+                                    ps.stallCount++;
+                                }
+                                ps.localPC = ps.EX.instr.imm;
+                                ps.ID.valid = false;
+                                ps.IF.valid = false; // Flush IF stage as well.
+                            }
+                            else if (op == "j" || op == "J")
+                            {
+                                if (ps.ID.valid)
+                                {
+                                    ps.stallCount++;
+                                }
+
+                                ps.localPC = ps.EX.instr.imm;
+                                ps.ID.valid = false;
+                                ps.IF.valid = false; // Flush IF stage as well.
+                            }
+                            else if (op == "bnecid" || op == "BNECID" || op == "beqcid" || op == "BEQCID" || op == "blecid" || op == "BLECID" || op == "bgecid" || op == "BGECID" || op == "bltcid" || op == "BLTCID")
+                            {
+                                int rs1Val = core.readRegister(ps.EX.instr.rs1);
+                                int rs2Val = ps.EX.instr.rs2;
+                                int rdVal = ps.EX.instr.rd;
+
+                                bool taken = core.isBranchTaken(op, rs1Val, rs2Val, rdVal, bnenum);
+
+                                if (taken)
+                                {
+                                   // std::cout << "Core " << cid << " - EX: Branch "
+                                    //         << instrToString(ps.EX.instr)
+                                    //         << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
+                                    if (ps.ID.valid)
+                                    {
+                                        ps.stallCount++;
+                                    }
+                                    //  std::cout<<"inc stall"<<endl;} // for IF down
+                                    ps.localPC = ps.EX.instr.imm;
+                                    ps.ID.valid = false;
+                                    ps.IF.valid = false; // Flush IF stage as well.
+                                }
+                                else
+                                {
+                                  //  std::cout << "Core " << cid << " - EX: Branch "
+                                             // << instrToString(ps.EX.instr) << " not taken" << std::endl;
+                                }
+                            }
+                            else if (op == "bne" || op == "BNE" ||
+                                     op == "beq" || op == "BEQ" ||
+                                     op == "ble" || op == "BLE" ||
+                                     op == "blt" || op == "BLT" ||
+                                     op == "bge" || op == "BGE")
+                            {
+                                auto getVal = [&](int reg) -> int
+                                {
+                                    if (forwardingEnabled)
+                                    {
+                                        if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                            return ps.WB.computedResult;
+                                        if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                            return ps.MEM.computedResult;
+                                    }
+                                    return core.readRegister(reg);
+                                };
+                                int rs1Val = getVal(ps.EX.instr.rs1);
+                                int rs2Val = getVal(ps.EX.instr.rs2);
+                                // if(bnenum) rs1Val=core.readRegister(32);//need to change
+                                int rdVal = ps.EX.instr.rd;
+
+                                bool taken = core.isBranchTaken(op, rs1Val, rs2Val, rdVal, bnenum);
+
+                                if (taken)
+                                {
+                                    if (ps.ID.valid)
+                                    {
+                                        ps.stallCount++;
+                                    }
+
+                                    ps.localPC = ps.EX.instr.imm;
+                                    ps.ID.valid = false;
+                                    ps.IF.valid = false; // Flush IF stage as well.
+                                }
+                                else
+                                {
+                                }
+                            }
+                            else if (ps.EX.instr.opcode == "ecall")
+                            {
+
+                                bool isActive = true;
+                                auto getVal = [&](int reg) -> int
+                                {
+                                    if (forwardingEnabled)
+                                    {
+                                        if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                            return ps.WB.computedResult;
+                                        if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                            return ps.MEM.computedResult;
+                                    }
+                                    return core.readRegister(reg);
+                                };
+                                int x10 = getVal(10);
+                                int x17 = getVal(17);
+
+                                if (x17 == 1)
+                                { // Print integer
+                                    int value = x10;
+                                    consoleOutput[cid].emplace_back("", value); // Store in the core's section
+                                }
+                                std::cout <<"Cloclk Cycle: "<< clockCycles << " | Core " << cid << " | Executing ECALL" << "  x10=" << x10 << std::endl;
+                                std::cout << " | Core " << cid
+                                      << " | Executing ECALL" << "  x10=" << x10 << std::endl;
+                            }
+
+                            ps.MEM = ps.EX;
+                            ps.MEM.remainingLatency = 0;
+                            ps.MEM.stage = STAGE_MEM;
+                            ps.EX.valid = false;
+                        }
+                    }
                 }
             }
             // --- Decode Stage ---
@@ -1123,61 +1330,40 @@ public:
             {
                 if (ps.EX.valid && ps.EX.remainingLatency > 0)
                 {
-                    if (!stallCounted) { ps.stallCount++; stallCounted = true; 
-                       // cout << "\n=== Console Output Per Core ===\n";  std::cout << "Core " << cid << " - ID: EX is busy, stalling "
-                       // << instrToString(ps.ID.instr) << std::endl;
+                    if (!stallCounted)
+                    {
+                        ps.stallCount++;
+                        stallCounted = true;
                     }
-                   
-                    //ps.stallCount++;
-                    // Stall: do not advance the instruction
                 }
-                /*else if(exBusy&&!ps.EX.valid && !hazardDetected(ps, ps.ID.instr)){
-                    //ps.stallCount++;
-                    ps.EX = ps.ID;
-                    ps.EX.stage = STAGE_EX;
-                    std::string op = ps.EX.instr.opcode;
-                    std::cout << "Core " << cid << " - ID: Decoding instruction "
-                              << instrToString(ps.ID.instr) << std::endl;
-                    if (latencyConfig.find(op) != latencyConfig.end())
-                        ps.EX.remainingLatency = latencyConfig[op] - 1;
-                    else
-                        ps.EX.remainingLatency = 0;
-                    ps.ID.valid = false;
-                }
-                else if (exBusy) {
-                    std::cout << "Core " << cid << " - ID: EX was busy at cycle start, stalling "
-                              << instrToString(ps.ID.instr) << std::endl;
-                    ps.stallCount++;
-                    // Stall: do not advance the instruction
-                }*/
-                else if (hazardDetected(ps, ps.ID.instr) && ps.ID.instr.opcode !="bnecid"&&ps.ID.instr.opcode !="beqcid"&&ps.ID.instr.opcode !="BNECID"&&ps.ID.instr.opcode !="BEQCID"&& ps.ID.instr.opcode !="blecid"&&ps.ID.instr.opcode !="BLECID"&&ps.ID.instr.opcode !="bgecid"&&ps.ID.instr.opcode !="BLTCID"&&ps.ID.instr.opcode !="bltcid"&&ps.ID.instr.opcode !="BGECID")
+
+                else if (hazardDetected(ps, ps.ID.instr) && ps.ID.instr.opcode != "bnecid" && ps.ID.instr.opcode != "beqcid" && ps.ID.instr.opcode != "BNECID" && ps.ID.instr.opcode != "BEQCID" && ps.ID.instr.opcode != "blecid" && ps.ID.instr.opcode != "BLECID" && ps.ID.instr.opcode != "bgecid" && ps.ID.instr.opcode != "BLTCID" && ps.ID.instr.opcode != "bltcid" && ps.ID.instr.opcode != "BGECID")
                 {
-                    if (!stallCounted) { ps.stallCount++; stallCounted = true; 
-                        //std::cout << "Core " << cid << " - ID: Hazard detected, stalling "
-                        //<< instrToString(ps.ID.instr) << std::endl;
-                        }
-                    
-                    //ps.stallCount++;
-                    // ps.EX.valid = true;
-                    // ps.EX.instr = createNopInstruction();
-                    // ps.EX.stage = STAGE_EX;
+                    if (!stallCounted)
+                    {
+                        ps.stallCount++;
+                        stallCounted = true;
+                    }
                 }
                 else if (ps.EX.valid)
                 {
-                    if (!stallCounted) { ps.stallCount++; stallCounted = true; 
-                        //std::cout << "Core " << cid << " - ID: EX stage busy, stalling "
-                        //<< instrToString(ps.ID.instr) << std::endl;
-                        }
-                 
-                    //ps.stallCount++; // Stall because EX is busy
+                    if (!stallCounted)
+                    {
+                        ps.stallCount++;
+                        stallCounted = true;
+                    }
                 }
                 else
                 {
                     ps.EX = ps.ID;
                     ps.EX.stage = STAGE_EX;
                     std::string op = ps.EX.instr.opcode;
-                    //std::cout << "Core " << cid << " - ID: Decoding instruction "
-                             // << instrToString(ps.ID.instr) << std::endl;
+                  
+                    // std::cout<< ps.IF.instr.opcode<<endl;
+          
+                    
+                    // std::cout << "Core " << cid << " - ID: Decoding instruction "
+                    //  << instrToString(ps.ID.instr) << std::endl;
                     if (latencyConfig.find(op) != latencyConfig.end())
                         ps.EX.remainingLatency = latencyConfig[op] - 1;
                     else
@@ -1187,64 +1373,85 @@ public:
             }
 
             // --- Fetch Stage (IF) ---
-           // IF Stage: Fetch instruction and load into IF register if conditions are met.
-if (fetchedValid) {
-   // std::cout << "DEBUG: Core " << cid << " ps.localPC = " << ps.localPC 
-    //<< ", fetchedInstr.index = " << fetchedInstr.index << std::endl;
-    // Check if the fetched instruction matches the expected index.
-    if (ps.localPC == fetchedInstr.index) {
-        // Only load a new instruction into IF if IF is not already occupied.
-        if (!ps.IF.valid) {
-            ps.IF.valid = true;
-            ps.IF.instr = fetchedInstr;
-            ps.IF.instr.index = fetchedInstr.index;
-            ps.IF.stage = STAGE_IF;
-            //std::cout << "Core " << cid << " - IF: Fetched instruction " 
-             //         << fetchedInstr.opcode << " at index " 
-              //        << fetchedInstr.index << std::endl;
-            ps.localPC++; // Advance localPC once the instruction is loaded into IF.
-        } else {
-            // IF register is already holding an instruction: count stall.
-           // ps.stallCount++;
-            /*if (!stallCounted) { ps.stallCount++; stallCounted = true;
-            std::cout << "Core " << cid << " - IF: IF register already occupied; stall counted" << std::endl;
-        }*/
-        }
-    } else {
-        // The fetched instruction index does not match the expected one.
-        ps.IF.valid = false;
-        //ps.stallCount++;
-        if (!stallCounted && ps.localPC<program.size()) { ps.stallCount++; stallCounted = true; 
-            //std::cout << "Core " << cid << " - IF: Fetched instruction index (" 
-           // << fetchedInstr.index << ") does not match expected localPC (" 
-            //<< ps.localPC << "); stall counted" << std::endl;
-        }
-       
-    }
-}
-// Advance IF -> ID if the ID stage is free.
-if (ps.IF.valid) {
-    if (!ps.ID.valid) {
-        ps.ID = ps.IF;
-        ps.ID.stage = STAGE_ID;
-       // std::cout << "Core " << cid << " - IF->ID: Moved instruction " 
-         //         << ps.ID.instr.opcode << " to Decode stage" << std::endl;
-        ps.IF.valid = false;
-    } else {
-        // ID stage is busy so the instruction stays in IF; count stall.
-        //ps.stallCount++;
-        if (!stallCounted) { ps.stallCount++; stallCounted = true;
-           // std::cout << "Core " << cid << " - IF: ID stage busy; stall counted" << std::endl; 
-           }
-       
-    }
-}
+            // IF Stage: Fetch instruction and load into IF register if conditions are met.
+            if (fetchedValid)
+            {
+                //
+                if (ps.localPC == fetchedInstr.index)
+                {
+                   // std::cout<<"Fetched"<<std::endl;
 
+                    // Only load a new instruction into IF if IF is not already occupied.
+                    if (!ps.IF.valid&& !ps.waitingForSync)
+                    {
+                        ps.IF.valid = true;
+                        ps.IF.instr = fetchedInstr;
+                        ps.IF.instr.index = fetchedInstr.index;
+                        ps.IF.stage = STAGE_IF;
+                        // Simulate cache latency for instruction fetch.
+                        uint32_t instrAddress = fetchedInstr.index * 4;
+                        int latency = memory.loadinstructionWord(instrAddress);
+                        // Set remainingLatency in IF so that the instruction waits here.
+                        ps.IF.remainingLatency = (latency > 0 ? latency - 1 : 0);
+                        std::string op = ps.IF.instr.opcode;
+                        
+
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                    // The fetched instruction index does not match the expected one.
+                    ps.IF.valid = false;
+                    // ps.stallCount++;
+                    if (!stallCounted && ps.localPC < program.size())
+                    {
+                        ps.stallCount++;
+                        stallCounted = true;
+                    }
+                }
+            }
+            // Advance IF -> ID if the ID stage is free.
+            if (ps.IF.valid)
+            {
+                if (ps.IF.remainingLatency > 0&& !ps.waitingForSync)
+                {
+                    // Decrement the fetch latency counter; do not move to ID until it reaches 0.
+                    ps.IF.remainingLatency--;
+                    ps.stallCount++;
+                }
+                else if (!ps.ID.valid&& !ps.waitingForSync)
+                {
+                    std::string op = ps.IF.instr.opcode;
+                    if (op == "sync")
+                    {                   // cout<<"CLOCK CYCLE: "<<clockCycles<<endl;
+                       // std::cout << "Core " << cid << " - ID: Fetched  instruction  moved to ID "
+                            //      << instrToString(ps.IF.instr) << clockCycles << std::endl;
+                    }
+                    ps.ID = ps.IF;
+                    ps.ID.stage = STAGE_ID;
+                   
+                    ps.IF.valid = false;
+                    ps.localPC++;
+                }
+                else
+                {
+                    // ID stage is busy so the instruction stays in IF; count stall.
+                    // ps.stallCount++;
+                    if (!stallCounted)
+                    {
+                        ps.stallCount++;
+                        stallCounted = true;
+                        // std::cout << "Core " << cid << " - IF: ID stage busy; stall counted" << std::endl;
+                    }
+                }
+            }
         }
         clockCycles++;
-        //std::cout << "---- End of Cycle " << clockCycles << " ----" << std::endl;
+        // std::cout << "---- End of Cycle " << clockCycles << " ----" << std::endl;
     }
-
     // Check if all pipelines are empty and no new instructions will be fetched.
     bool pipelinesEmpty()
     {
@@ -1265,51 +1472,52 @@ if (ps.IF.valid) {
         {
             cycle();
         }
-       // cout << "\n=== Console Output Per Core ===\n";
-      /*for (int i = 0; i < 4; i++) {  // Loop through each core
-          cout << "Core " << i << " Output: ";
-          for (const auto& entry : consoleOutput[i]) {
-              string str = std::get<0>(entry);
-              int num = std::get<1>(entry);
-                  cout << num;
-          }
-          cout<<endl;
-        }*/
-        // Now print per-core statistics.
-    // Final Results Output
-std::cout << "\n================== FINAL SIMULATION RESULTS ==================\n" << std::endl;
+        memory.update();
 
-        std::cout << "Total Clock Cycles: " << clockCycles << std::endl;
-        std::cout << "\n====================================\n" << std::endl;
-
-
-for (int cid = 0; cid < 4; cid++) {
-    int committed = pipelineStates[cid].completedInstr;
-    int stalls = pipelineStates[cid].stallCount;
-    double ipc = (clockCycles > 0) ? static_cast<double>(committed) / clockCycles : 0;
-    
-    std::cout << "Core " << cid << " Final Results:" << std::endl;
-    std::cout << "   Instructions Committed  : " << committed << std::endl;
-    std::cout << "   Stall Cycles            : " << stalls << std::endl;
-    std::cout << "   IPC (Instructions/Cycle): " << ipc << std::endl;
-}
-std::cout << "-------------------------------------------------------------" << std::endl;
-
-std::cout << "\n================== FINAL STATE OF REGISTERS ==================\n" << std::endl;
-for (int i = 0; i < 4; i++) {
-    std::cout << "Core " << i << " Registers:" << std::endl;
-    cores[i].printRegisters();
-    std::cout << "-------------------------------------------------------------" << std::endl;
-}
-std::cout << "\n================== FINAL STATE OF MEMORY =====================\n" << std::endl;
-for (int i = 0; i < 4; i++) {
-   // std::cout << "Memory for Core " << i << ":" << std::endl;
-   std::cout << "-------------------------------------------------------------" << std::endl;
-    memory.printMem(i);
-}
-
-    }
         
+
+        
+       
+        memory.printCompleteMemoryContents();
+         std::cout << "-------------------------------------------------------------" << std::endl;
+
+        std::cout << "\n================== FINAL STATE OF REGISTERS ==================\n"
+                  << std::endl;
+        for (int i = 0; i < 4; i++)
+        {
+            std::cout << "Core " << i << " Registers:" << std::endl;
+            cores[i].printRegisters();
+            std::cout << "-------------------------------------------------------------" << std::endl;
+        }
+        std::cout << "\n================== FINAL SIMULATION RESULTS ==================\n"
+                  << std::endl;
+
+        std::cout << "\n====================================\n"
+                  << std::endl;
+        std::cout << "Total Clock Cycles: " << clockCycles << std::endl;
+for (int cid = 0; cid < 4; cid++)
+        {
+            int committed = pipelineStates[cid].completedInstr;
+            int stalls = pipelineStates[cid].stallCount;
+            double ipc = (clockCycles > 0) ? static_cast<double>(committed) / clockCycles : 0;
+
+            std::cout << "Core " << cid << " Final Results:" << std::endl;
+            std::cout << "   Instructions Committed  : " << committed << std::endl;
+            std::cout << "   Stall Cycles            : " << stalls << std::endl;
+            std::cout << "   IPC (Instructions/Cycle): " << ipc << std::endl;
+        }
+        /*std::cout << "\n================== FINAL STATE OF MEMORY =====================\n"
+                  << std::endl;
+        for (int i = 0; i < 4; i++)
+        {
+            // std::cout << "Memory for Core " << i << ":" << std::endl;
+            std::cout << "-------------------------------------------------------------" << std::endl;
+
+            memory.printMem(i);
+        }*/
+        memory.printSPM();
+     //memory.printCompleteMemoryContents();
+    }
 };
 
 int main()
