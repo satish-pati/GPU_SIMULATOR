@@ -744,9 +744,8 @@ public:
         std::cout << "Enter Main Memory Access Time (cycles): ";
         std::cin >> memLatency;
         memory.configureCaches(l1Isize,l1Size, l2Size, blockSize, associativity, l1Latency, l2Latency, memLatency);
-        std::cout<<"Instruction "<<std::endl;
         auto progTuples = loadProgramFromFile(filename, memory);
-                    std::cout<<"Instruction "<<std::endl;
+                    
         // Convert tuples into Instruction objects
         for (size_t i = 0; i < progTuples.size(); i++)
         {
@@ -1045,7 +1044,7 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                         syncCounter++;
                        
                     }
-                    // If not all cores have reached SYNC, stall this core.
+                    //If not all cores have reached SYNC, stall this core.
                     if (syncCounter < 4)
                     {                   
                         ps.stallCount++;
@@ -1379,16 +1378,13 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                 //
                 if (ps.localPC == fetchedInstr.index)
                 {
-                   // std::cout<<"Fetched"<<std::endl;
-
-                    // Only load a new instruction into IF if IF is not already occupied.
+                  
                     if (!ps.IF.valid&& !ps.waitingForSync)
                     {
                         ps.IF.valid = true;
                         ps.IF.instr = fetchedInstr;
                         ps.IF.instr.index = fetchedInstr.index;
                         ps.IF.stage = STAGE_IF;
-                        // Simulate cache latency for instruction fetch.
                         uint32_t instrAddress = fetchedInstr.index * 4;
                         int latency = memory.loadinstructionWord(instrAddress);
                         // Set remainingLatency in IF so that the instruction waits here.
@@ -1473,16 +1469,15 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
             cycle();
         }
         memory.update();
-
-        
-
-        
-       
         memory.printCompleteMemoryContents();
+     memory.printSPM();
+
          std::cout << "-------------------------------------------------------------" << std::endl;
 
         std::cout << "\n================== FINAL STATE OF REGISTERS ==================\n"
                   << std::endl;
+                 std::cout << "-------------------------------------------------------------" << std::endl;
+
         for (int i = 0; i < 4; i++)
         {
             std::cout << "Core " << i << " Registers:" << std::endl;
@@ -1506,17 +1501,10 @@ for (int cid = 0; cid < 4; cid++)
             std::cout << "   Stall Cycles            : " << stalls << std::endl;
             std::cout << "   IPC (Instructions/Cycle): " << ipc << std::endl;
         }
-        /*std::cout << "\n================== FINAL STATE OF MEMORY =====================\n"
-                  << std::endl;
-        for (int i = 0; i < 4; i++)
-        {
-            // std::cout << "Memory for Core " << i << ":" << std::endl;
-            std::cout << "-------------------------------------------------------------" << std::endl;
+    std::cout << "-------------------------------------------------------------" << std::endl;
 
-            memory.printMem(i);
-        }*/
-        memory.printSPM();
-     //memory.printCompleteMemoryContents();
+        
+        memory.printCacheStats();
     }
 };
 
