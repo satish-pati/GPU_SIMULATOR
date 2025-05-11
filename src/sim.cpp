@@ -1311,7 +1311,7 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                                     int value = x10;
                                     consoleOutput[cid].emplace_back("", value); // Store in the core's section
                                 }
-                                std::cout <<"Cloclk Cycle: "<< clockCycles << " | Core " << cid << " | Executing ECALL" << "  x10=" << x10 << std::endl;
+                              //  std::cout <<"Cloclk Cycle: "<< clockCycles << " | Core " << cid << " | Executing ECALL" << "  x10=" << x10 << std::endl;
                                 std::cout << " | Core " << cid
                                       << " | Executing ECALL" << "  x10=" << x10 << std::endl;
                             }
@@ -1469,8 +1469,8 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
             cycle();
         }
         memory.update();
-        memory.printCompleteMemoryContents();
-     memory.printSPM();
+       // memory.printCompleteMemoryContents();
+        // memory.printSPM();
 
          std::cout << "-------------------------------------------------------------" << std::endl;
 
