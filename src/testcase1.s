@@ -1,3 +1,4 @@
+
 .data
 arr: .word 1:10000
 sums:   .word 0, 0, 0, 0
@@ -8,7 +9,7 @@ main:
     addi x10,x0 ,100     #count 
     la x6,arr     # base of array
     addi x31,x0,4          # bytes per word
-    li   x20, 400
+    li  x20, 400
 outer_loop:
     addi x8,x0,0             # i = 0
     addi x11,x6,0
@@ -37,6 +38,7 @@ inner_loop:
     add x5, x5, x6
     add x5, x5, x7
     add x5, x5, x8
+    sw x5,4(x14)
     # x5 now contains total sum
 end:
     li x10,100
