@@ -1,3 +1,4 @@
+
 .data
 arr: 1:20000
 sums: .word 0, 0, 0, 0
@@ -59,5 +60,6 @@ calculate_sum:
     add x5, x5, x6
     add x5, x5, x7
     add x5, x5, x8
+    sw x5,4(x15)
 end_spm:
     ecall
