@@ -26,7 +26,7 @@ public:
     // Read the value of a register.
     int readRegister(int reg);
 
-    // Reset all registers (except x32 which holds the core ID).
+    // Reset 
     void reset();
 
 private:
