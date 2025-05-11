@@ -4,21 +4,20 @@ sums:   .word 0, 0, 0, 0
 .text
 main:
     addi x5,x0, 0             #x5 = sum[CID]
-    addi x7,x0, 100        #count loop
-    addi x10,x0 ,100     #X = 100(cache_size / 4)
-    li x6,1008     #base of array
+    addi x7,x0, 100        # count loop
+    addi x10,x0 ,100     #count 
+    la x6,arr     # base of array
     addi x31,x0,4          # bytes per word
     li   x20, 400
 outer_loop:
     addi x8,x0,0             # i = 0
     addi x11,x6,0
 inner_loop:
-    lw x12, 0(x11)       # load a[i*X]
-    add x5, x5, x12      #sum[CID] += a[i*X]
-    addi x8, x8, 1
-    addi x13,X0,100
+    lw x12,0(x11)       # load a[i*X]
+    add x5,x5,x12      #sum[CID] += a[i*X]
+    addi x8,x8,1
     add  x11, x11, x20      # update pointer to next element position in the inner stride
-    blt x8, x13, inner_loop
+    blt  x8,x10,inner_loop
     addi x7, x7, -1
     bne x7,x0, outer_loop
     #Save partial sum in memory
@@ -28,7 +27,7 @@ inner_loop:
     add x14, x14, x16
     sw x5, 0(x14)
     sync
-    # Combine if CID == 1
+    #Combine if CID == 1
     bne cid, 1, end
     la x14, sums
     lw x5, 0(x14)
@@ -40,4 +39,4 @@ inner_loop:
     add x5, x5, x8
     # x5 now contains total sum
 end:
-    ecall
+    li x10,100
