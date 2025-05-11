@@ -900,6 +900,7 @@ void Memory::printCacheStats() const
     std::cout << "L2 Unified Cache Miss Rate    : " << L2->missRate() << std::endl;
     std::cout << "------------------------------------------------------\n";
 }
+
 // function for storing word to memory  before program starts
 void Memory::sstoreWord(uint32_t address, uint32_t value, int coreID, bool &isActive)
 {
@@ -909,7 +910,6 @@ void Memory::sstoreWord(uint32_t address, uint32_t value, int coreID, bool &isAc
     mem[address + 3] = (value >> 24) & 0xFF;
 }
 // function for storing word to memory  before program starts
-
 uint32_t Memory::lloadWord(uint32_t address, int coreID, bool &isActive) 
 {
     return (mem[address]) | (mem[address + 1] << 8) |
@@ -919,7 +919,7 @@ uint32_t Memory::lloadWord(uint32_t address, int coreID, bool &isActive)
 // function for printing complete memory
 void Memory::printCompleteMemoryContents() const {
     //std::cout << "----- Complete Memory Contents -----\n";
-    for (uint32_t addr = 0; addr <=DATA_BASE_ADDRESS+ 10 ; addr += 16) {
+    for (uint32_t addr = DATA_BASE_ADDRESS; addr <=MEMORY_SIZE; addr += 16) {
         std::cout << "Addr: 0x" << std::dec << addr << "-0x" << addr + 15 << ": ";
         for (int offset = 0; offset < 16; offset += 4) {
             if (addr + offset + 3 >= mem.size()) break;
