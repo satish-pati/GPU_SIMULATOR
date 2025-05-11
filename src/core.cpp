@@ -1,4 +1,3 @@
-// core.cpp
 #include "../include/core.h"
 #include <iostream>
 #include <unordered_map>
@@ -9,13 +8,14 @@ Core::Core(Memory &memRef, const std::vector<std::tuple<std::string, int, int, i
 {
     reset();
 }
+//function for printing reg values
 void Core::printRegisters() const {
     std::cout << "\nRegister Dump for Core " << coreID << ":\n";
     for (int i = 0; i < 33; i++) {
-        std::cout << "x" << i << " = " << registers[i] << std::endl;
+        std::cout << "x" <<std::dec<< i << " = " << registers[i] << std::endl;
     }
 }
-
+//function for arithmetic operations
 int Core::ALUOperation(const std::string &instruction, int rs1Val, int rs2Val, int imm) {
     if (instruction == "add" || instruction == "ADD") {
         return rs1Val + rs2Val;
@@ -27,67 +27,56 @@ int Core::ALUOperation(const std::string &instruction, int rs1Val, int rs2Val, i
     else if (instruction == "addi" || instruction == "ADDI") {
         return rs1Val + imm;
     } else if (instruction == "mv" || instruction == "MV") {
-        return rs1Val; // mv is essentially a move
+        return rs1Val;
     }
-    // You can add other arithmetic operations as needed.
     return 0;
 }
 
+// function for checking branch operations
 bool Core::isBranchTaken(const std::string &instruction, int rs1Val, int rs2Val,int rdVal,bool bnenum) {
-   // std::cout<<"RDVALUE RDVALUE RDVALUE RDVALUE"<<rdVal<<std::endl;
     if (instruction == "beqcid" || instruction == "BEQCID" ) {
        
             if(coreID == rs2Val)
             {
-               // std::cout<<"rdVal :"<<rdVal<<std::endl;
-               // std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+               
                 return true;
             }
-            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "bnecid" || instruction == "BNECID" ) {
        
             if(coreID != rs2Val)
             {
-                //std::cout<<"rdVal :"<<rdVal<<std::endl;
-                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+               
                 return true;
             }
-            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "blecid" || instruction == "BLECID" ) {
        
             if(coreID <= rs2Val)
             {
-                //std::cout<<"rdVal :"<<rdVal<<std::endl;
-                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+               
                 return true;
             }
-            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "bgecid" || instruction == "BGECID" ) {
        
             if(coreID >= rs2Val)
             {
-               // std::cout<<"rdVal :"<<rdVal<<std::endl;
-                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+               
                 return true;
             }
-            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
         else if (instruction == "bltcid" || instruction == "BLTCID" ) {
        
             if(coreID < rs2Val)
             {
-                //std::cout<<"rdVal :"<<rdVal<<std::endl;
-                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+                
                 return true;
             }
-            //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"False"<<std::endl;
             return false;
         }
 
@@ -97,8 +86,7 @@ bool Core::isBranchTaken(const std::string &instruction, int rs1Val, int rs2Val,
         
             if(rs1Val!=rs2Val)
             {
-                //std::cout<<"rdVal :"<<rdVal<<std::endl;
-                //std::cout<<"Coreeeeeeee Idddddd  ::::"<<coreID<<"True"<<std::endl;
+                
                 return true;
             }
             return false;
@@ -146,19 +134,19 @@ bool Core::isBranchTaken(const std::string &instruction, int rs1Val, int rs2Val,
     return false;
 }
 
+
+// Helper fucntion for writing back
 void Core::writeBack(int rd, int value) {
     if (rd == 0) {
-        // x0 is hardwired to 0.
         return;
     }
     if (rd == 32) {
-        // x32 is read-only (contains core ID)
         return;
     }
     registers[rd] = value;
-    //std::cout << "Core " << coreID << " - WriteBack: x" << rd << " = " << value << std::endl;
 }
 
+//Helper function for reading
 int Core::readRegister(int reg) {
     if (reg == 0)
         return 0;
@@ -167,7 +155,8 @@ int Core::readRegister(int reg) {
     return registers[reg];
 }
 
+ // Keep core ID in x32
 void Core::reset() {
     std::fill(std::begin(registers), std::end(registers), 0);
-    registers[32] = coreID; // Keep core ID in x32
+    registers[32] = coreID;
 }
