@@ -5,9 +5,9 @@ sums:   .word 0, 0, 0, 0
 main:
     addi x5,x0, 0             #x5 = sum[CID]
     addi x7,x0, 100        #count loop
-    addi x10,x0 ,100     #X = 100(cache_size / 4)
-    li x6,1008     #base of array
+    la x6,arr     #base of array
     addi x31,x0,4          #4 bytes per word
+    addi x13,X0,200
     li    x20, 400
 outer_loop:
     addi x8,x0,0             # i = 0
@@ -17,7 +17,6 @@ inner_loop:
     add x5, x5, x12      # sum[CID] += a[i*X]
     addi x8, x8, 1
     add  x11, x11, x20      # update pointer to next element position in the inner stride
-    addi x13,X0,200
     blt x8, x13, inner_loop
     addi x7, x7, -1
     bne x7,x0, outer_loop
