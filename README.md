@@ -93,6 +93,180 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 
 ## Meeting Minutes
+---
+
+#### **Meeting 8 (May 12, 2025)**  
+**Focus:** Final testing and reporting.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Perform comprehensive testing with all test cases.  
+- Compile final report with stalls, cache miss rate, and IPC.  
+
+**Tasks Completed (Functions Implemented):**  
+- **Satish:**  
+  - Modified `Simulator::run()` to output final metrics (stalls, miss rate, IPC).  
+  - Implemented `Memory::missRate()` to ensure accurate cache miss rate calculation.  
+  - Implemented `Memory::getL1DLatency()` to verify latency in test cases.  
+  - Implemented `Memory::updateFinalMemory()` to finalize memory state.  
+- **Niharika:**  
+  - Modified `Simulator::cycle()` to finalize SPM, cache, and SYNC integration.  
+  - Implemented `Simulator::pipelinesEmpty()` to verify SYNC behavior in test cases.  
+  - Modified `Memory::loadWord()` to ensure SPM/cache coherence in test cases.  
+  - Modified `Memory::storeWord()` to ensure SPM/cache coherence in test cases.  
+
+---
+
+#### **Meeting 7 (May 10, 2025)**  
+**Focus:** Finalize SPM integration and test with remaining SPM test cases.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Complete SPM operations with cache and SYNC in the pipeline.  
+- Test SPM, cache, and SYNC with `testcase3spm.s`.  
+
+**Tasks :**  
+- **Satish:**  
+  - Modified `Simulator::run()` to ensure SPM operations are correctly simulated.  
+  - Modified `Memory::loadWord()` to integrate SPM access with cache hierarchy.  
+  - Modified `Memory::storeWord()` to integrate SPM access with cache hierarchy.  
+  - Implemented `Memory::update()` to handle SPM and cache coherence.  
+- **Niharika:**  
+  - Modified `Simulator::cycle()` to ensure SPM, cache, and SYNC work together.  
+  - Implemented `Memory::loadWordSPM()` to finalize `lw_spm` functionality.  
+  - Implemented `Memory::storeWordSPM()` to finalize `sw_spm` functionality.  
+  - Implemented `Memory::sstoreWord()` to support SPM test case setup.  
+  - Implemented test case `testcase3spm.s` to verify SPM, cache, and SYNC with larger array access.  
+---
+
+#### **Meeting 6 (May 8, 2025)**  
+**Focus:** Start SPM implementation and test with an SPM test case.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Begin SPM integration with `lw_spm` and `sw_spm` instructions.  
+- Test SPM functionality with `testcase1spm.s`.  
+
+**Tasks :**  
+- **Satish:**  
+  - Implemented `Memory::loadWordSPM()` to load words from SPM (`lw_spm` instruction).  
+  - Implemented `Memory::storeWordSPM()` to store words in SPM (`sw_spm` instruction).  
+  - Modified `Memory::Memory()` to include SPM initialization.  
+  - Modified `Memory::~Memory()` to clean up SPM resources.  
+- **Niharika:**  
+  - Modified `assembleInstruction()` in `sim2.cpp` to parse `lw_spm` and `sw_spm` instructions.  
+  - Modified `Simulator::cycle()` to handle SPM instructions with correct latency.  
+  - Implemented `Memory::lloadWord()` to load words for test case setup (SPM-related).  
+  - Implemented `Memory::sstoreWord()` to store words for test case setup (SPM-related).  
+  - Implemented test case `testcase1spm.s` to verify SPM behavior with strided array addition.  
+---
+
+#### **Meeting 5 (April 27, 2025)**  
+**Focus:** Complete SYNC implementation and test with a cache-only test case.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Finalize SYNC instruction handling in the pipeline.  
+- Test SYNC and cache functionality with `testcase3cache.s` (cache-only test case).  
+- Prepare for SPM implementation in the next meeting.  
+
+**Tasks :**  
+- **Satish:**  
+  - Modified `Simulator::cycle()` to finalize SYNC implementation for all cores.  
+  - Modified `Simulator::run()` to ensure SYNC behavior in multi-core simulation.  
+  - Modified `Core::isBranchTaken()` to support CID-based branching for test cases.  
+  - Implemented `Simulator::pipelinesEmpty()` to ensure all pipelines are ready for SYNC.  
+- **Niharika:**  
+  - Modified `Simulator::hazardDetected()` to handle stalls with SYNC and cache latency.  
+  - Implemented `Memory::updateFinalMemory()` to finalize memory state for test cases.  
+  - Implemented `Memory::missRate()` to calculate accurate cache miss rates for test cases.  
+  - Implemented `Memory::getL1DLatency()` to verify latency in test cases.  
+  - Implemented test case `testcase3cache.s` to verify cache and SYNC behavior with larger array access.  
+---
+
+#### **Meeting 4 (April 20, 2025)**  
+**Focus:** Start SYNC implementation and test with cache-only test cases.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Begin implementing SYNC instruction for multi-core synchronization.  
+- Test cache functionality with `testcase1.s` and `program.s` (cache-only test cases).  
+
+**Tasks :**  
+- **Satish:**  
+  - Implemented `Simulator::pipelinesEmpty()` to check pipeline state for SYNC synchronization.  
+  - Modified `Simulator::cycle()` to implement SYNC by waiting for all cores to execute it.  
+  - Modified `Core::isBranchTaken()` to handle `bnecid` for CID-based branching in multi-core setup.  
+  - Implemented `Memory::updateFinalMemory()` to flush dirty cache blocks at the end.  
+  - Implemented test case `testcase1.s` to verify cache behavior with strided array addition.  
+- **Niharika:**  
+  - Modified `Simulator::hazardDetected()` to handle stalls with SYNC and cache latency.  
+  - Modified `Core::isBranchTaken()` to support CID-based branching for SYNC coordination.  
+  - Modified `Simulator::run()` to ensure SYNC behavior in multi-core simulation.  
+  - Modified `Simulator::cycle()` to finalize SYNC implementation.  
+  - Implemented test case `program.s` to verify cache behavior with strided array addition.  
+---
+
+#### **Meeting 3 (April 13, 2025)**  
+**Focus:** Finalize cache implementation and test with a cache-focused test case.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Complete cache operations and integrate them into the pipeline.  
+- Test cache functionality with `l2cacheutilise.s` to verify L2 cache utilization.  
+
+**Tasks :**  
+- **Satish:**  
+  - Implemented `Memory::writeBack()` to write dirty cache blocks to main memory.  
+  - Implemented `Memory::update()` to flush dirty cache blocks to main memory.  
+  - Implemented `Memory::getL1DLatency()` to support variable latency in loads/stores.  
+  - Implemented `Memory::missRate()` to calculate cache miss rates for L1I, L1D, and L2.  
+- **Niharika:**  
+  - Modified `Simulator::hazardDetected()` to account for stalls due to cache miss latency.  
+  - Implemented `Simulator::run()` to compute stalls, cache miss rate, and IPC at the end.  
+  - Implemented `Memory::lloadWord()` to load words for test case setup (cache-related).  
+  - Implemented `Memory::sstoreWord()` to store words for test case setup (cache-related).  
+  - Implemented test case `l2cacheutilise.s` to verify L2 cache utilization.  
+---
+
+#### **Meeting 2 (April 10, 2025)**  
+**Focus:** Continue cache implementation.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Implement cache operations for instruction and data access.  
+- Prepare for SYNC implementation in the next meeting.  
+
+**Tasks :**  
+- **Satish:**  
+  - Implemented `Memory::loadinstructionWord()` to fetch instructions from L1I, L2, or main memory.  
+  - Implemented `Memory::storeinstructionWord()` to store instructions in the cache.  
+  - Implemented `Memory::loadWord()` to load data from L1D, L2, or main memory with cache latency.  
+  - Implemented `Memory::storeWord()` to store data with cache coherence.  
+- **Niharika:**  
+  - Implemented `Cache::updateBlock()` to update cache blocks with LRU/SRRIP policies.  
+  - Implemented `Cache::writeBlockL2()` to update L2 cache with evicted L1 lines.  
+  - Implemented `Cache::replaceLine()` to replace cache lines using LRU/SRRIP.  
+  - Implemented `Memory::loadBlock()` to fetch blocks from main memory on cache misses.  
+
+---
+
+#### **Meeting 1 (April 3, 2025)**  
+**Focus:** Start cache implementation.  
+**Members:** Satish, Niharika  
+**Decisions:**  
+- Review project requirements for cache implementation.  
+- Set timeline for incremental development, starting with caches.  
+- Divide initial tasks for cache design and configuration.  
+
+**Tasks :**  
+- **Satish:**  
+  - Implemented `Cache::Cache()` to set up cache parameters for L1I, L1D, and L2.  
+  - Implemented `Memory::Memory()` to initialize L1I, L1D, and L2.  
+  - Implemented `Memory::~Memory()` to clean up cache resources.  
+  - Implemented `Memory::configureCaches()` to set up cache parameters from input.  
+- **Niharika:**  
+  - Implemented `Cache::readWord()` to read words from the cache.  
+  - Implemented `Cache::writeWord()` to write words to the cache.  
+  - Implemented `Cache::contains()` to check if a block exists in the cache.  
+  - Implemented `Cache::readBlock()` to retrieve blocks from the cache.  
+
+---
+PHASE-3
+---
 ### **Meeting 9 (20-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
