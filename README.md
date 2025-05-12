@@ -29,6 +29,7 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
 4. View **register and memory outputs** after execution
  
 ## Phase 3
+#### Report : https://hackmd.io/@uUsQvP7mRR-VkcGLNOg8Zw/SJc9dOkWxe
 # Test Cases 
 # Part 1
 ## Assembly code Used 
