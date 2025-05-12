@@ -66,6 +66,588 @@ This project is a multi-core simulator inspired by [Ripes](https://github.com/mo
 3. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
 4. View **register and memory outputs** after execution
  
+## Phase 3
+# Test Cases 
+# Part 1
+## Assembly code Used 
+```Riscv=
+
+.data
+arr: .word 1:10000
+sums:   .word 0, 0, 0, 0
+.text
+main:
+    addi x5,x0, 0             #x5 = sum[CID]
+    addi x7,x0, 100        # count loop
+    addi x10,x0,25    #count 
+    la x6,arr     # base of array
+    addi x31,x0,4          # bytes per word
+    li  x20, 400
+    mul x30,x20,x10
+    mul x30,x30,x32
+    add x30,x30,x6
+outer_loop:
+    addi x8,x0,0             # i = 0
+    addi x11,x30,0
+inner_loop:
+    lw x12,0(x11)       # load a[i*X]
+    add x5,x5,x12      #sum[CID] += a[i*X]
+    addi x8,x8,1
+    add  x11, x11, x20      # update pointer to next element position in the inner stride
+    blt  x8,x10,inner_loop
+    addi x7, x7, -1
+    bne x7,x0, outer_loop
+    #Save partial sum in memory
+sum:
+    la x14, sums
+    addi x15,x0,4
+    mul x16, x32, x15
+    add x14, x14, x16
+    sw x5,0(x14)
+    sync
+    #Combine if CID == 1
+    bne cid, 1, end
+    la x14, sums
+    lw x5, 0(x14)
+    lw x6, 4(x14)
+    lw x7, 8(x14)
+    lw x8, 12(x14)
+    add x5, x5, x6
+    add x5, x5, x7
+    add x5, x5, x8
+    sw x5,4(x14)
+    # x5 now contains total sum
+end:
+    li x10,100
+```
+
+## Parameters given
+
+
+```
+Enter L1D Cache Size in bytes: 400
+Enter L1I Cache Size in bytes: 400
+Enter L2 Cache Size in bytes: 800
+Enter Cache Block Size in bytes: 4
+Enter Cache Associativity: 1
+Enter L1 Cache Access Latency (cycles): 2
+Enter L2 Cache Access Latency (cycles): 4
+Enter Main Memory Access Time (cycles): 6
+Enable data forwarding? (y/n): y
+Enter latency for ADD (cycles): 1
+Enter latency for SUB (cycles): 1
+Enter latency for ADDI (cycles): 1
+Enter latency for MUL (cycles): 1
+
+```
+## Testing of  a direct mapped vs equivalent SPM
+
+
+### Algorithm 1: Implementation without using scratchpad memory.
+
+
+```
+      
+
+otal Clock Cycles: 56195
+Core 0 Final Results:
+   Instructions Committed  : 12916
+   Stall Cycles            : 45774
+   IPC (Instructions/Cycle): 0.229843
+Core 1 Final Results:
+   Instructions Committed  : 12925
+   Stall Cycles            : 45765
+   IPC (Instructions/Cycle): 0.230003
+Core 2 Final Results:
+   Instructions Committed  : 12916
+   Stall Cycles            : 45774
+   IPC (Instructions/Cycle): 0.229843
+Core 3 Final Results:
+   Instructions Committed  : 12916
+   Stall Cycles            : 45773
+   IPC (Instructions/Cycle): 0.229843
+-------------------------------------------------------------
+
+------------------ CACHE STATISTICS ------------------
+L1 Instruction Cache Miss Rate: 0.00985797      
+L1 Data Cache Miss Rate       : 0.9995
+L2 Unified Cache Miss Rate    : 1
+------------------------------------------------------
+```
+
+### Algorithm 2: Implementation with using scratchpad memory.
+## Assembly code Used 
+```Riscv=
+.data
+arr:     .word 1:10000
+sums:   .word 0, 0, 0, 0
+.text
+main:
+    la x6, arr          # base of array
+    li x14,25         # total loop count (moved earlier)
+    li x20, 400          # stride
+    li x13, 0            # SPM base index
+    li x8, 0             # i = 0
+    li x10,25
+    mul x30,x20,x10
+    mul x30,x30,x32
+    add x30,x30,x6
+    li x29,100
+    mul x28,x32,x29
+    mv x13,x28
+    add x11, x30, x0     # addr = &array[i*X]
+fill_loop:
+    lw x12, 0(x11)
+    sw_spm x12, 0(x13)
+    addi x13,x13,4     # SPM pointer increment
+    add x11, x11, x20  # array pointer increment
+    addi x8, x8, 1     
+    blt x8, x14, fill_loop
+    li x5, 0             # sum[CID]
+    li x7,100           # outer loop counter
+outer_loop_spm:
+    li x8,0             #i = 0
+    mv x9,x28          #SPM address
+inner_loop:
+    lw_spm x12, 0(x9)
+    add x5, x5, x12
+    addi x9, x9, 4
+    addi x8, x8, 1
+    blt x8, x14, inner_loop
+    addi x7, x7, -1
+    bne x7, x0, outer_loop_spm
+    # Save partial sum
+    la x15, sums
+    li x16, 4
+    mul x17, x32, x16
+    add x15, x15, x17
+    sw x5,0(x15)
+    sync
+    # Combine if CID == 1
+    bne cid, 1, end_spm
+    la x15, sums
+    lw x5, 0(x15)
+    lw x6, 4(x15)
+    lw x7, 8(x15)
+    lw x8, 12(x15)
+    add x5, x5, x6
+    add x5, x5, x7
+    add x5, x5, x8
+    sw x5,4(x15)
+end_spm:
+    ecall
+```
+```
+Total Clock Cycles: 31925
+Core 0 Final Results:
+   Instructions Committed  : 13072
+   Stall Cycles            : 18897
+   IPC (Instructions/Cycle): 0.40946
+Core 1 Final Results:
+   Instructions Committed  : 13081
+   Stall Cycles            : 18888
+   IPC (Instructions/Cycle): 0.409742
+Core 2 Final Results:
+   Instructions Committed  : 13072
+   Stall Cycles            : 18897
+   IPC (Instructions/Cycle): 0.40946
+Core 3 Final Results:
+   Instructions Committed  : 13072
+   Stall Cycles            : 18896
+   IPC (Instructions/Cycle): 0.40946
+-------------------------------------------------------------
+
+  
+```
+
+### Analysis
+
+A direct-mapped cache works much slower than a scratchpad memory (SPM). Without SPM, the system takes 221,159 clock cycles to complete, whereas with SPM, it only takes 123,641 cycles—which is significantly faster. The IPC (Instructions Per Cycle) also increases from about 0.23 to 0.41, meaning the system performs more useful work in less time. The main reason for the poor performance of the direct-mapped cache is its very high miss rate, caused by strided memory access patterns. In such cases, multiple elements map to the same cache location, so the cache often can't find the needed data—resulting in nearly every data cache access missing. In contrast, SPM avoids these issues by allowing the programmer to manually manage data placement, ensuring faster access and better reuse of the needed data.
+
+
+
+# Part 2
+## Parameters given
+```
+Enter L1D Cache Size in bytes: 400
+Enter L1I Cache Size in bytes: 400
+Enter L2 Cache Size in bytes: 800
+Enter Cache Block Size in bytes: 4
+Enter Cache Associativity: 100
+Enter L1 Cache Access Latency (cycles): 2
+Enter L2 Cache Access Latency (cycles): 4
+Enter Main Memory Access Time (cycles): 6
+Enable data forwarding? (y/n): y
+Enter latency for ADD (cycles): 1
+Enter latency for SUB (cycles): 1
+Enter latency for ADDI (cycles): 1
+Enter latency for MUL (cycles): 1
+
+```
+## Testing of Fully associative vs equivalent SPM
+
+
+### Algorithm 1: Implementation without using scratchpad memory.
+
+```
+Total Clock Cycles: 31445
+Core 0 Final Results:
+   Instructions Committed  : 12916
+   Stall Cycles            : 21024
+   IPC (Instructions/Cycle): 0.410749
+Core 1 Final Results:
+   Instructions Committed  : 12925
+   Stall Cycles            : 21015
+   IPC (Instructions/Cycle): 0.411035
+Core 2 Final Results:
+   Instructions Committed  : 12916
+   Stall Cycles            : 21024
+   IPC (Instructions/Cycle): 0.410749
+Core 3 Final Results:
+   Instructions Committed  : 12916
+   Stall Cycles            : 21023
+   IPC (Instructions/Cycle): 0.410749
+-------------------------------------------------------------
+
+------------------ CACHE STATISTICS ------------------
+L1 Instruction Cache Miss Rate: 0.00985797      
+L1 Data Cache Miss Rate       : 0.0103906       
+L2 Unified Cache Miss Rate    : 1
+------------------------------------------------------
+
+```
+
+### Algorithm 2: Implementation with using scratchpad memory.
+
+```
+Total Clock Cycles: 31925
+Core 0 Final Results:
+   Instructions Committed  : 13072
+   Stall Cycles            : 18897
+   IPC (Instructions/Cycle): 0.40946
+Core 1 Final Results:
+   Instructions Committed  : 13081
+   Stall Cycles            : 18888
+   IPC (Instructions/Cycle): 0.409742
+Core 2 Final Results:
+   Instructions Committed  : 13072
+   Stall Cycles            : 18897
+   IPC (Instructions/Cycle): 0.40946
+Core 3 Final Results:
+   Instructions Committed  : 13072
+   Stall Cycles            : 18896
+   IPC (Instructions/Cycle): 0.40946
+-------------------------------------------------------------
+
+  
+```
+### Analysis
+The performance of the fully associative cache and the scratchpad memory (SPM) is almost the same. The system with the fully associative cache takes 31,445 clock cycles, while the one using SPM takes 31,925 cycles, which is a very small difference. Both setups also have a similar IPC of around 0.41, meaning they do about the same amount of useful work per cycle.  SPM gives similar performance by letting the programmer control data placement. Overall, in this case, both methods perform nearly equally well, so using a fully associative cache can be just as effective as using SPM.
+
+
+# Part 2 
+# Algorithm 1: Implementation without using scratchpad memory.
+## Assembly code Used 
+```Riscv=
+
+
+.data
+arr: .word 1:20000
+sums:   .word 0, 0, 0, 0
+.text
+main:
+    addi x5,x0, 0             #x5 = sum[CID]
+    addi x7,x0, 100        # count loop
+    addi x10,x0,50    #count 
+    la x6,arr     # base of array
+    addi x31,x0,4          # bytes per word
+    li  x20, 400
+    mul x30,x20,x10
+    mul x30,x30,x32
+    add x30,x30,x6
+outer_loop:
+    addi x8,x0,0             # i = 0
+    addi x11,x30,0
+inner_loop:
+    lw x12,0(x11)       # load a[i*X]
+    add x5,x5,x12      #sum[CID] += a[i*X]
+    addi x8,x8,1
+    add  x11, x11, x20      # update pointer to next element position in the inner stride
+    blt  x8,x10,inner_loop
+    addi x7, x7, -1
+    bne x7,x0, outer_loop
+    
+    #Save partial sum in memory
+sum:
+    la x14, sums
+    addi x15,x0,4
+    mul x16, x32, x15
+    add x14, x14, x16
+    sw x5, 0(x14)
+    sync
+    #Combine if CID == 1
+    bne cid, 1, end
+    la x14, sums
+    lw x5, 0(x14)
+    lw x6, 4(x14)
+    lw x7, 8(x14)
+    lw x8, 12(x14)
+    add x5, x5, x6
+    add x5, x5, x7
+    add x5, x5, x8
+    sw x5,4(x14)
+    # x5 now contains total sum
+end:
+    li x10,100
+    
+
+```
+
+
+
+## Fully associative
+
+```
+Total Clock Cycles: 111195
+Core 0 Final Results:
+   Instructions Committed  : 25416
+   Stall Cycles            : 90774
+   IPC (Instructions/Cycle): 0.228571
+Core 1 Final Results:
+   Instructions Committed  : 25425
+   Stall Cycles            : 90765
+   IPC (Instructions/Cycle): 0.228652
+Core 2 Final Results:
+   Instructions Committed  : 25416
+   Stall Cycles            : 90774
+   IPC (Instructions/Cycle): 0.228571
+Core 3 Final Results:
+   Instructions Committed  : 25416
+   Stall Cycles            : 90773
+   IPC (Instructions/Cycle): 0.228571
+-------------------------------------------------------------
+
+------------------ CACHE STATISTICS ------------------
+L1 Instruction Cache Miss Rate: 0.00581873      
+L1 Data Cache Miss Rate       : 0.99975
+L2 Unified Cache Miss Rate    : 1
+------------------------------------------------------
+```
+
+# Algorithm 2: Implementation with using scratchpad memory.
+
+## Assembly code Used 
+```Riscv=
+
+.data
+arr:     .word 1:20000
+sums:   .word 0, 0, 0, 0
+.text
+main:
+    la x6, arr          # base of array
+    li x14,25         # total loop count (moved earlier)
+    li x20, 400          # stride
+    li x13, 0            # SPM base index
+    li x8, 0             # i = 0
+    li x10,25
+    mul x27,x20,x10
+    mul x30,x27,x32
+    add x30,x30,x6
+    li x29,100
+    mul x28,x32,x29
+    mv x13,x28
+    li x19,50
+    add x11,x30,x0     #addr = &array[i*X]
+    addi x26,x30,40000
+fill_loop:
+    lw x12, 0(x11)
+    sw_spm x12, 0(x13)
+    addi x13,x13,4     # SPM pointer increment
+    add x11, x11, x20  # array pointer increment
+    addi x8, x8, 1     
+    blt x8, x14, fill_loop
+    li x5, 0             # sum[CID]
+    li x7,100           # outer loop counter
+outer_loop_spm:
+    li x8,0             #i = 0
+    mv x9,x28          #SPM address
+    mv x25,x26
+inner_loop:
+    blt x8,x10, lw_from_spm
+    lw x12,0(x25)
+    addi x25,x25,400
+    addi x8, x8, 1
+    j calsum
+lw_from_spm:
+    lw_spm x12, 0(x9)
+    addi x9,x9,4
+    addi x8, x8, 1
+calsum:
+    add x5, x5, x12
+    blt x8,x19,inner_loop
+    addi x7, x7, -1
+    bne x7,x0, outer_loop_spm
+    # Save partial sum
+    la x15,sums
+    li x16,4
+    mul x17, x32, x16
+    add x15, x15, x17
+    sw x5,0(x15)
+    sync
+    # Combine if CID == 1
+    bne cid, 1, end_spm
+    la x15, sums
+    lw x5, 0(x15)
+    lw x6, 4(x15)
+    lw x7, 8(x15)
+    lw x8, 12(x15)
+    add x5, x5, x6
+    add x5, x5, x7
+    add x5, x5, x8
+    sw x5,4(x15)
+end_spm:
+    ecall
+
+
+```
+# Parameters Given
+```
+
+Total Clock Cycles: 87401
+Core 0 Final Results:
+   Instructions Committed  : 33174
+   Stall Cycles            : 54535
+   IPC (Instructions/Cycle): 0.379561
+Core 1 Final Results:
+   Instructions Committed  : 33183
+   Stall Cycles            : 54526
+   IPC (Instructions/Cycle): 0.379664
+Core 2 Final Results:
+   Instructions Committed  : 33174
+   Stall Cycles            : 54535
+   IPC (Instructions/Cycle): 0.379561
+Core 3 Final Results:
+   Instructions Committed  : 33174
+   Stall Cycles            : 54534
+   IPC (Instructions/Cycle): 0.379561
+-------------------------------------------------------------
+
+
+```
+### Analysis
+
+- At first in previous test case, it might look like scratchpad memory (SPM) and fully associative caches give similar performance when they’re the same size. 
+- But from our new results, **Algorithm 2** (which uses SPM) clearly performs better than **Algorithm 1** (which uses a cache) in terms of speed and IPC.
+- We doubled the number of elements being accessed to 200 but only store 100 in the SPM—**Algorithm 2** still does better.
+- The main reason is that with SPM, the program controls exactly what gets stored, so every access hits the correct data with no guessing or data being replaced. 
+- In this Testcase,we double our loop to touch 200 distinct elements but only preload 100 words into the SPM. Every access to those 100 words is a guaranteed hit, whereas a fully associative cache will begin evicting and reloading data once its capacity is exceeded—causing  misses even though it is **Fully associative**
+-  This means that with a larger stride (200 elements), the cache’s miss rate rises sharply and stalls far more, while the SPM continues to deliver steady, predictable hits on its 100 preloaded entries. Thus, even under equal latency assumptions, SPM offers a clear performance edge for workloads whose access patterns can be partitioned to fit its manually managed storage.
+
+# Latencies (and power requirements) of SPMs are far lower than caches
+
+- Scratchpad memories (SPMs) are much faster and use less energy than regular caches because they are built in a simpler way. 
+- They use basic memory blocks with one or two access ports and don’t include the extra circuits that caches need, like those for checking addresses or deciding what data to replace. 
+- Caches must compare tags, keep track of sharing between processors, and run a replacement process every time data is accessed or loaded. These extra steps add more layers of logic, increase wiring needs, and use more power. 
+- SPMs, on the other hand, are accessed using fixed addresses managed by the programmer or compiler, and these go straight to the memory with no need for comparisons or replacement logic. 
+- This simple setup makes SPMs quicker (fewer steps and shorter delays) and more power-efficient (less unnecessary activity), so they perform better and save energy compared to caches of the same size.
+
+# Implementation of SYNC 
+
+## Sync Instruction Handling in Simulator
+
+### Detection in EX Stage
+
+When a core encounters a `sync` instruction in the **Execute (EX)** stage:
+
+```cpp
+if (ps.EX.instr.opcode == "sync") {
+  if (!ps.waitingForSync) {
+    ps.waitingForSync = true;
+    syncCounter++;
+  }
+  if (syncCounter < 4) {
+    ps.stallCount++;
+    continue;  // core stalls here, stays in EX
+  } else {
+    // all cores have reached the barrier
+    for (int j = 0; j < 4; j++) {
+      pipelineStates[j].EX.valid = false;
+      pipelineStates[j].waitingForSync = false;
+    }
+    syncCounter = 0;
+    continue;  // release all cores
+  }
+}
+```
+
+- `ps.waitingForSync`: Ensures a core only contributes to `syncCounter` once.
+- `syncCounter`: Global variable tracking how many cores have hit the barrier.
+- If `syncCounter < 4`, the core **stalls in EX**, incrementing `stallCount`.
+- Once `syncCounter == 4`, all cores:
+  - Invalidate their EX stage (`EX.valid = false`)
+  - Reset their `waitingForSync` flags
+  - `syncCounter` is reset to 0
+
+---
+
+### Effect on Pipeline
+
+- **Barrier semantics**: No core can move past `sync` until all others have reached it.
+- The instruction **stays in EX** and does not advance through MEM/WB.
+- On release:
+  - All cores' EX stages are flushed
+  - Program counters advance in **lockstep**
+  - Next cycle: Each core fetches the instruction after `sync`
+
+---
+
+### Design Choices 
+
+- ✅ Avoiding Fixed Delays
+- The design **does not use hardcoded delays** like “stall for 100 cycles.”
+- Instead, it **dynamically detects** when all cores arrive at the barrier:
+  - Cores stall in EX until `syncCounter == num_cores`
+- ✅ **Minimal pipeline changes**: Reuses EX stage logic (`valid`, `waitingForSync`).
+- ✅ **Scalable**: `syncCounter` logic can extend to any number of cores.
+- ✅ **Flush approach**: Ensures synchronized PC advancement after barrier.
+- ✅**Zero-cost semantic**:
+The sync does no arithmetic or memory access; it only performs the barrier. All register-and-cache side-effects are NOP.
+- Ensured strong barrier behavior without introducing new pipeline complexity.
+
+### Hardware Mapping of design 
+
+## Hardware Relation for `sync` Instruction
+
+
+- **Global Barrier Counter**  
+  - Implemented as a simple register (`SYNC_COUNT`) that all cores can increment.  
+  - Each core has a small “arrived” flag in its own status register to avoid double‐counting.
+
+- **Per‐Core Waiting Flag**  
+  - A single bit (`WAIT_FOR_SYNC`) in each core’s control register.  
+  - Set when the core first executes `sync`, preventing repeated increments.
+
+- **Stall Control in EX Stage**  
+  - A hardware comparator checks: `if (SYNC_COUNT < NUM_CORES)`.  
+  - If true, the core’s EX stage is held (its pipeline register enable is gated off).  
+  - Stall signal increments a per‐core stall counter for performance stats.
+
+- **Barrier Release Logic**  
+  - Once `SYNC_COUNT == NUM_CORES`, a broadcast clears:  
+    - All cores’ EX‐valid bits (flush the `sync` instruction)  
+    - All `WAIT_FOR_SYNC` flags  
+    - The `SYNC_COUNT` register  
+  - A single clock edge resumes all EX stages together, advancing each PC in lockstep.
+
+- **Minimal Extra Hardware**  
+  - No new pipeline stages—just a few extra bits and simple comparator logic in EX.  
+  - No timers or fixed delays—hardware stalls until the counter condition is met.
+
+- **Scalability**  
+  - Replace the single counter with a tree of counters or a ring network to support more cores without one hot‐spot register.
+  - This hardware view shows how a small amount of extra control logic in the EX stage can implement a full barrier without major pipeline redesign. 
+
+
 
 ## Features
 - **4-Core Simulation**: Each core operates independently but shares memory.
