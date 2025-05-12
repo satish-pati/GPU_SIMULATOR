@@ -12,7 +12,6 @@
 #include <climits>
 #include <string>
 using namespace std;
-
 std::unordered_map<std::string, int> labelMap;
 std::map<std::string, int> dataLabels;
 bool sp= false;
@@ -537,7 +536,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                         {
                             memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
                         }*/
-                        memory.sstoreWord( dataAddress, value, 0, is);
+                        memory.sstoreWord(dataAddress, value, 0, is);
                         dataAddress += 4;
                     }
                 }
@@ -588,10 +587,6 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                 }
             }
         }
-
-          
-            
-
         if (inTextSection)
         {
             // 🔹 Properly handle labels (trim spaces before checking ':')
@@ -826,7 +821,7 @@ public:
         latencyConfig["MUL"] = lat;
         // --- Prompt for cache configuration ---
         
-        if(l1Latency==1&&!sp) clockCycles=-10000;
+        
         for (int cid = 0; cid < 4; cid++) {
             pipelineStates[cid].stallCount = 0;
             pipelineStates[cid].waitingForSync = false;
@@ -1127,9 +1122,7 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                             ps.MEM = ps.EX;
                             ps.MEM.stage = STAGE_MEM;
                             int spmLatency = memory.getL1DLatency();
-                             
                             ps.MEM.remainingLatency = (spmLatency > 0 ? spmLatency - 1 : 0);
-
                             ps.EX.valid = false;
                         }
                         // New branch for SPM store
