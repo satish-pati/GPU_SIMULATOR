@@ -14,8 +14,8 @@
 using namespace std;
 std::unordered_map<std::string, int> labelMap;
 std::map<std::string, int> dataLabels;
-bool sp= false;
-bool bnenum= false;
+bool sp = false;
+bool bnenum = false;
 
 // Converts a line (already parsed as a tuple) into an Instruction object.
 Instruction tupleToInstruction(const std::tuple<std::string, int, int, int, int, std::string> &t, int index)
@@ -30,7 +30,7 @@ Instruction tupleToInstruction(const std::tuple<std::string, int, int, int, int,
     instr.index = index;
     return instr;
 }
-// function for assembly instruction 
+// function for assembly instruction
 std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(const std::string &line)
 {
 
@@ -72,7 +72,7 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
 
         return {instr, rd, rs1, rs2, imm, ""};
     }
-// ... inside assembleInstruction() ...
+    // ... inside assembleInstruction() ...
 
     if (instr == "addi" || instr == "ADDI")
     {
@@ -206,7 +206,8 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
 
         return {instr, rd, rs1, rs2, imm, ""};
     }
-    else if (instr == "lw_spm" || instr == "LW_SPM") {
+    else if (instr == "lw_spm" || instr == "LW_SPM")
+    {
         std::string rdStr, rs1Str, immStr;
         // Format: lw_spm rd, offset(rs1)
         getline(iss >> std::ws, rdStr, ',');
@@ -215,10 +216,11 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
         rd = std::stoi(rdStr.substr(1));   // Remove 'x' and convert
         rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert
         imm = std::stoi(immStr);           // Convert offset
-        sp=true;
+        sp = true;
         return {instr, rd, rs1, rs2, imm, ""};
     }
-    else if (instr == "sw_spm" || instr == "SW_SPM") {
+    else if (instr == "sw_spm" || instr == "SW_SPM")
+    {
         std::string rs2Str, rs1Str, immStr;
         // Format: sw_spm rs2, offset(rs1)
         getline(iss >> std::ws, rs2Str, ',');
@@ -227,10 +229,10 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
         rs2 = std::stoi(rs2Str.substr(1)); // Remove 'x' and convert
         rs1 = std::stoi(rs1Str.substr(1)); // Remove 'x' and convert
         imm = std::stoi(immStr);           // Convert offset
-        sp=true;
+        sp = true;
         return {instr, rd, rs1, rs2, imm, ""};
     }
-    
+
     else if (instr == "li" || instr == "LI")
     {
         std::string rdStr;
@@ -299,12 +301,12 @@ std::tuple<std::string, int, int, int, int, std::string> assembleInstruction(con
                 {
                     rd = 0;
                     cout << "wrong immediate given in bne instruction and immediate should be between 0 and 3 only" << endl;
-                    //bnenum = false;
+                    // bnenum = false;
                 }
                 else
                 {
                     rd = 0;
-                   // bnenum = true;
+                    // bnenum = true;
                 }
                 rs1 = 0;        // will change to coreID in sim classs---for now 0,no need of rd
                 rs2 = cidValue; // given in code ...just compare cid,core id---> rs1,rs2
@@ -474,7 +476,7 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
 
                 if (!label.empty())
                 {
-                   // std::cout << "Data Label found: " << label << " at address " << dataAddress << std::endl;
+                    // std::cout << "Data Label found: " << label << " at address " << dataAddress << std::endl;
                     dataLabels[label] = dataAddress;
                 }
 
@@ -482,25 +484,34 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                 while (iss >> token)
                 {
                     size_t rangePos = token.find(':');
-                    if (rangePos != std::string::npos && rangePos > 0 && rangePos < token.length() - 1) {
+                    if (rangePos != std::string::npos && rangePos > 0 && rangePos < token.length() - 1)
+                    {
                         // Handle range format
-                        try {
+                        try
+                        {
                             int start = std::stoi(token.substr(0, rangePos));
                             int end = std::stoi(token.substr(rangePos + 1));
-                            
-                            if (start <= end) {
-                                for (int i = start; i <= end; i++) {
+
+                            if (start <= end)
+                            {
+                                for (int i = start; i <= end; i++)
+                                {
                                     memory.sstoreWord(dataAddress, i, 0, is);
                                     dataAddress += 4;
                                 }
-                            } else {
-                                for (int i = start; i >= end; i--) {
+                            }
+                            else
+                            {
+                                for (int i = start; i >= end; i--)
+                                {
                                     memory.sstoreWord(dataAddress, i, 0, is);
                                     dataAddress += 4;
                                 }
                             }
                             continue; // Skip the normal comma processing for this token
-                        } catch (...) {
+                        }
+                        catch (...)
+                        {
                             // If conversion fails, treat it as normal token
                         }
                     }
@@ -515,9 +526,9 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                         {
                             int value = std::stoi(valueStr);
                             // Store the value in all cores' memory
-                           
-                                memory.sstoreWord( dataAddress, value, 0, is);
-                            
+
+                            memory.sstoreWord(dataAddress, value, 0, is);
+
                             dataAddress += 4;
                         }
 
@@ -532,10 +543,10 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                     {
                         int value = std::stoi(token);
                         // Store the value in all cores' memory
-                       /* for (int coreID = 0; coreID < 4; coreID++)
-                        {
-                            memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
-                        }*/
+                        /* for (int coreID = 0; coreID < 4; coreID++)
+                         {
+                             memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
+                         }*/
                         memory.sstoreWord(dataAddress, value, 0, is);
                         dataAddress += 4;
                     }
@@ -558,12 +569,12 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                         {
                             int value = std::stoi(valueStr);
                             // Store the value in all cores' memory
-                           /* for (int coreID = 0; coreID < 4; coreID++)
-                            {
-                                memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
-                            }*/
-                           // Store the value in shared memory only once.
-                           memory.sstoreWord(dataAddress, value, 0, is);
+                            /* for (int coreID = 0; coreID < 4; coreID++)
+                             {
+                                 memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
+                             }*/
+                            // Store the value in shared memory only once.
+                            memory.sstoreWord(dataAddress, value, 0, is);
                             dataAddress += 4;
                         }
                         token = token.substr(commaPos + 1); // Update the token to the part after the comma
@@ -577,10 +588,10 @@ loadProgramFromFile(const std::string &filename, Memory &memory)
                     {
                         int value = std::stoi(token);
                         // Store the value in all cores' memory
-                       /*for (int coreID = 0; coreID < 4; coreID++)
-                        {
-                            memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
-                        }*/
+                        /*for (int coreID = 0; coreID < 4; coreID++)
+                         {
+                             memory.storeWord(coreID * 1024 + dataAddress, value, coreID, is);
+                         }*/
                         memory.sstoreWord(dataAddress, value, 0, is);
                         dataAddress += 4;
                     }
@@ -719,9 +730,9 @@ public:
     std::vector<PipelineState> pipelineStates;          // One per core
     int syncCounter;                                    //  counter for SYNC barrier.
 public:
-    Simulator(const std::string &filename) : clockCycles(0), globalPC(0),syncCounter(0)
+    Simulator(const std::string &filename) : clockCycles(0), globalPC(0), syncCounter(0)
     {
-        int l1Size,l1Isize, l2Size, blockSize, associativity, l1Latency, l2Latency, memLatency;
+        int l1Size, l1Isize, l2Size, blockSize, associativity, l1Latency, l2Latency, memLatency;
         std::cout << "Enter L1D Cache Size in bytes: ";
         std::cin >> l1Size;
         std::cout << "Enter L1I Cache Size in bytes: ";
@@ -738,15 +749,15 @@ public:
         std::cin >> l2Latency;
         std::cout << "Enter Main Memory Access Time (cycles): ";
         std::cin >> memLatency;
-        memory.configureCaches(l1Isize,l1Size, l2Size, blockSize, associativity, l1Latency, l2Latency, memLatency);
+        memory.configureCaches(l1Isize, l1Size, l2Size, blockSize, associativity, l1Latency, l2Latency, memLatency);
         auto progTuples = loadProgramFromFile(filename, memory);
-                    
+
         // Convert tuples into Instruction objects
         for (size_t i = 0; i < progTuples.size(); i++)
         {
-           // std::cout<<"Instruction "<<i<<std::endl;
-            auto isactive=true;
-            memory.sstoreWord(i*4,i,0,isactive);
+            // std::cout<<"Instruction "<<i<<std::endl;
+            auto isactive = true;
+            memory.sstoreWord(i * 4, i, 0, isactive);
             program.push_back(tupleToInstruction(progTuples[i], i));
         }
 
@@ -763,7 +774,7 @@ public:
         std::cout << "Enter latency for ADD (cycles): ";
         int lat;
         // std::cin >> lat;
-        
+
         /*for(int i=1;i<=20000;i++)   {
             uint32_t word=(1008+((i-1)*4));
             bool k=true;
@@ -820,9 +831,9 @@ public:
         latencyConfig["mul"] = lat;
         latencyConfig["MUL"] = lat;
         // --- Prompt for cache configuration ---
-        
-        
-        for (int cid = 0; cid < 4; cid++) {
+
+        for (int cid = 0; cid < 4; cid++)
+        {
             pipelineStates[cid].stallCount = 0;
             pipelineStates[cid].waitingForSync = false;
         }
@@ -863,11 +874,10 @@ public:
         return false;
     }
 
-    
     // Simulate one clock cycle.
-   void cycle()
+    void cycle()
     {
-        
+
         //  Adjust globalPC if any core's localPC is behind (branch taken backward)
         int minLocalPC = INT_MAX;
         for (int cid = 0; cid < 4; cid++)
@@ -878,7 +888,7 @@ public:
 
         globalPC = minLocalPC;
 
-        // Fetch Stage: Broadcast one instruction from global instruction memory 
+        // Fetch Stage: Broadcast one instruction from global instruction memory
         Instruction fetchedInstr;
         bool fetchedValid = false;
         if (globalPC < (int)program.size())
@@ -912,16 +922,14 @@ public:
                         ps.WB.instr.opcode == "mv" || ps.WB.instr.opcode == "MV" ||
                         ps.WB.instr.opcode == "lw" || ps.WB.instr.opcode == "LW" ||
                         ps.WB.instr.opcode == "la" || ps.WB.instr.opcode == "LA" ||
-                        ps.WB.instr.opcode == "jal" || ps.WB.instr.opcode == "JAL"
-                    ||ps.WB.instr.opcode == "lw_spm" || ps.WB.instr.opcode == "LW_SPM" 
-                )
+                        ps.WB.instr.opcode == "jal" || ps.WB.instr.opcode == "JAL" || ps.WB.instr.opcode == "lw_spm" || ps.WB.instr.opcode == "LW_SPM")
                     {
                         core.writeBack(ps.WB.instr.rd, ps.WB.computedResult);
                     }
                     // For branch, store, jump (J) and other control instructions,
                     // no register update is needed but we still count the instruction.
                     ps.completedInstr++;
-                    
+
                     if (ps.WB.instr.opcode == "sw" || ps.WB.instr.opcode == "SW" ||
                         ps.WB.instr.opcode == "bne" || ps.WB.instr.opcode == "BNE" ||
                         ps.WB.instr.opcode == "beq" || ps.WB.instr.opcode == "BEQ" ||
@@ -940,44 +948,47 @@ public:
             {
                 // If lw or sw and still waiting on latency, decrement remainingLatency.
                 if ((ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW" ||
-                     ps.MEM.instr.opcode == "sw" || ps.MEM.instr.opcode == "SW"||ps.MEM.instr.opcode == "sw_spm" || ps.MEM.instr.opcode == "SW_SPM"||ps.MEM.instr.opcode == "lw_spm" || ps.MEM.instr.opcode == "LW_SPM") &&
+                     ps.MEM.instr.opcode == "sw" || ps.MEM.instr.opcode == "SW" || ps.MEM.instr.opcode == "sw_spm" || ps.MEM.instr.opcode == "SW_SPM" || ps.MEM.instr.opcode == "lw_spm" || ps.MEM.instr.opcode == "LW_SPM") &&
                     (ps.MEM.remainingLatency > 0))
                 {
                     ps.MEM.remainingLatency--;
+                    //std::cout << "Remaining latency: " << ps.MEM.remainingLatency << std::endl;
+                   // std::cout<<"Clock: "<<clockCycles<<std::endl;
                 }
                 else if (ps.MEM.instr.opcode == "lw_spm" || ps.MEM.instr.opcode == "LW_SPM")
-        {
-         uint32_t addr = ps.MEM.computedResult;
-         int value = memory.loadWordSPM(addr);
-        // std::cout << "Load from SPM: " << addr <<"value: " <<value<<std::endl;
-
-         ps.MEM.computedResult = value;
-         ps.WB = ps.MEM;
-         ps.WB.stage = STAGE_WB;
-         ps.MEM.valid = false;
-    }
-    // New branch for SPM store
-    else if (ps.MEM.instr.opcode == "sw_spm" || ps.MEM.instr.opcode == "SW_SPM")
-    {
-         auto getVal = [&](int reg) -> int {
-             if (forwardingEnabled) {
-                 if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
-                     return ps.WB.computedResult;
-                 if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
-                     return ps.MEM.computedResult;
-             }
-             return core.readRegister(reg);
-         };
-         uint32_t addr = ps.MEM.computedResult;
-         int value = getVal(ps.MEM.instr.rs2);
-         memory.storeWordSPM(addr, value);
-         ps.WB = ps.MEM;
-         ps.WB.stage = STAGE_WB;
-         ps.MEM.valid = false;
-    }
+                {
+                    uint32_t addr = ps.MEM.computedResult;
+                    int value = memory.loadWordSPM(addr);
+                    // std::cout << "Load from SPM: " << addr <<"value: " <<value<<std::endl;
+                    ps.MEM.computedResult = value;
+                    ps.WB = ps.MEM;
+                    ps.WB.stage = STAGE_WB;
+                    ps.MEM.valid = false;
+                }
+                // New branch for SPM store
+                else if (ps.MEM.instr.opcode == "sw_spm" || ps.MEM.instr.opcode == "SW_SPM")
+                {
+                    auto getVal = [&](int reg) -> int
+                    {
+                        if (forwardingEnabled)
+                        {
+                            if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
+                                return ps.WB.computedResult;
+                            if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
+                                return ps.MEM.computedResult;
+                        }
+                        return core.readRegister(reg);
+                    };
+                    uint32_t addr = ps.MEM.computedResult;
+                    int value = getVal(ps.MEM.instr.rs2);
+                    memory.storeWordSPM(addr, value);
+                    ps.WB = ps.MEM;
+                    ps.WB.stage = STAGE_WB;
+                    ps.MEM.valid = false;
+                }
                 // Once latency count reaches zero,perform memory access.
-else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
-{
+                else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
+                {
                     bool isActive = true;
                     uint32_t addr = ps.MEM.computedResult;
                     auto memdatapair = memory.loadWord(addr, cid, isActive);
@@ -1020,51 +1031,48 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
             if (ps.EX.valid)
             {
 
-                
-                 if (ps.EX.remainingLatency > 0)
+                if (ps.EX.remainingLatency > 0)
                 {
                     const std::string &op = ps.EX.instr.opcode;
-                   
+
                     ps.EX.remainingLatency--;
                 }
                 else if (ps.EX.remainingLatency == 0)
                 {
-                    
-                 if (ps.EX.instr.opcode == "sync" || ps.EX.instr.opcode == "SYNC")
-                {
-                    // If this core hasn't yet flagged itself as waiting, do so and update syncCounter.
-                    if (!ps.waitingForSync)
+
+                    if (ps.EX.instr.opcode == "sync" || ps.EX.instr.opcode == "SYNC")
                     {
-                        ps.waitingForSync = true;
-                        syncCounter++;
-                       
-                    }
-                    //If not all cores have reached SYNC, stall this core.
-                    if (syncCounter < 4)
-                    {                   
-                        ps.stallCount++;
-                        continue; // Remain in EX until barrier condition is met.
-                    }
-                    else
-                    {                 
-                        // For all cores, flush the SYNC instruction and advance localPC.
-                        for (int j = 0; j < 4; j++)
+                        // If this core hasn't yet flagged itself as waiting, do so and update syncCounter.
+                        if (!ps.waitingForSync)
                         {
-                            pipelineStates[j].EX.valid = false;
-                            pipelineStates[j].waitingForSync = false;
-                            // Advance the localPC to move past the SYNC instruction.
-                          
+                            ps.waitingForSync = true;
+                            syncCounter++;
                         }
-                        syncCounter = 0; 
-                        continue;
+                        // If not all cores have reached SYNC, stall this core.
+                        if (syncCounter < 4)
+                        {
+                            ps.stallCount++;
+                            continue; // Remain in EX until barrier condition is met.
+                        }
+                        else
+                        {
+                            // For all cores, flush the SYNC instruction and advance localPC.
+                            for (int j = 0; j < 4; j++)
+                            {
+                                pipelineStates[j].EX.valid = false;
+                                pipelineStates[j].waitingForSync = false;
+                                // Advance the localPC to move past the SYNC instruction.
+                            }
+                            syncCounter = 0;
+                            continue;
+                        }
                     }
-                }
-                else if  (ps.MEM.valid )
-                {
-                    // MEM stage is busy; stall the current instruction in EX.
-                    ps.stallCount++;
-                    // Do not clear or modify EX, let the instruction remain until MEM becomes free.
-                }
+                    else if (ps.MEM.valid)
+                    {
+                        // MEM stage is busy; stall the current instruction in EX.
+                        ps.stallCount++;
+                        // Do not clear or modify EX, let the instruction remain until MEM becomes free.
+                    }
                     else
                     {
                         const std::string &op = ps.EX.instr.opcode;
@@ -1086,28 +1094,40 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                             int addr = base + ps.EX.instr.imm;
                             ps.EX.computedResult = addr;
                             // Transfer to MEM stage and set memory latency.
-                           
                             ps.MEM = ps.EX;
                             ps.MEM.stage = STAGE_MEM;
                             int memLat;
                             bool isActive = true;
-                            if (op == "lw" || op == "LW" ){
-                                 auto memdatapair = memory.loadWord(addr, cid, isActive);
-                                 memLat = memdatapair.second;
+                            if (op == "lw" || op == "LW")
+                            {
+                             memLat= memory.loadWordlatency(addr, cid, isActive);
+                           // std::cout <<cid<< "core"<<memLat << std::endl;
+                           // std::cout <<cid<< "core"<<memory.loadWordlatency(addr, cid, isActive) << std::endl;
+
+                                //auto memdatapair = memory.loadWord(addr, cid, isActive);
+                                //ps.MEM.mem_exe = memdatapair.first;
+                                //memLat = memdatapair.second;
                             }
-                            else {
-                                    int value = getVal(ps.MEM.instr.rs2);
-                                auto memLat = memory.storeWord(addr,value,cid,isActive);
+                            else
+                            {
+                                int value = getVal(ps.MEM.instr.rs2);
+                                memLat = memory.storeWordlatency(addr, value, cid, isActive);
+                                //ps.MEM.mem_exe = memdatapair.first;
+
                             }
                             ps.MEM.remainingLatency = (memLat > 0 ? memLat - 1 : 0);
-                            
+
+                            //std::cout <<cid<< "core"<<memLat << std::endl;
 
                             ps.EX.valid = false;
                         }
-                        else if (op == "lw_spm" || op == "LW_SPM") {
+                        else if (op == "lw_spm" || op == "LW_SPM")
+                        {
                             // Compute effective address: base register + immediate
-                            auto getVal = [&](int reg) -> int {
-                                if (forwardingEnabled) {
+                            auto getVal = [&](int reg) -> int
+                            {
+                                if (forwardingEnabled)
+                                {
                                     if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
                                         return ps.WB.computedResult;
                                     if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
@@ -1126,9 +1146,12 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                             ps.EX.valid = false;
                         }
                         // New branch for SPM store
-                        else if (op == "sw_spm" || op == "SW_SPM") {
-                            auto getVal = [&](int reg) -> int {
-                                if (forwardingEnabled) {
+                        else if (op == "sw_spm" || op == "SW_SPM")
+                        {
+                            auto getVal = [&](int reg) -> int
+                            {
+                                if (forwardingEnabled)
+                                {
                                     if (ps.WB.valid && ps.WB.instr.rd == reg && reg != 0 && reg != 32)
                                         return ps.WB.computedResult;
                                     if (ps.MEM.valid && ps.MEM.instr.rd == reg && reg != 0 && reg != 32)
@@ -1144,7 +1167,7 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                             ps.MEM.stage = STAGE_MEM;
                             int spmLatency = memory.getL1DLatency();
                             ps.MEM.remainingLatency = (spmLatency > 0 ? spmLatency - 1 : 0);
-                            //ps.MEM.remainingLatency=0;
+                            // ps.MEM.remainingLatency=0;
                             ps.EX.valid = false;
                         }
                         else
@@ -1224,7 +1247,7 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
 
                                 if (taken)
                                 {
-                                   // std::cout << "Core " << cid << " - EX: Branch "
+                                    // std::cout << "Core " << cid << " - EX: Branch "
                                     //         << instrToString(ps.EX.instr)
                                     //         << " taken, jumping to index " << ps.EX.instr.imm << std::endl;
                                     if (ps.ID.valid)
@@ -1238,8 +1261,8 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                                 }
                                 else
                                 {
-                                  //  std::cout << "Core " << cid << " - EX: Branch "
-                                             // << instrToString(ps.EX.instr) << " not taken" << std::endl;
+                                    //  std::cout << "Core " << cid << " - EX: Branch "
+                                    // << instrToString(ps.EX.instr) << " not taken" << std::endl;
                                 }
                             }
                             else if (op == "bne" || op == "BNE" ||
@@ -1304,9 +1327,9 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                                     int value = x10;
                                     consoleOutput[cid].emplace_back("", value); // Store in the core's section
                                 }
-                              //  std::cout <<"Cloclk Cycle: "<< clockCycles << " | Core " << cid << " | Executing ECALL" << "  x10=" << x10 << std::endl;
+                                //  std::cout <<"Cloclk Cycle: "<< clockCycles << " | Core " << cid << " | Executing ECALL" << "  x10=" << x10 << std::endl;
                                 std::cout << " | Core " << cid
-                                      << " | Executing ECALL" << "  x10=" << x10 << std::endl;
+                                          << " | Executing ECALL" << "  x10=" << x10 << std::endl;
                             }
 
                             ps.MEM = ps.EX;
@@ -1350,10 +1373,9 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                     ps.EX = ps.ID;
                     ps.EX.stage = STAGE_EX;
                     std::string op = ps.EX.instr.opcode;
-                  
+
                     // std::cout<< ps.IF.instr.opcode<<endl;
-          
-                    
+
                     // std::cout << "Core " << cid << " - ID: Decoding instruction "
                     //  << instrToString(ps.ID.instr) << std::endl;
                     if (latencyConfig.find(op) != latencyConfig.end())
@@ -1371,20 +1393,21 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
                 //
                 if (ps.localPC == fetchedInstr.index)
                 {
-                  
-                    if (!ps.IF.valid&& !ps.waitingForSync)
+                    if (!ps.IF.valid && !ps.waitingForSync)
                     {
                         ps.IF.valid = true;
                         ps.IF.instr = fetchedInstr;
                         ps.IF.instr.index = fetchedInstr.index;
                         ps.IF.stage = STAGE_IF;
                         uint32_t instrAddress = fetchedInstr.index * 4;
-                        int latency = memory.loadinstructionWord(instrAddress);
+                       // std::cout << "Core" << cid << "-IF: Fetching instruction "
+                       //           << instrToString(ps.IF.instr) << std::endl;
+                        int latency = memory.loadinstructionWordlatency(instrAddress);
+                        //int latencydummy = memory.loadinstructionWord(instrAddress);
                         // Set remainingLatency in IF so that the instruction waits here.
                         ps.IF.remainingLatency = (latency > 0 ? latency - 1 : 0);
+                        //std::cout << latency << std::endl;
                         std::string op = ps.IF.instr.opcode;
-                        
-
                     }
                     else
                     {
@@ -1405,23 +1428,23 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
             // Advance IF -> ID if the ID stage is free.
             if (ps.IF.valid)
             {
-                if (ps.IF.remainingLatency > 0&& !ps.waitingForSync)
+                if (ps.IF.remainingLatency > 0 && !ps.waitingForSync)
                 {
                     // Decrement the fetch latency counter; do not move to ID until it reaches 0.
                     ps.IF.remainingLatency--;
+                    //    std::cout<<cid<<"core "<<ps.IF.remainingLatency<<endl;
                     ps.stallCount++;
                 }
-                else if (!ps.ID.valid&& !ps.waitingForSync)
+                else if (!ps.ID.valid && !ps.waitingForSync)
                 {
                     std::string op = ps.IF.instr.opcode;
-                    if (op == "sync")
-                    {                   // cout<<"CLOCK CYCLE: "<<clockCycles<<endl;
-                       // std::cout << "Core " << cid << " - ID: Fetched  instruction  moved to ID "
-                            //      << instrToString(ps.IF.instr) << clockCycles << std::endl;
-                    }
+                    
+                    //    std::cout<<cid<<"core moved to ID"<<ps.IF.remainingLatency<<endl;
+                    uint32_t instrAddress = fetchedInstr.index * 4;
+                    memory.loadinstructionWord(instrAddress);
                     ps.ID = ps.IF;
                     ps.ID.stage = STAGE_ID;
-                   
+
                     ps.IF.valid = false;
                     ps.localPC++;
                 }
@@ -1462,14 +1485,14 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
             cycle();
         }
         memory.update();
-       // memory.printCompleteMemoryContents();
+        // memory.printCompleteMemoryContents();
         // memory.printSPM();
 
-         std::cout << "-------------------------------------------------------------" << std::endl;
+        std::cout << "-------------------------------------------------------------" << std::endl;
 
         std::cout << "\n================== FINAL STATE OF REGISTERS ==================\n"
                   << std::endl;
-                 std::cout << "-------------------------------------------------------------" << std::endl;
+        std::cout << "-------------------------------------------------------------" << std::endl;
 
         for (int i = 0; i < 4; i++)
         {
@@ -1483,7 +1506,7 @@ else if (ps.MEM.instr.opcode == "lw" || ps.MEM.instr.opcode == "LW")
         std::cout << "\n====================================\n"
                   << std::endl;
         std::cout << "Total Clock Cycles: " << clockCycles << std::endl;
-for (int cid = 0; cid < 4; cid++)
+        for (int cid = 0; cid < 4; cid++)
         {
             int committed = pipelineStates[cid].completedInstr;
             int stalls = pipelineStates[cid].stallCount;
@@ -1494,9 +1517,8 @@ for (int cid = 0; cid < 4; cid++)
             std::cout << "   Stall Cycles            : " << stalls << std::endl;
             std::cout << "   IPC (Instructions/Cycle): " << ipc << std::endl;
         }
-    std::cout << "-------------------------------------------------------------" << std::endl;
+        std::cout << "-------------------------------------------------------------" << std::endl;
 
-        
         memory.printCacheStats();
     }
 };
