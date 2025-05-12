@@ -14,66 +14,7 @@ Cache::Cache(int size, int blockSize, int associativity, int accessLatency, Repl
     numSets = size / (blockSize * associativity);
     sets.resize(numSets, std::vector<CacheLine>(associativity, CacheLine(blockSize)));
 }
-/*
-bool Cache::access(uint32_t address)
-{
-    accesses++;
-    currentCycle++;
-    uint32_t blockAddr = address / blockSize;
-    int setIndex = blockAddr % numSets;
-    uint32_t tag = blockAddr / numSets;
-    for (auto &line : sets[setIndex]) {
-        if (line.valid && line.tag == tag) {
-            line.lastUsed = currentCycle;
-            return true;
-        }
-    }
-    misses++;
-    for (auto &line : sets[setIndex]) {
-        if (!line.valid) {
-            line.valid = true;
-            line.tag = tag;
-            line.insertCycle = currentCycle;
-            line.lastUsed = currentCycle;
-            line.dirty = false;
-            return false;
-        }
-    }
-    int replaceIndex = 0;
-    if (policy == LRU) {
-        int minUsed = INT_MAX;
-        for (int i = 0; i < associativity; i++) {
-            if (sets[setIndex][i].lastUsed < minUsed) {
-                minUsed = sets[setIndex][i].lastUsed;
-                replaceIndex = i;
-            }
-        }
-    } else { 
-        while (true) {
-            for (int i = 0; i < associativity; i++) {
-                if (!sets[setIndex][i].valid){
-                 replaceIndex= i;        // empty slot wins
-                 break;
-                }
-                if (sets[setIndex][i].rrpv == maxRRPV) {
-                    replaceIndex= i;
-                    break;
-                }
-            }
-            if(replaceIndex != -1) break;
-            // 2) Otherwise, increment everyone’s RRPV and retry
-            for (auto &line : sets[setIndex]) {
-                if (line.rrpv < maxRRPV) line.rrpv++;
-            }
-        }
-    }
-    sets[setIndex][replaceIndex].tag = tag;
-    sets[setIndex][replaceIndex].lastUsed = currentCycle;
-    sets[setIndex][replaceIndex].insertCycle = currentCycle;
-    sets[setIndex][replaceIndex].dirty = false;
-    return false;
-}
-    */
+
 
 // function to read a block from the cache
 std::vector<uint8_t> Cache::readBlock(uint32_t address)  {
@@ -81,7 +22,6 @@ std::vector<uint8_t> Cache::readBlock(uint32_t address)  {
     uint32_t blockAddr = address / blockSize;
     int setIndex = blockAddr % numSets;
     uint32_t tag      = blockAddr / numSets;
-
     for (auto &line : sets[setIndex]) {
         if (line.valid && line.tag == tag) {
             if (policy == ReplacementPolicy::LRU) {
@@ -97,7 +37,6 @@ std::vector<uint8_t> Cache::readBlock(uint32_t address)  {
 // function to check if a block is in the cache
 bool Cache::contains(uint32_t address) {
     ++currentCycle;
-
     uint32_t blockAddr = address / blockSize;
     int setIndex = blockAddr % numSets;
     uint32_t tag = blockAddr / numSets;
@@ -114,15 +53,64 @@ bool Cache::contains(uint32_t address) {
     return false;
 }
 // function to update a block in the cache
-std::pair<bool,std::pair<uint32_t,std::vector<uint8_t>>> Cache::updateBlock(uint32_t address, const std::vector<uint8_t>& block) {
+std::pair<bool,std::pair<uint32_t,std::vector<uint8_t>>> Cache::updateBlocklat(uint32_t address, const std::vector<uint8_t>& block) {
     ++currentCycle;
     uint32_t blockAddr = address / blockSize;
     int setIndex = blockAddr % numSets;
     uint32_t tag = blockAddr / numSets;
     int replaceIndex = -1;
-
     // First, try to find an invalid line
-    
+    for (int i = 0; i < associativity; i++) {
+        if (!sets[setIndex][i].valid) { 
+            replaceIndex = i; 
+            break; 
+        }
+    }
+    std::pair<bool, std::pair<uint32_t, std::vector<uint8_t>>> result = {false, {0, {}}};
+    if (replaceIndex == -1) {
+        if (policy == LRU) { 
+            int minUsed = INT_MAX;
+            for (int i = 0; i < associativity; i++) {
+                if (sets[setIndex][i].lastUsed < minUsed) {
+                    minUsed = sets[setIndex][i].lastUsed;
+                    replaceIndex = i;
+                }
+            }
+        } else { 
+             while (true) {
+            for (int i = 0; i < associativity; i++) {
+                if (!sets[setIndex][i].valid){
+                 replaceIndex= i;      
+                 break;
+                }
+                if (sets[setIndex][i].rrpv == maxRRPV) {
+                    replaceIndex= i;
+                    break;
+                }
+            }
+            if(replaceIndex != -1) break;
+            // increment everyone’s RRPV and retry
+            for (auto &line : sets[setIndex]) {
+                if (line.rrpv < maxRRPV) line.rrpv++;
+            }
+        }
+        }
+
+        if (sets[setIndex][replaceIndex].dirty) {
+            uint32_t victimBlockAddr = ((sets[setIndex][replaceIndex].tag * numSets) + setIndex) * blockSize;
+            result = {true, {victimBlockAddr, sets[setIndex][replaceIndex].data}};
+        }
+    }
+    return result;
+    }
+
+    std::pair<bool,std::pair<uint32_t,std::vector<uint8_t>>> Cache::updateBlock(uint32_t address, const std::vector<uint8_t>& block) {
+    ++currentCycle;
+    uint32_t blockAddr = address / blockSize;
+    int setIndex = blockAddr % numSets;
+    uint32_t tag = blockAddr / numSets;
+    int replaceIndex = -1;
+    // First, try to find an invalid line
     for (int i = 0; i < associativity; i++) {
         if (!sets[setIndex][i].valid) { 
             replaceIndex = i; 
@@ -173,8 +161,7 @@ std::pair<bool,std::pair<uint32_t,std::vector<uint8_t>>> Cache::updateBlock(uint
            sets[setIndex][replaceIndex].insertCycle = currentCycle;
      }
      if (policy == SRRIP)
-        sets[setIndex][replaceIndex].rrpv = maxRRPV - 1;
-
+    sets[setIndex][replaceIndex].rrpv = maxRRPV - 1;
     sets[setIndex][replaceIndex].dirty = false;
     return result;
     }
@@ -272,19 +259,240 @@ void Cache::updateFinalMemory(Memory &memory) {
     }
 }
 
-// function to load instruction from memory
-int Memory::loadinstructionWord(uint32_t address) {
+
+int Memory::loadinstructionWordlatency(uint32_t address) {
         uint32_t totalLatency = 0;
     if (L1I->contains(address)) {
-        L1I->accesses++;
+                        L1I->accesses++;
                 totalLatency+=L1I->accessLatency;
-
         return L1I->accessLatency;
     }
     else if (L2->contains(address)) {
          L1I->accesses++;
             L2->accesses++;
              L1I->misses++;
+                             //   std::cout<<"loading from L2I"<<address<<std::endl;
+
+        totalLatency+=L1I->accessLatency+L2->accessLatency;
+
+        uint32_t word = L2->readWord(address, *this);
+        uint32_t blockStartAddr = (address / L1I->blockSize) * L1I->blockSize;
+        std::vector<uint8_t> block = L2->readBlock(address);
+        auto writebackInfo = L1I->updateBlocklat(address, block);
+        if (writebackInfo.first) {
+                totalLatency+=L2->accessLatency;
+            if (L2->contains(writebackInfo.second.first)) {
+                //already added L2 latency
+            } else {
+                // update in L2 
+                auto writebackInfo2= L2->updateBlocklat(writebackInfo.second.first, writebackInfo.second.second);
+               if (writebackInfo2.first) {
+                     totalLatency+=mainMemoryLatency;
+               
+
+            }
+        }
+    }
+            return totalLatency;
+}
+    else {
+         L1I->accesses++;
+            L2->accesses++;
+             L1I->misses++;
+             L2->misses++;
+        totalLatency+=L1I->accessLatency+L2->accessLatency+mainMemoryLatency;
+        uint32_t blockStartAddr = (address / L2->blockSize) * L2->blockSize;
+        std::vector<uint8_t> block = loadBlock(blockStartAddr, L2->blockSize);
+        auto writebackInfo = L2->updateBlocklat(address,block);
+          if (writebackInfo.first){
+                totalLatency += mainMemoryLatency;
+        }
+        uint32_t l1BlockStartAddr = (address / L1I->blockSize) * L1I->blockSize;
+        std::vector<uint8_t> l1Block = loadBlock(l1BlockStartAddr, L1I->blockSize);
+        writebackInfo = L1I->updateBlocklat(address, l1Block);
+         if (writebackInfo.first) {
+                        totalLatency+=L2->accessLatency;
+            
+            if (L2->contains(writebackInfo.second.first)) {
+               
+            } else {
+                auto writebackInfo2= L2->updateBlock(writebackInfo.second.first, writebackInfo.second.second);
+               if (writebackInfo2.first) {
+                        totalLatency+=mainMemoryLatency;
+
+            }
+        }
+    }
+    
+        int offset = address % L1I->blockSize;
+        uint32_t word = 0;
+        for (int i = 0; i < 4; i++) {
+            word |= (l1Block[offset + i] << (8 * i));
+        }
+    }
+        return totalLatency;
+    }
+
+
+int Memory::storeWordlatency(uint32_t address, uint32_t value, int coreID, bool &isActive) {
+      uint32_t totalLatency = 0;
+    if (L1D->contains(address)) {
+           L1D->accesses++;
+                       //     std::cout<<"loading from L1D"<<address<<std::endl;
+        totalLatency+=L1D->accessLatency;
+       //     std::cout<<"total"<<totalLatency<<std::endl;
+        return L1D->accessLatency;
+    }
+    else if (L2->contains(address)) {
+          L1D->accesses++;
+            L2->accesses++;
+             L1D->misses++;
+
+                             //   std::cout<<"loading from L2I"<<address<<std::endl;
+
+        totalLatency+=L1D->accessLatency+L2->accessLatency;
+           //    std::cout<<"total L2"<<totalLatency<<std::endl;
+        uint32_t word = L2->readWord(address, *this);
+        uint32_t blockStartAddr = (address / L1D->blockSize) * L1D->blockSize;
+        std::vector<uint8_t> block = L2->readBlock(address);
+        auto writebackInfo = L1D->updateBlocklat(address, block);
+        if (writebackInfo.first) {
+                totalLatency+=L2->accessLatency;
+            if (L2->contains(writebackInfo.second.first)) {
+                //already added L2 latency
+            } else {
+                // update in L2 
+                auto writebackInfo2= L2->updateBlocklat(writebackInfo.second.first, writebackInfo.second.second);
+               if (writebackInfo2.first) {
+                     totalLatency+=mainMemoryLatency;
+               
+
+            }
+        }
+    }
+    totalLatency+=L1D->accessLatency;
+            return totalLatency;
+}
+    else {
+          L1D->accesses++;
+            L2->accesses++;
+             L1D->misses++;
+             L2->misses++;
+        totalLatency+=L1D->accessLatency+L2->accessLatency+mainMemoryLatency;
+               //     std::cout<<"total main"<<totalLatency<<std::endl;
+        uint32_t blockStartAddr = (address / L2->blockSize) * L2->blockSize;
+        std::vector<uint8_t> block = loadBlock(blockStartAddr, L2->blockSize);
+        auto writebackInfo = L2->updateBlocklat(address,block);
+          if (writebackInfo.first){
+                totalLatency += mainMemoryLatency;
+        }
+        uint32_t l1BlockStartAddr = (address / L1D->blockSize) * L1D->blockSize;
+        std::vector<uint8_t> l1Block = loadBlock(l1BlockStartAddr, L1D->blockSize);
+        writebackInfo = L1D->updateBlocklat(address, l1Block);
+         if (writebackInfo.first) {
+                        totalLatency+=L2->accessLatency;
+            
+            if (L2->contains(writebackInfo.second.first)) {
+               
+            } else {
+                auto writebackInfo2= L2->updateBlock(writebackInfo.second.first, writebackInfo.second.second);
+               if (writebackInfo2.first) {
+                        totalLatency+=mainMemoryLatency;
+
+            }
+        }
+    }
+    }
+        totalLatency+=L1D->accessLatency;
+        return totalLatency;
+    }
+
+
+
+int Memory::loadWordlatency(uint32_t address, int coreID, bool &isActive) {
+      uint32_t totalLatency = 0;
+    if (L1D->contains(address)) {
+          L1D->accesses++;
+        totalLatency+=L1D->accessLatency;
+        return L1D->accessLatency;
+    }
+    else if (L2->contains(address)) {
+         L1D->accesses++;
+            L2->accesses++;
+             L1D->misses++;
+                             //   std::cout<<"loading from L2I"<<address<<std::endl;
+
+        totalLatency+=L1D->accessLatency+L2->accessLatency;
+           //    std::cout<<"total L2"<<totalLatency<<std::endl;
+        uint32_t word = L2->readWord(address, *this);
+        uint32_t blockStartAddr = (address / L1D->blockSize) * L1D->blockSize;
+        std::vector<uint8_t> block = L2->readBlock(address);
+        auto writebackInfo = L1D->updateBlocklat(address, block);
+        if (writebackInfo.first) {
+                totalLatency+=L2->accessLatency;
+            if (L2->contains(writebackInfo.second.first)) {
+                //already added L2 latency
+            } else {
+                // update in L2 
+                auto writebackInfo2= L2->updateBlocklat(writebackInfo.second.first, writebackInfo.second.second);
+               if (writebackInfo2.first) {
+                     totalLatency+=mainMemoryLatency;
+               
+
+            }
+        }
+    }
+            return totalLatency;
+}
+    else {
+        L1D->accesses++;
+            L2->accesses++;
+             L1D->misses++;
+             L2->misses++;
+
+        totalLatency+=L1D->accessLatency+L2->accessLatency+mainMemoryLatency;
+                //    std::cout<<"total main"<<totalLatency<<std::endl;
+        uint32_t blockStartAddr = (address / L2->blockSize) * L2->blockSize;
+        std::vector<uint8_t> block = loadBlock(blockStartAddr, L2->blockSize);
+        auto writebackInfo = L2->updateBlocklat(address,block);
+          if (writebackInfo.first){
+                totalLatency += mainMemoryLatency;
+        }
+        uint32_t l1BlockStartAddr = (address / L1D->blockSize) * L1D->blockSize;
+        std::vector<uint8_t> l1Block = loadBlock(l1BlockStartAddr, L1D->blockSize);
+        writebackInfo = L1D->updateBlocklat(address, l1Block);
+         if (writebackInfo.first) {
+                        totalLatency+=L2->accessLatency;
+            
+            if (L2->contains(writebackInfo.second.first)) {
+               
+            } else {
+                auto writebackInfo2= L2->updateBlock(writebackInfo.second.first, writebackInfo.second.second);
+               if (writebackInfo2.first) {
+                        totalLatency+=mainMemoryLatency;
+
+            }
+        }
+    }
+    }
+        return totalLatency;
+    }
+
+       
+// function to load instruction from memory
+void Memory::loadinstructionWord(uint32_t address) {
+        uint32_t totalLatency = 0;
+    if (L1I->contains(address)) {
+                        //std::cout<<"loading from L1I"<<address<<std::endl;
+                totalLatency+=L1I->accessLatency;
+        return ;
+    }
+    else if (L2->contains(address)) {
+                                //std::cout<<"loading from L2I"<<address<<std::endl;
+
+         //L1I->accesses++;
+          //  L2->accesses++;
+            // L1I->misses++;
                 totalLatency+=L1I->accessLatency+L2->accessLatency;
 
         uint32_t word = L2->readWord(address, *this);
@@ -292,15 +500,10 @@ int Memory::loadinstructionWord(uint32_t address) {
         std::vector<uint8_t> block = L2->readBlock(address);
         auto writebackInfo = L1I->updateBlock(address, block);
         if (writebackInfo.first) {
-                        totalLatency+=L2->accessLatency;
-
-              // If L1D had to evict a dirty line, we need to update L2
+                totalLatency+=L2->accessLatency;
             if (L2->contains(writebackInfo.second.first)) {
-                // Directly replace the content in L2
                 L2->replaceLine(writebackInfo.second.first, writebackInfo.second.second);
-                //writeBack(writebackInfo.second.first, writebackInfo.second.second);
             } else {
-                // update in L2 
                 auto writebackInfo2= L2->updateBlock(writebackInfo.second.first, writebackInfo.second.second);
                if (writebackInfo2.first) {
                         totalLatency+=L2->accessLatency;
@@ -316,19 +519,21 @@ int Memory::loadinstructionWord(uint32_t address) {
         }
     }
 }
-        return totalLatency;
+        return ;
     }
     else {
-         L1I->accesses++;
-            L2->accesses++;
-             L1I->misses++;
-             L2->misses++;
+                              //  std::cout<<"loading from MAIN"<<address<<std::endl;
+
+        // L1I->accesses++;
+        // L2->accesses++;
+        // L1I->misses++;
+        //L2->misses++;
         totalLatency+=L1I->accessLatency+L2->accessLatency+mainMemoryLatency;
         uint32_t blockStartAddr = (address / L2->blockSize) * L2->blockSize;
         std::vector<uint8_t> block = loadBlock(blockStartAddr, L2->blockSize);
-        auto writebackInfo = L2->updateBlock(address, block);
-          if (writebackInfo.first) {
-                totalLatency+=mainMemoryLatency;
+        auto writebackInfo = L2->updateBlock(address,block);
+          if (writebackInfo.first){
+                totalLatency += mainMemoryLatency;
             writeBack(writebackInfo.second.first, writebackInfo.second.second);
         }
         uint32_t l1BlockStartAddr = (address / L1I->blockSize) * L1I->blockSize;
@@ -363,23 +568,23 @@ int Memory::loadinstructionWord(uint32_t address) {
         for (int i = 0; i < 4; i++) {
             word |= (l1Block[offset + i] << (8 * i));
         }
-        return totalLatency;
+        return ;
     }
 }
 
 // fucntion to store a instruction in memory
-int Memory::storeinstructionWord(uint32_t address, uint32_t value) {
+int Memory::storeinstructionWord(uint32_t address, uint32_t value){
     int totalLatency = 0;
     if (L1I->contains(address)) {
-        L1I->accesses++;
+        //L1I->accesses++;
         totalLatency += L1I->accessLatency;
         L1I->writeWord(address,value,*this);
             return totalLatency;
     }
     else if (L2->contains(address)) {
-        L2->accesses++;
-        L1I->accesses++;
-        L1I->misses++;
+        //L2->accesses++;
+        //L1I->accesses++;
+        //L1I->misses++;
         totalLatency += L2->accessLatency+L1I->accessLatency;
         uint32_t blockStartAddr = (address / L1I->blockSize) * L1I->blockSize;
         std::vector<uint8_t> block = L2->readBlock(address);
@@ -415,10 +620,10 @@ int Memory::storeinstructionWord(uint32_t address, uint32_t value) {
     }
     else {
         
-         L1I->accesses++;
-            L2->accesses++;
-             L1I->misses++;
-             L2->misses++;
+        // L1I->accesses++;
+         //   L2->accesses++;
+          //   L1I->misses++;
+           //  L2->misses++;
        totalLatency += L1I->accessLatency+ L2->accessLatency+ mainMemoryLatency;
         uint32_t blockStartAddr = (address / L2->blockSize) * L2->blockSize;
         std::vector<uint8_t> block = loadBlock(blockStartAddr, L2->blockSize);
@@ -469,7 +674,7 @@ double Cache::missRate() const
 
 
 // function for replacing an existing cache line 
-void Cache::replaceLine(uint32_t address, const std::vector<uint8_t>& block) {
+void Cache::replaceLine(uint32_t address, const std::vector<uint8_t>& block){
     ++currentCycle;
     uint32_t blockAddr = address / blockSize;
     int setIndex = blockAddr % numSets;
@@ -608,14 +813,17 @@ int Memory::getLatency(uint32_t address, bool isInstruction)
  std::pair<uint32_t,int> Memory::loadWord(uint32_t address, int coreID, bool &isActive) {
         uint32_t totalLatency = 0;
     if (L1D->contains(address)) {
-             L1D->accesses++;
+                //    std::cout<<"loading from L1D"<<address<<std::endl;
+
+            // L1D->accesses++;
         totalLatency+=L1D->accessLatency;
         return {L1D->readWord(address, *this),totalLatency};
     }
     else if (L2->contains(address)) {
-            L1D->accesses++;
-            L2->accesses++;
-             L1D->misses++;
+            //    std::cout<<"loading from L2D"<<address<<std::endl;
+           // L1D->accesses++;
+           // L2->accesses++;
+            // L1D->misses++;
 
         totalLatency+=L1D->accessLatency+L2->accessLatency;
         uint32_t word = L2->readWord(address, *this);
@@ -646,10 +854,12 @@ int Memory::getLatency(uint32_t address, bool isInstruction)
         return {word,totalLatency}; 
     }
     else {
-         L1D->accesses++;
-            L2->accesses++;
-             L1D->misses++;
-             L2->misses++;
+                        //    std::cout<<"loading from main"<<address<<std::endl;
+
+        // L1D->accesses++;
+          //  L2->accesses++;
+          //   L1D->misses++;
+          //   L2->misses++;
                 totalLatency+=L1D->accessLatency+L2->accessLatency+mainMemoryLatency;
         uint32_t blockStartAddr = (address / L2->blockSize) * L2->blockSize;
         std::vector<uint8_t> block =loadBlock(blockStartAddr, L2->blockSize);
@@ -701,15 +911,15 @@ int Memory::storeWord(uint32_t address, uint32_t value, int coreID, bool &isActi
     //std::cout<<"storeWord"<<address<<std::endl;
     uint32_t totalLatency = 0;
     if (L1D->contains(address)) {
-                     L1D->accesses++;
+       //              L1D->accesses++;
         L1D->writeWord(address, value, *this);
                 totalLatency+=L1D->accessLatency;//read
              return totalLatency;
     }
     else if (L2->contains(address)) {
-         L1D->accesses++;
-            L2->accesses++;
-             L1D->misses++;
+         //L1D->accesses++;
+          //  L2->accesses++;
+           //  L1D->misses++;
         totalLatency+=L1D->accessLatency+L2->accessLatency;
         uint32_t blockStartAddr = (address / L1D->blockSize) * L1D->blockSize;
         std::vector<uint8_t> block = L2->readBlock(address);
@@ -732,10 +942,10 @@ int Memory::storeWord(uint32_t address, uint32_t value, int coreID, bool &isActi
         return totalLatency;
     }
     else {
-          L1D->accesses++;
-            L2->accesses++;
-             L1D->misses++;
-             L2->misses++;
+         // L1D->accesses++;
+          //  L2->accesses++;
+          //   L1D->misses++;
+           //  L2->misses++;
             totalLatency+=L1D->accessLatency+L2->accessLatency+mainMemoryLatency;
 
         uint32_t blockStartAddr = (address / L2->blockSize) * L2->blockSize;
@@ -778,6 +988,8 @@ int Memory::storeWord(uint32_t address, uint32_t value, int coreID, bool &isActi
         return totalLatency;
     }
 }
+
+
 
 //helper for printing vector
 void printVector(const std::vector<uint8_t>& vec) {
