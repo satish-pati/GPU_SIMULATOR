@@ -1486,7 +1486,7 @@ public:
         }
         memory.update();
         // memory.printCompleteMemoryContents();
-        // memory.printSPM();
+        memory.printSPM();
 
         std::cout << "-------------------------------------------------------------" << std::endl;
 
