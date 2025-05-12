@@ -104,9 +104,9 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 **Tasks :**  
 - **Satish:**  
-  -modified and fixed latency caluclations.
-  -tested with different test casesto ensure correctness.
-  -updated readme file.
+   -modified and fixed latency caluclations.
+   -tested with different test casesto ensure correctness.
+   -updated readme file.
 - **Niharika:**
   - readme file.
   - checked complete code for any errors.
