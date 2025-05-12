@@ -102,18 +102,15 @@ The simulator is capable of running a **bubble sort program** across all cores.
 - Perform comprehensive testing with all test cases.  
 - Compile final report with stalls, cache miss rate, and IPC.  
 
-**Tasks Completed (Functions Implemented):**  
+**Tasks :**  
 - **Satish:**  
-  - Modified `Simulator::run()` to output final metrics (stalls, miss rate, IPC).  
-  - Implemented `Memory::missRate()` to ensure accurate cache miss rate calculation.  
-  - Implemented `Memory::getL1DLatency()` to verify latency in test cases.  
-  - Implemented `Memory::updateFinalMemory()` to finalize memory state.  
-- **Niharika:**  
-  - Modified `Simulator::cycle()` to finalize SPM, cache, and SYNC integration.  
-  - Implemented `Simulator::pipelinesEmpty()` to verify SYNC behavior in test cases.  
-  - Modified `Memory::loadWord()` to ensure SPM/cache coherence in test cases.  
-  - Modified `Memory::storeWord()` to ensure SPM/cache coherence in test cases.  
-
+  -modified and fixed latency caluclations.
+  -tested with different test casesto ensure correctness.
+  -updated readme file.
+- **Niharika:**
+  - readme file.
+  - checked complete code for any errors.
+  - checked with different test cases
 ---
 
 #### **Meeting 7 (May 10, 2025)**  
@@ -130,9 +127,7 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Modified `Memory::storeWord()` to integrate SPM access with cache hierarchy.  
   - Implemented `Memory::update()` to handle SPM and cache coherence.  
 - **Niharika:**  
-  - Modified `Simulator::cycle()` to ensure SPM, cache, and SYNC work together.  
-  - Implemented `Memory::loadWordSPM()` to finalize `lw_spm` functionality.  
-  - Implemented `Memory::storeWordSPM()` to finalize `sw_spm` functionality.  
+  - Modified `Simulator::cycle()` to ensure SPM, cache, and SYNC work together.   
   - Implemented `Memory::sstoreWord()` to support SPM test case setup.  
   - Implemented test case `testcase3spm.s` to verify SPM, cache, and SYNC with larger array access.  
 ---
@@ -149,13 +144,13 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Implemented `Memory::loadWordSPM()` to load words from SPM (`lw_spm` instruction).  
   - Implemented `Memory::storeWordSPM()` to store words in SPM (`sw_spm` instruction).  
   - Modified `Memory::Memory()` to include SPM initialization.  
-  - Modified `Memory::~Memory()` to clean up SPM resources.  
+  - Modified `Memory::~Memory()` to clean up SPM resources.
+  - Implemented test case `testcase1spm.s` to verify SPM behavior with strided array addition. 
 - **Niharika:**  
   - Modified `assembleInstruction()` in `sim2.cpp` to parse `lw_spm` and `sw_spm` instructions.  
   - Modified `Simulator::cycle()` to handle SPM instructions with correct latency.  
   - Implemented `Memory::lloadWord()` to load words for test case setup (SPM-related).  
-  - Implemented `Memory::sstoreWord()` to store words for test case setup (SPM-related).  
-  - Implemented test case `testcase1spm.s` to verify SPM behavior with strided array addition.  
+  - Implemented `Memory::sstoreWord()` to store words for test case setup (SPM-related).   
 ---
 
 #### **Meeting 5 (April 27, 2025)**  
@@ -172,11 +167,8 @@ The simulator is capable of running a **bubble sort program** across all cores.
   - Modified `Simulator::run()` to ensure SYNC behavior in multi-core simulation.  
   - Modified `Core::isBranchTaken()` to support CID-based branching for test cases.  
   - Implemented `Simulator::pipelinesEmpty()` to ensure all pipelines are ready for SYNC.  
-- **Niharika:**  
-  - Modified `Simulator::hazardDetected()` to handle stalls with SYNC and cache latency.  
-  - Implemented `Memory::updateFinalMemory()` to finalize memory state for test cases.  
-  - Implemented `Memory::missRate()` to calculate accurate cache miss rates for test cases.  
-  - Implemented `Memory::getL1DLatency()` to verify latency in test cases.  
+- **Niharika:**    
+  - checked complete implemenatation of SYNC for any errors and fixes.
   - Implemented test case `testcase3cache.s` to verify cache and SYNC behavior with larger array access.  
 ---
 
@@ -189,16 +181,14 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 **Tasks :**  
 - **Satish:**  
-  - Implemented `Simulator::pipelinesEmpty()` to check pipeline state for SYNC synchronization.  
+  - Modified `Simulator::hazardDetected()` to handle stalls with SYNC and cache latency.  
   - Modified `Simulator::cycle()` to implement SYNC by waiting for all cores to execute it.  
-  - Modified `Core::isBranchTaken()` to handle `bnecid` for CID-based branching in multi-core setup.  
   - Implemented `Memory::updateFinalMemory()` to flush dirty cache blocks at the end.  
   - Implemented test case `testcase1.s` to verify cache behavior with strided array addition.  
 - **Niharika:**  
-  - Modified `Simulator::hazardDetected()` to handle stalls with SYNC and cache latency.  
-  - Modified `Core::isBranchTaken()` to support CID-based branching for SYNC coordination.  
+  - Implemented `Simulator::pipelinesEmpty()` to check pipeline state for SYNC synchronization.
   - Modified `Simulator::run()` to ensure SYNC behavior in multi-core simulation.  
-  - Modified `Simulator::cycle()` to finalize SYNC implementation.  
+  - final check of complete cache implementation with test cases.
   - Implemented test case `program.s` to verify cache behavior with strided array addition.  
 ---
 
@@ -211,16 +201,16 @@ The simulator is capable of running a **bubble sort program** across all cores.
 
 **Tasks :**  
 - **Satish:**  
-  - Implemented `Memory::writeBack()` to write dirty cache blocks to main memory.  
-  - Implemented `Memory::update()` to flush dirty cache blocks to main memory.  
-  - Implemented `Memory::getL1DLatency()` to support variable latency in loads/stores.  
-  - Implemented `Memory::missRate()` to calculate cache miss rates for L1I, L1D, and L2.  
-- **Niharika:**  
   - Modified `Simulator::hazardDetected()` to account for stalls due to cache miss latency.  
   - Implemented `Simulator::run()` to compute stalls, cache miss rate, and IPC at the end.  
+  - Implemented `Memory::getL1DLatency()` to support variable latency in loads/stores.  
+  - Implemented `Memory::missRate()` to calculate cache miss rates for L1I, L1D, and L2.
+  - Implemented test case `l2cacheutilise.s` to verify L2 cache utilization. 
+- **Niharika:**
+  - Implemented `Memory::writeBack()` to write dirty cache blocks to main memory.  
+  - Implemented `Memory::update()` to flush dirty cache blocks to main memory.  
   - Implemented `Memory::lloadWord()` to load words for test case setup (cache-related).  
-  - Implemented `Memory::sstoreWord()` to store words for test case setup (cache-related).  
-  - Implemented test case `l2cacheutilise.s` to verify L2 cache utilization.  
+  - Implemented `Memory::sstoreWord()` to store words for test case setup (cache-related).   
 ---
 
 #### **Meeting 2 (April 10, 2025)**  
