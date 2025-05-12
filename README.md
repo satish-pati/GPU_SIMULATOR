@@ -619,14 +619,15 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
 **Focus:** Final testing and reporting.  
 **Members:** Satish, Niharika  
 **Decisions:**  
-- Perform comprehensive testing with all test cases.  
+- Perform comprehensive testing with all test cases.
 - Compile final report with stalls, cache miss rate, and IPC.  
 
 **Tasks :**  
-- **Satish:**  
-   - modified and fixed latency caluclations.
-   - tested with different test casesto ensure correctness.
-   - updated readme file.
+- **Satish:**
+   - Implemented new functions for latency cacaluclations `storeWordlatency`,`loadWordlatency`,`loadInstructionWordlatency` to correct Latency caluculation.
+   - Wrote new test cases as per ProjectDoc and analysed results & performance .
+   - Modified Simulator class and pipeline Implementation to correctly insert stalls due to the memory access Latencies.
+   - Compiled results from testcases to Report &  updated readme file.
 - **Niharika:**
   - readme file.
   - checked complete code for any errors.
@@ -645,7 +646,9 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
   - Modified `Simulator::run()` to ensure SPM operations are correctly simulated.  
   - Modified `Memory::loadWord()` to integrate SPM access with cache hierarchy.  
   - Modified `Memory::storeWord()` to integrate SPM access with cache hierarchy.  
-  - Implemented `Memory::update()` to handle SPM and cache coherence.  
+  - Implemented `Memory::update()` to handle SPM and cache .
+  - Modifed L1I cache to Correctly work and add latencies with the instruction fetch stage of pipeline
+   
 - **Niharika:**  
   - Modified `Simulator::cycle()` to ensure SPM, cache, and SYNC work together.   
   - Implemented `Memory::sstoreWord()` to support SPM test case setup.  
@@ -686,7 +689,8 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
   - Modified `Simulator::cycle()` to finalize SYNC implementation for all cores.  
   - Modified `Simulator::run()` to ensure SYNC behavior in multi-core simulation.  
   - Modified `Core::isBranchTaken()` to support CID-based branching for test cases.  
-  - Implemented `Simulator::pipelinesEmpty()` to ensure all pipelines are ready for SYNC.  
+  - Implemented `Simulator::pipelinesEmpty()` to ensure all pipelines completed.
+  - Added new Lw_spm ,sw_spm instructions for SPM memory.
 - **Niharika:**    
   - checked complete implemenatation of SYNC for any errors and fixes.
   - Implemented test case `testcase3cache.s` to verify cache and SYNC behavior with larger array access.  
@@ -703,8 +707,9 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
 - **Satish:**  
   - Modified `Simulator::hazardDetected()` to handle stalls with SYNC and cache latency.  
   - Modified `Simulator::cycle()` to implement SYNC by waiting for all cores to execute it.  
-  - Implemented `Memory::updateFinalMemory()` to flush dirty cache blocks at the end.  
-  - Implemented test case `testcase1.s` to verify cache behavior with strided array addition.  
+  - Implemented `Memory::updateFinalMemory()` to update dirty cache blocks to the memory at the end.  
+  - Implemented test case `testcase1.s` to verify cache behavior with strided array addition.
+  -  Added new No-Op instruction for SYNC instruction
 - **Niharika:**  
   - Implemented `Simulator::pipelinesEmpty()` to check pipeline state for SYNC synchronization.
   - Modified `Simulator::run()` to ensure SYNC behavior in multi-core simulation.  
@@ -741,11 +746,13 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
 - Prepare for SYNC implementation in the next meeting.  
 
 **Tasks :**  
-- **Satish:**  
+- **Satish:**
+  - Redesigned Memory class and Implemented accordingly .
   - Implemented `Memory::loadinstructionWord()` to fetch instructions from L1I, L2, or main memory.  
   - Implemented `Memory::storeinstructionWord()` to store instructions in the cache.  
   - Implemented `Memory::loadWord()` to load data from L1D, L2, or main memory with cache latency.  
-  - Implemented `Memory::storeWord()` to store data with cache coherence.  
+  - Implemented `Memory::storeWord()` to store data with cache .
+    
 - **Niharika:**  
   - Implemented `Cache::updateBlock()` to update cache blocks with LRU/SRRIP policies.  
   - Implemented `Cache::writeBlockL2()` to update L2 cache with evicted L1 lines.  
@@ -763,7 +770,8 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
 - Divide initial tasks for cache design and configuration.  
 
 **Tasks :**  
-- **Satish:**  
+- **Satish:**
+  - Designed and implemented  new Cache class .
   - Implemented `Cache::Cache()` to set up cache parameters for L1I, L1D, and L2.  
   - Implemented `Memory::Memory()` to initialize L1I, L1D, and L2.  
   - Implemented `Memory::~Memory()` to clean up cache resources.  
