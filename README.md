@@ -4,44 +4,6 @@
 This project is a multi-core simulator inspired by [Ripes](https://github.com/mortbopet/Ripes). The simulator models a **4-core RISC-V processor**, that execute instructions concurrently while sharing memory. This is **Phase 1** of the project, currently developed in **Python and C++**, with a future goal to extend one based on feasibility and convert the cores into GPU cores.
 
 
----
-
-
-
-![Screenshot 2025-02-20 155636](https://github.com/user-attachments/assets/ebebad1a-c1d5-48b3-86e6-b05d03200218)
-
----
-
-
-
-![Screenshot 2025-02-20 175130](https://github.com/user-attachments/assets/f4c66400-72e1-4c78-b66a-193cfb8043fe)
-
-
-
-
-### Steps to Run
-## Python Version
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
-   
-   ```
-    ```sh
-      cd python/src
-     ```
-
-2. Compile and run:
-   ```sh
-   python gui.py  
-   ```
-    or
-   
-   ```sh
-   python sim.py  
-   ```
-4. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
-5. View **register and memory outputs** after execution.
-
 
 ## CPP Version
 1. Clone the repository:
@@ -649,30 +611,6 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
 
 
 
-## Features
-- **4-Core Simulation**: Each core operates independently but shares memory.
-- - **Memory Architecture**:
-  - **4KB memory**, divided equally among cores.
-  - Core 0 → First 1KB, Core 1 → Next 1KB, Core 2 → Next 1KB,Core 3 → Next 1KB
-- **Supported RISC-V Instructions**:
-  - `ADD`, `SUB`
-  - `BNE`, `JAL`
-  - `LW`, `SW`
-  - **Additional instruction of choice**
-  - `ADDI`,`MV`
-  - `BEQ`,`BLE`
-  - `BLT`,`LA`
-  - `J`,`BGE`,
-- **Additional (Optional) Features**:
-  - Graphical User interface in python version.
-- **Execution Model**:
-  - Reads assembly file.
-  - Executes instructions across all cores.
-  - Displays **final register and memory state**.
-
-## Bubble Sort Implementation
-The simulator is capable of running a **bubble sort program** across all cores.
-
 
 ## Meeting Minutes
 ---
@@ -1168,6 +1106,69 @@ PHASE-3
    - Study about  how pipelining, hazards and latencies works.
      
       
+# Phase 1
+
+
+---
 
 
 
+![Screenshot 2025-02-20 155636](https://github.com/user-attachments/assets/ebebad1a-c1d5-48b3-86e6-b05d03200218)
+
+---
+
+
+
+![Screenshot 2025-02-20 175130](https://github.com/user-attachments/assets/f4c66400-72e1-4c78-b66a-193cfb8043fe)
+
+
+
+
+### Steps to Run
+## Python Version
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/satish-pati/SIMULATOR_GROUP_28.git
+   
+   ```
+    ```sh
+      cd python/src
+     ```
+
+2. Compile and run:
+   ```sh
+   python gui.py  
+   ```
+    or
+   
+   ```sh
+   python sim.py  
+   ```
+4. Provide an **assembly file** named **program.s** as input.(currently **program.s** has bubblesort algorithm)
+5. View **register and memory outputs** after execution.
+
+
+
+## Features
+- **4-Core Simulation**: Each core operates independently but shares memory.
+- - **Memory Architecture**:
+  - **4KB memory**, divided equally among cores.
+  - Core 0 → First 1KB, Core 1 → Next 1KB, Core 2 → Next 1KB,Core 3 → Next 1KB
+- **Supported RISC-V Instructions**:
+  - `ADD`, `SUB`
+  - `BNE`, `JAL`
+  - `LW`, `SW`
+  - **Additional instruction of choice**
+  - `ADDI`,`MV`
+  - `BEQ`,`BLE`
+  - `BLT`,`LA`
+  - `J`,`BGE`,
+- **Additional (Optional) Features**:
+  - Graphical User interface in python version.
+- **Execution Model**:
+  - Reads assembly file.
+  - Executes instructions across all cores.
+  - Displays **final register and memory state**.
+
+## Bubble Sort Implementation
+The simulator is capable of running a **bubble sort program** across all cores.
