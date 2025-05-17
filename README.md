@@ -786,6 +786,46 @@ The sync does no arithmetic or memory access; it only performs the barrier. All 
 ---
 PHASE-3
 ---
+Features Implemented in Phase 3
+Note: Continued development in C++ (.cpp files). Assumed branch outcomes are known in the Execution Stage only.
+
+Cache Hierarchy Integration:
+
+Two-level cache system: L1I (instruction), L1D (data), and unified L2.
+Configurable cache size, block size, associativity, and access latency via input file.
+Main memory access time specified as input.
+LRU and SRRIP (Static Re-Reference Interval Prediction) cache replacement policies.
+Outputs stalls, cache miss rates (L1I, L1D, L2), and IPC.
+
+
+Scratchpad Memory (SPM):
+
+Programmer-controlled memory with same size and latency as L1D.
+Special instructions: lw_spm (load) and sw_spm (store).
+Supports explicit data placement for strided array addition.
+
+
+SYNC Instruction:
+
+No-op instruction for synchronization.
+Ensures all compute units complete execution before proceeding to the next instruction.
+
+
+Simulator Output Enhancements:
+
+Outputs cache miss rates, total stalls, and IPC.
+Reads cache parameters and memory latency from input file.
+
+
+Continued Features from Prior Phases:
+
+Five-stage pipelining with data forwarding.
+Merged compute units with single fetch unit and CID-based branching.
+4KB shared memory (1KB per core) with cache/SPM integration.
+Supported instructions: ADD, SUB, BNE, JAL, LW, SW, ADDI, MV, BEQ, BLE, BLT, LA, J, BGE, MUL, li, ecall + new lw_spm, sw_spm, SYNC.
+Bubble sort support with cache/SPM interactions.
+
+---
 ### **Meeting 9 (20-Feb-2025)**
 - **Members**: Satish,Niharika
 - **Decisions**:
